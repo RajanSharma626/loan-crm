@@ -17,10 +17,35 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            $user->employee_id = self::generateEmployeeId();
+        });
+    }
+
+    public static function generateEmployeeId()
+    {
+        $latestUser = self::latest('id')->first();
+
+        if (!$latestUser) {
+            return 'EMP0001';
+        }
+
+        // Extract number from last employee_id and increment
+        $lastNumber = (int) substr($latestUser->employee_id, 3);
+        return 'EMP' . str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+    }
+
     protected $fillable = [
         'name',
-        'email',
+        'employee_id',
         'password',
+        'position'
     ];
 
     /**
