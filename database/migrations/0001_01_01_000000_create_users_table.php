@@ -7,28 +7,25 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up()
     {
-        Schema::create('leads', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('mobile')->unique();
-            $table->string('email')->unique();
-            $table->string('lead_source')->nullable();
-            $table->string('keyword')->nullable();
-            $table->enum('loan_type', ['Personal Loan', 'Home Loan', 'Auto Loan'])->default('Personal Loan');
-            $table->string('city');
-            $table->integer('monthly_salary');
-            $table->integer('loan_amount');
-            $table->integer('duration'); // in days
-            $table->string('pancard_number')->unique();
-            $table->enum('gender', ['Male', 'Female', 'Other']);
-            $table->date('dob');
-            $table->enum('marital_status', ['Single', 'Married', 'Divorced', 'Widowed'])->nullable();
-            $table->string('education')->nullable();
-            $table->enum('disposition', ['Pending', 'Approved', 'Rejected'])->default('Pending');
-            $table->text('notes')->nullable();
-            $table->string('agent_name')->nullable();
+            $table->string('name');
+            $table->string('employee_id')->unique();
+            $table->string('password');
+            $table->enum('role', ['Admin', 'Manager', 'Agent'])->default('Agent');
+            $table->enum('status', ['Active', 'Inactive'])->default('Active');
+            $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
+        });
+
+        Schema::create('sessions', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->foreignId('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
         });
     }
 
