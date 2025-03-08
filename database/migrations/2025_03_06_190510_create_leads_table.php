@@ -32,6 +32,7 @@ return new class extends Migration
             $table->enum('disposition', ['Pending', 'Approved', 'Rejected'])->default('Pending');
             $table->text('notes')->nullable();
             $table->string('agent_name')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

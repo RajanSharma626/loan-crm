@@ -3,19 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lead;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class LeadController extends Controller
 {
     public function index()
     {
-        $leads = Lead::all();
-        return view('leads.index', compact('leads'));
+        $leads = Lead::whereNull('deleted_at')->get();
+        return view('leads', compact('leads'));
     }
 
     public function create()
     {
-        return view('leads.create');
+        $emp = User::whereNull('deleted_at')->where('status', 'Active')->get();
+        return view('lead-form', compact('emp'));
     }
 
     public function store(Request $request)
@@ -33,10 +35,12 @@ class LeadController extends Controller
             'pancard_number' => 'required|unique:leads',
             'gender' => 'required',
             'dob' => 'required|date',
+            'disposition' => 'required',
+            'agent_id' => 'required',
         ]);
 
         Lead::create($request->all());
 
-        return redirect()->route('leads.index')->with('success', 'Lead created successfully.');
+        return redirect()->route('leads')->with('success', 'Lead created successfully.');
     }
 }

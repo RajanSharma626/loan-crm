@@ -179,8 +179,8 @@
                 <div class="menu-content-wrap">
                     <div class="menu-group">
                         <ul class="navbar-nav flex-column">
-                            <li class="nav-item mb-2">
-                                <a class="nav-link" href="index.html">
+                            <li class="nav-item mb-2 {{ Route::currentRouteName() == 'leads' ? 'active' : '' }} {{ Route::currentRouteName() == 'lead.form' ? 'active' : '' }}">
+                                <a class="nav-link" href="{{route('leads')}}">
                                     <span class="nav-icon-wrap">
                                         <span class="svg-icon">
                                             <svg xmlns="http://www.w3.org/2000/svg"
