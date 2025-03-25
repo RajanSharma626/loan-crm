@@ -14,10 +14,11 @@ class LeadController extends Controller
         return view('leads', compact('leads'));
     }
 
-    public function create()
+    public function create($id)
     {
         $emp = User::whereNull('deleted_at')->where('status', 'Active')->get();
-        return view('lead-form', compact('emp'));
+        $lead = Lead::where('id', $id)->whereNull('deleted_at')->first();
+        return view('lead-form', compact('emp', 'lead'));
     }
 
     public function store(Request $request)

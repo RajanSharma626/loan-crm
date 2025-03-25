@@ -11,16 +11,11 @@
                     <div class="contactapp-detail-wrap">
                         <header class="contact-header">
                             <div class="w-100 align-items-center justify-content-between">
-
                                 <div class="d-flex justify-content-between w-100">
                                     <a class="contactapp-title link-dark">
                                         <h1>Leads List</h1>
                                     </a>
-                                    <a href="{{ route('lead.form') }}"
-                                        class="btn btn-sm btn-outline-secondary flex-shrink-0 d-lg-inline-block d-none">+
-                                        Create New</a>
                                 </div>
-
                             </div>
 
                         </header>
@@ -85,9 +80,9 @@
                                                                                 data-feather="archive"></i></span></span></a>
                                                                 <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover"
                                                                     data-bs-toggle="tooltip" data-placement="top"
-                                                                    title="" data-bs-original-title="Edit"
-                                                                    href="edit-contact.html"><span class="icon"><span
-                                                                            class="feather-icon"><i
+                                                                    title="Edit" data-bs-original-title="Edit"
+                                                                    href="{{ route('lead.info', $lead->id) }}"><span
+                                                                        class="icon"><span class="feather-icon"><i
                                                                                 data-feather="edit"></i></span></span></a>
                                                                 <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover del-button"
                                                                     data-bs-toggle="tooltip" data-placement="top"
