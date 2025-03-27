@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Leads')
+@section('title', 'Leads | Money Portal')
 
 @section('content')
     <div class="hk-pg-wrapper pb-0">

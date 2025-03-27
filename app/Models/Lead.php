@@ -30,4 +30,14 @@ class Lead extends Model
         'notes',
         'agent_name'
     ];
+
+    public function notesRelation()
+    {
+        return $this->hasMany(Note::class, 'lead_id', 'id');
+    }
+
+    public function eagreement()
+    {
+        return $this->hasOne(Eagreement::class, 'lead_id', 'id');
+    }
 }

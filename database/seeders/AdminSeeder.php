@@ -18,9 +18,8 @@ class AdminSeeder extends Seeder
         User::create([
             'name' => 'Admin User',
             'employee_id' => User::generateEmployeeId(), // Call the function to generate ID
-            'position' => 'admin',
+            'role' => 'admin',
             'status' => 'active',
-            'email_verified_at' => now(),
             'password' => Hash::make('admin123'), // Change this to a secure password
             'remember_token' => \Illuminate\Support\Str::random(10),
         ]);

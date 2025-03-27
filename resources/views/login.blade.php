@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'My Laravel App')</title>
+    <title>@yield('title', 'Money Portal | CRM Login')</title>
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="favicon.ico">
@@ -36,21 +36,31 @@
                     <div class="row">
                         <div class="col-sm-10 position-relative mx-auto">
                             <div class="auth-content py-8">
-                                <form class="w-100">
+                                <form class="w-100" method="POST" action="{{ route('login.auth') }}">
+                                    @csrf
                                     <div class="row">
                                         <div class="col-lg-5 col-md-7 col-sm-10 mx-auto">
-
                                             <div class="card card-lg card-border">
                                                 <div class="card-body">
                                                     <h4 class="mb-4 text-center">Sign in to your account</h4>
+
+                                                    @if (session('error'))
+                                                        <div class="alert alert-danger">{{ session('error') }}</div>
+                                                    @endif
+
                                                     <div class="row gx-3">
                                                         <div class="form-group col-lg-12">
                                                             <div class="form-label-group">
                                                                 <label>Employee ID</label>
                                                             </div>
                                                             <input class="form-control" placeholder="Employee ID"
-                                                                value="" type="text">
+                                                                name="employee_id" type="text"
+                                                                value="{{ old('employee_id') }}">
+                                                            @error('employee_id')
+                                                                <small class="text-danger">{{ $message }}</small>
+                                                            @enderror
                                                         </div>
+
                                                         <div class="form-group col-lg-12">
                                                             <div class="form-label-group">
                                                                 <label>Password</label>
@@ -58,8 +68,8 @@
                                                             <div class="input-group password-check">
                                                                 <span class="input-affix-wrapper">
                                                                     <input class="form-control"
-                                                                        placeholder="Enter your password" value=""
-                                                                        type="password">
+                                                                        placeholder="Enter your password"
+                                                                        name="password" type="password">
                                                                     <a href="#" class="input-suffix text-muted">
                                                                         <span class="feather-icon"><i class="form-icon"
                                                                                 data-feather="eye"></i></span>
@@ -69,21 +79,33 @@
                                                                     </a>
                                                                 </span>
                                                             </div>
+                                                            @error('password')
+                                                                <small class="text-danger">{{ $message }}</small>
+                                                            @enderror
+                                                        </div>
+
+                                                        <div class="form-group col-lg-12">
+                                                            <button type="submit" class="btn btn-primary w-100">
+                                                                <span class="btn-text">Sign In</span>
+                                                            </button>
                                                         </div>
                                                     </div>
+
                                                     <div class="d-flex justify-content-center">
                                                         <div class="form-check form-check-sm mb-3">
                                                             <input type="checkbox" class="form-check-input"
-                                                                id="logged_in" checked>
+                                                                id="logged_in" name="remember" checked>
                                                             <label class="form-check-label text-muted fs-7"
                                                                 for="logged_in">Keep me logged in</label>
                                                         </div>
                                                     </div>
+
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </form>
+
                             </div>
                         </div>
                     </div>
@@ -104,7 +126,7 @@
                                 <span>Designed & Developed By </span>
                                 <a href="https://www.fiverr.com/rajansharma626" target="_blank">Rajan Sharma</a>
                             </p>
-                    </div>
+                        </div>
                 </footer>
             </div>
             <!-- / Page Footer -->

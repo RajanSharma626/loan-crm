@@ -32,7 +32,7 @@ class LeadSeeder extends Seeder
             'education' => 'Bachelor',
             'disposition' => 'Pending',
             'notes' => 'First lead',
-            'agent_name' => 'Agent Smith',
+            'agent_id' => 1,
         ]);
     }
 }
