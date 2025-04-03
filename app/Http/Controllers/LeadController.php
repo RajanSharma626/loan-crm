@@ -63,7 +63,7 @@ class LeadController extends Controller
 
     public function updateAgreement(Request $request)
     {
-        $lead = Lead::findOrFail($request->id);
+        $lead = Lead::findOrFail($request->lead_id);
         $lead->disposition = $request->disposition;
         $lead->save();
 
@@ -110,5 +110,8 @@ class LeadController extends Controller
                 'lead_assign_by' => Auth::id(),
             ]);
         }
+
+        $eagreement->save();
+        return redirect()->route('lead.info', $lead->id)->with('success', 'Lead Agreement updated successfully.');
     }
 }

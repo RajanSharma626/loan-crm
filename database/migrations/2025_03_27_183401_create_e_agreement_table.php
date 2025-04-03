@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('application_number')->nullable();
             $table->string('customer_application_status');
             $table->string('signed_application')->nullable();
-            $table->text('notes');
+            $table->text('notes')->nullable();
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });

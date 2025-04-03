@@ -49,7 +49,8 @@
                                     data-bs-display="static" data-bs-toggle="dropdown" data-dropdown-animation
                                     data-bs-auto-close="outside" aria-expanded="false">
                                     <div class="avatar avatar-rounded avatar-xs">
-                                        <img src="dist/img/avatar12.jpg" alt="user" class="avatar-img">
+                                        <img src="{{ asset('dist/img/avatar12.jpg') }}" alt="user"
+                                            class="avatar-img">
                                     </div>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end">
@@ -150,9 +151,8 @@
             <!-- Brand -->
             <div class="menu-header">
                 <span>
-                    <a class="navbar-brand" href="index.html">
-                        <img class="brand-img img-fluid" src="dist/img/brand-sm.svg" alt="brand" />
-                        <img class="brand-img img-fluid" src="dist/img/Jampack.svg" alt="brand" />
+                    <a class="navbar-brand" href="/leads">
+                        <h5 class="fw-bold mb-0">Money Portal</h5>
                     </a>
                     <button class="btn btn-icon btn-rounded btn-flush-dark flush-soft-hover navbar-toggle">
                         <span class="icon">
@@ -179,8 +179,9 @@
                 <div class="menu-content-wrap">
                     <div class="menu-group">
                         <ul class="navbar-nav flex-column">
-                            <li class="nav-item mb-2 {{ Route::currentRouteName() == 'leads' ? 'active' : '' }} {{ Route::currentRouteName() == 'lead.form' ? 'active' : '' }}">
-                                <a class="nav-link" href="{{route('leads')}}">
+                            <li
+                                class="nav-item mb-2 {{ Route::currentRouteName() == 'leads' ? 'active' : '' }} {{ Route::currentRouteName() == 'lead.form' ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('leads') }}">
                                     <span class="nav-icon-wrap">
                                         <span class="svg-icon">
                                             <svg xmlns="http://www.w3.org/2000/svg"

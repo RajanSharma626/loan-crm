@@ -384,7 +384,7 @@
                                     <div class="card p-5">
                                         <h5 class="mb-5">Upload Information</h5>
 
-                                        <table class="table">
+                                        {{-- <table class="table">
                                             <thead>
                                                 <tr>
                                                     <th>Created Date</th>
@@ -406,7 +406,7 @@
                                                     <td>xyz</td>
                                                 </tr>
                                             </tbody>
-                                        </table>
+                                        </table> --}}
                                     </div>
 
 
@@ -418,10 +418,10 @@
                                         <h5 class="mb-5">E-agreement</h5>
                                         <form action="{{ route('lead.update.agreement') }}" method="post">
                                             @csrf
-                                            <input type="number" name="lead_id" id=""
+                                            <input type="number" name="lead_id"
                                                 value="{{ $lead->id }}" hidden>
 
-                                            <input type="number" name="id" id=""
+                                            <input type="number" name="id"
                                                 value="{{ $lead->eagreement->id ?? '' }}" hidden>
                                             <div class="row gx-3">
                                                 <div class="col-sm-4">
@@ -439,60 +439,60 @@
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
                                                         <label class="form-label">Loan Applied Amount</label>
-                                                        <input class="form-control" type="text" name="applied_amount"
-                                                            value="" placeholder="Last Name" required />
+                                                        <input class="form-control" type="number" name="applied_amount"
+                                                            value="" placeholder="Amount" required />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
                                                         <label class="form-label">Loan Approved Amount*</label>
-                                                        <input class="form-control" type="text" name="approved_amount"
-                                                            value="" placeholder="Last Name" required />
+                                                        <input class="form-control" type="number" name="approved_amount"
+                                                            value="" placeholder="Amount" required />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
                                                         <label class="form-label">Duration (In Days)* </label>
-                                                        <input class="form-control" type="text" name="duration"
-                                                            value="" placeholder="Last Name" required />
+                                                        <input class="form-control" type="number" name="duration"
+                                                            value="" placeholder="Duration" required />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
                                                         <label class="form-label">Rate of intrest per day (%)* </label>
-                                                        <input class="form-control" type="text" name="interest_rate"
-                                                            value="" placeholder="Last Name" required />
+                                                        <input class="form-control" type="number" name="interest_rate"
+                                                            value="" placeholder="Rate of intrest per day" required />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
                                                         <label class="form-label">Processing fees </label>
-                                                        <input class="form-control" type="text" name="processing_fees"
-                                                            value="" placeholder="Last Name" required />
+                                                        <input class="form-control" type="number" name="processing_fees"
+                                                            value="" placeholder="Processing fees" required />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
                                                         <label class="form-label">EMI/Repayment Amount </label>
-                                                        <input class="form-control" type="text"
+                                                        <input class="form-control" type="number"
                                                             name="repayment_amount" value=""
-                                                            placeholder="Last Name" required />
+                                                            placeholder="EMI/Repayment Amount" required />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
                                                         <label class="form-label">Amount to be Disbursed </label>
-                                                        <input class="form-control" type="text"
+                                                        <input class="form-control" type="number"
                                                             name="disbursed_amount" value=""
-                                                            placeholder="Last Name" required />
+                                                            placeholder="Amount to be Disbursed" required />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
                                                         <label class="form-label">Loan Application Number </label>
-                                                        <input class="form-control" type="text"
+                                                        <input class="form-control" type="number"
                                                             name="application_number" value=""
-                                                            placeholder="Last Name" required />
+                                                            placeholder="Loan Application Number" required />
                                                     </div>
                                                 </div>
 
@@ -514,8 +514,7 @@
                                                     <div class="form-group">
                                                         <label class="form-label">Signed Loan Application </label>
                                                         <input class="form-control" type="file"
-                                                            name="signed_application" value=""
-                                                            placeholder="Last Name" required />
+                                                            name="signed_application" required />
                                                     </div>
                                                 </div>
 
