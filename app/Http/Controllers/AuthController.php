@@ -9,6 +9,9 @@ class AuthController extends Controller
 {
     public function index()
     {
+        if (Auth::check()) {
+            return redirect('/leads');
+        }
         return view('login');
     }
 
