@@ -7,17 +7,19 @@ use Illuminate\Support\Facades\Route;
 
 
 // Public Routes (Guest Access)
-Route::middleware('guest')->group(function () {
+// Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
-    Route::get('/', function () {
-        return view('login');
-    });
     Route::post('/login', [AuthController::class, 'login'])->name('login.auth');
+    Route::get('/', function () {
+        return redirect()->route('login');
+    });
+// });
 
-    Route::get('/apply', function () {
-        return view('apply');
-    })->name('apply');
-});
+
+
+Route::get('/apply', function () {
+    return view('apply');
+})->name('apply');
 
 // Protected Routes (Authenticated Users Only)
 Route::middleware('auth')->group(function () {
@@ -28,7 +30,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/lead/update-info', [LeadController::class, 'updateInfo'])->name('lead.update.info');
     Route::post('/lead/update-agreement', [LeadController::class, 'updateAgreement'])->name('lead.update.agreement');
 
-
+    //upload document
+    Route::post('/lead/upload-document/store', [LeadController::class, 'storeDocument'])->name('lead.update.upload');
 
     Route::get('/employee', [EmployeeController::class, 'index'])->name('emp');
     Route::post('/employees/store', [EmployeeController::class, 'store'])->name('employees.store');

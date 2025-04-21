@@ -64,10 +64,9 @@
                                                     </div>
                                                     <div class="col-sm-4">
                                                         <div class="form-group">
-                                                            <label class="form-label">Last Name*</label>
+                                                            <label class="form-label">Last Name</label>
                                                             <input class="form-control" type="text" name="last_name"
-                                                                value="{{ $lead->last_name }}" placeholder="Last Name"
-                                                                required />
+                                                                value="{{ $lead->last_name }}" placeholder="Last Name" />
                                                             @error('last_name')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -124,8 +123,7 @@
                                                             <label class="form-label">Loan Type*</label>
                                                             <select class="form-select" name="loan_type" required>
                                                                 <option selected="">--</option>
-                                                                <option value="Instant Loan">Instant Loan</option>
-                                                                <option value="Personal Loan">Personal Loan</option>
+                                                                <option value="Instant Loan" {{ $lead->loan_type == "Instant Loan" ? "Selected" : ""}}>Instant Loan</option>
                                                             </select>
                                                             @error('loan_type')
                                                                 <span class="text-danger">{{ $message }}</span>
@@ -136,38 +134,8 @@
                                                     <div class="col-sm-4">
                                                         <div class="form-group">
                                                             <label class="form-label">City*</label>
-                                                            <select class="form-select" name="city" required>
-                                                                <option selected="">--</option>
-                                                                <option value="Mumbai">Mumbai</option>
-                                                                <option value="Delhi">Delhi</option>
-                                                                <option value="Bangalore">Bangalore</option>
-                                                                <option value="Hyderabad">Hyderabad</option>
-                                                                <option value="Chennai">Chennai</option>
-                                                                <option value="Kolkata">Kolkata</option>
-                                                                <option value="Pune">Pune</option>
-                                                                <option value="Ahmedabad">Ahmedabad</option>
-                                                                <option value="Jaipur">Jaipur</option>
-                                                                <option value="Lucknow">Lucknow</option>
-                                                                <option value="Surat">Surat</option>
-                                                                <option value="Nagpur">Nagpur</option>
-                                                                <option value="Indore">Indore</option>
-                                                                <option value="Bhopal">Bhopal</option>
-                                                                <option value="Vadodara">Vadodara</option>
-                                                                <option value="Visakhapatnam">Visakhapatnam</option>
-                                                                <option value="Chandigarh">Chandigarh</option>
-                                                                <option value="Patna">Patna</option>
-                                                                <option value="Ludhiana">Ludhiana</option>
-                                                                <option value="Agra">Agra</option>
-                                                                <option value="Nashik">Nashik</option>
-                                                                <option value="Faridabad">Faridabad</option>
-                                                                <option value="Meerut">Meerut</option>
-                                                                <option value="Rajkot">Rajkot</option>
-                                                                <option value="Kalyan">Kalyan</option>
-                                                                <option value="Varanasi">Varanasi</option>
-                                                                <option value="Amritsar">Amritsar</option>
-                                                                <option value="Aurangabad">Aurangabad</option>
-                                                                <option value="Dhanbad">Dhanbad</option>
-                                                            </select>
+                                                            <input type="text" class="form-control" name="city"
+                                                                placeholder="Enter City" value="{{ $lead->city }}" required>
                                                             @error('city')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -204,8 +172,9 @@
                                                         <div class="form-group">
                                                             <label class="form-label">Duration (In Days)*</label>
                                                             <input class="form-control" type="number"
-                                                                value="{{ $lead->duration }}" min="0"
-                                                                name="duration" placeholder="0 Days" required />
+                                                                value="{{ $lead->duration }}" min="0" max="61"
+                                                                name="duration" placeholder="0 Days" required
+                                                                oninput="if(this.value > 61) this.value = 61;" />
                                                             @error('duration')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -229,9 +198,9 @@
                                                             <label class="form-label">Gender*</label>
                                                             <select class="form-select" name="gender" required>
                                                                 <option selected="">--</option>
-                                                                <option value="Male">Male</option>
-                                                                <option value="Female">Female</option>
-                                                                <option value="Other">Other</option>
+                                                                <option value="Male"  {{ $lead->gender == "Male" ? "Selected" : ""}}>Male</option>
+                                                                <option value="Female"  {{ $lead->gender == "Female" ? "Selected" : ""}}>Female</option>
+                                                                <option value="Other"  {{ $lead->gender == "Other" ? "Selected" : ""}}>Other</option>
                                                             </select>
                                                             @error('gender')
                                                                 <span class="text-danger">{{ $message }}</span>
@@ -256,10 +225,10 @@
                                                             <select class="form-select" name="marital_status"
                                                                 value="{{ old('marital_status') }}">
                                                                 <option selected="">--</option>
-                                                                <option value="Single">Single</option>
-                                                                <option value="Married">Married</option>
-                                                                <option value="Divorced">Divorced</option>
-                                                                <option value="Widowed">Widowed</option>
+                                                                <option value="Single"  {{ $lead->marital_status == "Single" ? "Selected" : ""}}>Single</option>
+                                                                <option value="Married"  {{ $lead->marital_status == "Married" ? "Selected" : ""}}>Married</option>
+                                                                <option value="Divorced"  {{ $lead->marital_status == "Devorced" ? "Selected" : ""}}>Divorced</option>
+                                                                <option value="Widowed"  {{ $lead->marital_status == "Widowed" ? "Selected" : ""}}>Widowed</option>
                                                             </select>
                                                             @error('marital_status')
                                                                 <span class="text-danger">{{ $message }}</span>
@@ -284,9 +253,22 @@
                                                             <select class="form-select" name="disposition"
                                                                 value="{{ old('disposition') }}" required>
                                                                 <option value="" selected disabled>--</option>
-                                                                <option value="Pending">Pending</option>
-                                                                <option value="Approved">Approved</option>
+                                                                <option value="Open">Open</option>
+                                                                <option value="Closed">Closed</option>
+                                                                <option value="Ringing">Ringing</option>
+                                                                <option value="Busy">Busy</option>
+                                                                <option value="Not reachable">Not reachable</option>
+                                                                <option value="Wrong number">Wrong number</option>
+                                                                <option value="Out of scope">Out of scope</option>
+                                                                <option value="Call back">Call back</option>
+                                                                <option value="Follow up">Follow up</option>
                                                                 <option value="Rejected">Rejected</option>
+                                                                <option value="Language barrier">Language barrier</option>
+                                                                <option value="Nc Rejected">Nc Rejected</option>
+                                                                <option value="Docs received">Docs received</option>
+                                                                <option value="Approved">Approved</option>
+                                                                <option value="Disbursed">Disbursed</option>
+                                                                <option value="Reopen">Reopen</option>
                                                             </select>
                                                             @error('disposition')
                                                                 <span class="text-danger">{{ $message }}</span>
@@ -384,29 +366,89 @@
                                     <div class="card p-5">
                                         <h5 class="mb-5">Upload Information</h5>
 
-                                        {{-- <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Created Date</th>
-                                                    <th>Updated By</th>
-                                                    <th>Disposition</th>
-                                                    <th>Note</th>
-                                                    <th>Lead Assigned</th>
-                                                </tr>
-                                            </thead>
+                                        <form action="{{ route('lead.update.upload') }}" method="post"
+                                            enctype="multipart/form-data">
+                                            @csrf
+                                            <input type="number" name="lead_id" value="{{ $lead->id }}" hidden>
 
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        25 Mar, 2025 05:04 PM
-                                                    </td>
-                                                    <td>XYZ </td>
-                                                    <td> Rejected</td>
-                                                    <td>Low Salary</td>
-                                                    <td>xyz</td>
-                                                </tr>
-                                            </tbody>
-                                        </table> --}}
+                                            <div class="row gx-3">
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Upload Pan Card*</label>
+                                                        <input class="form-control" type="file" name="pan_card"
+                                                             />
+                                                        @error('pan_card')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                        @if ($doc->pan_card)
+                                                            <a href="{{ asset($doc->pan_card) }}" target="_blank"
+                                                                class="btn btn-link">View Pan Card</a>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Upload Photograph 1*</label>
+                                                        <input class="form-control" type="file" name="photo_1"
+                                                             />
+                                                        @error('photo_1')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                        @if ($doc->photo_1)
+                                                            <a href="{{ asset($doc->photo_1) }}" target="_blank"
+                                                                class="btn btn-link">View Photograph 1</a>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Upload Photograph 2*</label>
+                                                        <input class="form-control" type="file" name="photo_2"
+                                                             />
+                                                        @error('photo_2')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                        @if ($doc->photo_2)
+                                                            <a href="{{ asset($doc->photo_2) }}" target="_blank"
+                                                                class="btn btn-link">View Photograph 2</a>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Upload Photograph 3*</label>
+                                                        <input class="form-control" type="file" name="photo_3"
+                                                             />
+                                                        @error('photo_3')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                        @if ($doc->photo_3)
+                                                            <a href="{{ asset($doc->photo_3) }}" target="_blank"
+                                                                class="btn btn-link">View Photograph 3</a>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Upload ID Proof*</label>
+                                                        <input class="form-control" type="file" name="id_proof"
+                                                             />
+                                                        @error('id_proof')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                        @if ($doc->id_proof)
+                                                            <a href="{{ asset($doc->id_proof) }}" target="_blank"
+                                                                class="btn btn-link">View ID Proof</a>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+
+                                            <div class="modal-footer align-items-center">
+                                                <button type="submit" class="btn btn-primary"> Upload Document</button>
+                                            </div>
+                                        </form>
                                     </div>
 
 
@@ -418,8 +460,7 @@
                                         <h5 class="mb-5">E-agreement</h5>
                                         <form action="{{ route('lead.update.agreement') }}" method="post">
                                             @csrf
-                                            <input type="number" name="lead_id"
-                                                value="{{ $lead->id }}" hidden>
+                                            <input type="number" name="lead_id" value="{{ $lead->id }}" hidden>
 
                                             <input type="number" name="id"
                                                 value="{{ $lead->eagreement->id ?? '' }}" hidden>
@@ -459,9 +500,11 @@
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
-                                                        <label class="form-label">Rate of intrest per day (%)* </label>
+                                                        <label class="form-label">Rate of intrest per day (%)*
+                                                        </label>
                                                         <input class="form-control" type="number" name="interest_rate"
-                                                            value="" placeholder="Rate of intrest per day" required />
+                                                            value="" placeholder="Rate of intrest per day"
+                                                            required />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -529,7 +572,8 @@
                                                 </div>
 
                                                 <div class="modal-footer align-items-center">
-                                                    <button type="submit" class="btn btn-primary">Approve & Upload Loan
+                                                    <button type="submit" class="btn btn-primary">Approve &
+                                                        Upload Loan
                                                         Application </button>
                                                 </div>
                                             </div>

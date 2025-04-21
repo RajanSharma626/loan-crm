@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Documents;
 use App\Models\Eagreement;
 use App\Models\Lead;
 use App\Models\Note;
@@ -24,7 +25,9 @@ class LeadController extends Controller
             ->where('id', $id)
             ->whereNull('deleted_at')
             ->first();
-        return view('lead-form', compact('emp', 'lead'));
+
+        $doc =  Documents::where('lead_id', $lead->id)->first();
+        return view('lead-form', compact('emp', 'lead', 'doc'));
     }
 
     public function updateInfo(Request $request)
@@ -91,27 +94,45 @@ class LeadController extends Controller
             $request->file('signed_application')->move($path, $fileName);
             $eagreement->signed_application = '/' . trim($path, '/') . '/' . trim($fileName, '/');
         }
-        if ($request->notes) {
-            Note::create([
-                'lead_id' => $lead->id,
-                'updated_by' => Auth::id(),
-                'note' => 'E-Agreement: ' . $request->notes,
-                'disposition' => null,
-                'lead_assign_by' => Auth::id(),
-            ]);
-        }
-        if ($request->hasFile('signed_application')) {
-            Note::create([
-                'lead_id' => $lead->id,
-                'updated_by' => Auth::id(),
-                'note' => 'E-Agreement: Signed
-                Application uploaded',
-                'disposition' => null,
-                'lead_assign_by' => Auth::id(),
-            ]);
-        }
 
         $eagreement->save();
+
         return redirect()->route('lead.info', $lead->id)->with('success', 'Lead Agreement updated successfully.');
+    }
+
+    public function storeDocument(Request $request)
+    {
+        $request->validate([
+            'lead_id' => 'required|exists:leads,id',
+            'pan_card' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'photo_1' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'photo_2' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'photo_3' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'id_proof' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        ]);
+
+        $lead = Lead::findOrFail($request->lead_id);
+
+        $documents = ['pan_card', 'photo_1', 'photo_2', 'photo_3', 'id_proof'];
+        foreach ($documents as $document) {
+            if ($request->hasFile($document)) {
+                $fileName = time() . '_' . str_replace(' ', '_', strtolower($request->file($document)->getClientOriginalName()));
+                $path = 'uploads/documents/';
+                if (!file_exists($path)) {
+                    mkdir($path, 0777, true);
+                }
+                $request->file($document)->move($path, $fileName);
+
+                Documents::updateOrCreate(
+                    ['lead_id' => $lead->id],
+                    [
+                        $document => '/' . trim($path, '/') . '/' . trim($fileName, '/'),
+                        'updated_by' => Auth::id(),
+                    ]
+                );
+            }
+        }
+
+        return redirect()->route('lead.info', $lead->id)->with('success', 'Documents uploaded successfully.');
     }
 }
