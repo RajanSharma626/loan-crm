@@ -380,7 +380,7 @@
                                                         @error('pan_card')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
-                                                        @if ($doc->pan_card)
+                                                        @if ($doc && $doc->pan_card)
                                                             <a href="{{ asset($doc->pan_card) }}" target="_blank"
                                                                 class="btn btn-link">View Pan Card</a>
                                                         @endif
@@ -394,7 +394,7 @@
                                                         @error('photo_1')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
-                                                        @if ($doc->photo_1)
+                                                        @if ($doc && $doc->photo_1)
                                                             <a href="{{ asset($doc->photo_1) }}" target="_blank"
                                                                 class="btn btn-link">View Photograph 1</a>
                                                         @endif
@@ -408,7 +408,7 @@
                                                         @error('photo_2')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
-                                                        @if ($doc->photo_2)
+                                                        @if ($doc && $doc->photo_2)
                                                             <a href="{{ asset($doc->photo_2) }}" target="_blank"
                                                                 class="btn btn-link">View Photograph 2</a>
                                                         @endif
@@ -422,7 +422,7 @@
                                                         @error('photo_3')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
-                                                        @if ($doc->photo_3)
+                                                        @if ($doc && $doc->photo_3)
                                                             <a href="{{ asset($doc->photo_3) }}" target="_blank"
                                                                 class="btn btn-link">View Photograph 3</a>
                                                         @endif
@@ -436,14 +436,13 @@
                                                         @error('id_proof')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
-                                                        @if ($doc->id_proof)
+                                                        @if ($doc && $doc->id_proof)
                                                             <a href="{{ asset($doc->id_proof) }}" target="_blank"
                                                                 class="btn btn-link">View ID Proof</a>
                                                         @endif
                                                     </div>
                                                 </div>
                                             </div>
-                                            
 
                                             <div class="modal-footer align-items-center">
                                                 <button type="submit" class="btn btn-primary"> Upload Document</button>

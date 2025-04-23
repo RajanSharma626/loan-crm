@@ -202,28 +202,30 @@
                                     {{-- <span class="badge badge-sm badge-soft-pink ms-auto">Hot</span> --}}
                                 </a>
                             </li>
-                            <li class="nav-item mb-3 {{ Route::currentRouteName() == 'emp' ? 'active' : '' }}">
-                                <a class="nav-link" href="{{ route('emp') }}">
-                                    <span class="nav-icon-wrap">
-                                        <span class="svg-icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="icon icon-tabler icon-tabler-template" width="24"
-                                                height="24" viewBox="0 0 24 24" stroke-width="2"
-                                                stroke="currentColor" fill="none" stroke-linecap="round"
-                                                stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <rect x="4" y="4" width="16" height="4" rx="1" />
-                                                <rect x="4" y="12" width="6" height="8" rx="1" />
-                                                <line x1="14" y1="12" x2="20" y2="12" />
-                                                <line x1="14" y1="16" x2="20" y2="16" />
-                                                <line x1="14" y1="20" x2="20" y2="20" />
-                                            </svg>
+                            @can('admin')
+                                <li class="nav-item mb-3 {{ Route::currentRouteName() == 'emp' ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('emp') }}">
+                                        <span class="nav-icon-wrap">
+                                            <span class="svg-icon">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    class="icon icon-tabler icon-tabler-template" width="24"
+                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
+                                                    stroke="currentColor" fill="none" stroke-linecap="round"
+                                                    stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <rect x="4" y="4" width="16" height="4" rx="1" />
+                                                    <rect x="4" y="12" width="6" height="8" rx="1" />
+                                                    <line x1="14" y1="12" x2="20" y2="12" />
+                                                    <line x1="14" y1="16" x2="20" y2="16" />
+                                                    <line x1="14" y1="20" x2="20" y2="20" />
+                                                </svg>
+                                            </span>
                                         </span>
-                                    </span>
-                                    <span class="nav-link-text">Employees</span>
-                                    {{-- <span class="badge badge-sm badge-soft-pink ms-auto">Hot</span> --}}
-                                </a>
-                            </li>
+                                        <span class="nav-link-text">Employees</span>
+                                        {{-- <span class="badge badge-sm badge-soft-pink ms-auto">Hot</span> --}}
+                                    </a>
+                                </li>
+                            @endcan
                         </ul>
                     </div>
 
@@ -249,6 +251,38 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
+
+    <script>
+        $(document).ready(function() {
+            $('.edit-employee-btn').on('click', function() {
+                let empId = $(this).data('emp-id');
+
+                $.ajax({
+                    url: '/employee/edit/' + empId,
+                    type: 'GET',
+                    success: function(data) {
+                        // Populate modal fields
+                        $('#emp_name').val(data.name);
+                        $('#emp_position').val(data.role);
+                        $('#emp_status').val(data.status);
+                        $('#emp_password').val(''); // Optional: empty for security
+
+                        // Optionally store employee ID for update
+                        $('<input>').attr({
+                            type: 'hidden',
+                            id: 'emp_id',
+                            name: 'id',
+                            value: data.id
+                        }).appendTo('form');
+                    },
+                    error: function() {
+                        alert('Failed to fetch employee data.');
+                    }
+                });
+            });
+        });
+    </script>
+
 
     <!-- FeatherIcons JS -->
     <script src="{{ asset('dist/js/feather.min.js') }}"></script>

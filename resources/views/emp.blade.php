@@ -53,55 +53,55 @@
                                         <tbody>
 
                                             @foreach ($emp as $employee)
-                                                <tr>
-                                                    <td>
-                                                        #{{ $employee->employee_id }}
-                                                    </td>
-                                                    <td>
-                                                        <div class="media align-items-center">
-                                                            <div class="media-body">
-                                                                <span
-                                                                    class="d-block text-high-em">{{ $employee->name }}</span>
+                                                @if ($employee->id != Auth::user()->id)
+                                                    <tr>
+                                                        <td>
+                                                            #{{ $employee->employee_id }}
+                                                        </td>
+                                                        <td>
+                                                            <div class="media align-items-center">
+                                                                <div class="media-body">
+                                                                    <span
+                                                                        class="d-block text-high-em">{{ $employee->name }}</span>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>{{ $employee->role }}</td>
-                                                    <td>{{ $employee->created_at }}</td>
-                                                    <td>
-                                                        @if ($employee->status == 'Active')
-                                                            <span class="badge badge-soft-success">Active</span>
-                                                        @elseif($employee->status == 'Inactive')
-                                                            <span class="badge badge-soft-danger">Deactive</span>
-                                                        @endif
+                                                        </td>
+                                                        <td>{{ $employee->role }}</td>
+                                                        <td>{{ $employee->created_at }}</td>
+                                                        <td>
+                                                            @if ($employee->status == 'Active')
+                                                                <span class="badge badge-soft-success">Active</span>
+                                                            @elseif($employee->status == 'Deactive')
+                                                                <span class="badge badge-soft-danger">Deactive</span>
+                                                            @endif
 
-                                                    </td>
+                                                        </td>
 
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="d-flex">
-                                                                <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover"
-                                                                    data-bs-toggle="tooltip" data-placement="top"
-                                                                    title="" data-bs-original-title="Archive"
-                                                                    href="#"><span class="icon"><span
-                                                                            class="feather-icon"><i
-                                                                                data-feather="archive"></i></span></span></a>
-                                                                <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover"
-                                                                    data-bs-toggle="tooltip" data-placement="top"
-                                                                    title="" data-bs-original-title="Edit"
-                                                                    href="edit-contact.html"><span class="icon"><span
-                                                                            class="feather-icon"><i
-                                                                                data-feather="edit"></i></span></span></a>
-                                                                <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover del-button"
-                                                                    data-bs-toggle="tooltip" data-placement="top"
-                                                                    title="" data-bs-original-title="Delete"
-                                                                    href="#"><span class="icon"><span
-                                                                            class="feather-icon"><i
-                                                                                data-feather="trash"></i></span></span></a>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="d-flex">
+                                                                    <a data-emp-id="{{ $employee->id }}"
+                                                                        class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover edit-employee-btn"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#edit_emp"
+                                                                        title="Edit">
+                                                                         <span class="icon">
+                                                                             <span class="feather-icon"><i data-feather="edit"></i></span>
+                                                                         </span>
+                                                                     </a>
+
+                                                                    <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover del-button"
+                                                                        data-bs-toggle="tooltip" data-placement="top"
+                                                                        title="" data-bs-original-title="Delete"
+                                                                        href="#"><span class="icon"><span
+                                                                                class="feather-icon"><i
+                                                                                    data-feather="trash"></i></span></span></a>
+                                                                </div>
+
                                                             </div>
-
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                                        </td>
+                                                    </tr>
+                                                @endif
                                             @endforeach
                                         </tbody>
                                     </table>
@@ -109,6 +109,7 @@
                             </div>
                         </div>
                     </div>
+
                     <!-- Edit Info -->
                     <div id="add_new_contact" class="modal fade add-new-contact" tabindex="-1" role="dialog"
                         aria-hidden="true">
@@ -158,6 +159,72 @@
                                         <button type="button" class="btn btn-secondary"
                                             data-bs-dismiss="modal">Discard</button>
                                         <button type="submit" class="btn btn-primary">Create
+                                            Employee</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="edit_emp" class="modal fade add-new-contact" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                            <div class="modal-content">
+                                <form action="{{ route('employee.update') }}" method="post">
+                                    @csrf
+                                    <div class="modal-body">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                        <h5 class="mb-5">Create New Employee</h5>
+
+                                        <div class="row gx-3">
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Full Name</label>
+                                                    <input class="form-control" type="text" id="emp_name"
+                                                        name="name" placeholder="Full Name" required />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Position</label>
+                                                    <select class="form-select" name="position" id="emp_position"
+                                                        required>
+                                                        <option selected="">--</option>
+                                                        <option value="Admin">Admin</option>
+                                                        <option value="Manager">Manager</option>
+                                                        <option value="Agent">Agent</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">New Password</label>
+                                                    <input class="form-control" type="text" name="password"
+                                                        placeholder="Set New Password" id="emp_password" />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Status</label>
+                                                    <select class="form-select" name="status" id="emp_status" required>
+                                                        <option value="Active">Active</option>
+                                                        <option value="Deactive">Deactive</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="modal-footer align-items-center">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Discard</button>
+                                        <button type="submit" class="btn btn-primary">Update
                                             Employee</button>
                                     </div>
                                 </form>

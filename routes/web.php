@@ -6,20 +6,19 @@ use App\Http\Controllers\LeadController;
 use Illuminate\Support\Facades\Route;
 
 
-// Public Routes (Guest Access)
-// Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'index'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->name('login.auth');
-    Route::get('/', function () {
-        return redirect()->route('login');
-    });
-// });
+Route::get('/login', [AuthController::class, 'index'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.auth');
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+
 
 
 
 Route::get('/apply', function () {
     return view('apply');
 })->name('apply');
+
 
 // Protected Routes (Authenticated Users Only)
 Route::middleware('auth')->group(function () {
@@ -33,6 +32,12 @@ Route::middleware('auth')->group(function () {
     //upload document
     Route::post('/lead/upload-document/store', [LeadController::class, 'storeDocument'])->name('lead.update.upload');
 
-    Route::get('/employee', [EmployeeController::class, 'index'])->name('emp');
-    Route::post('/employees/store', [EmployeeController::class, 'store'])->name('employees.store');
+    // Employee routes restricted to admin
+    Route::middleware('admin')->group(function () {
+        Route::get('/employee', [EmployeeController::class, 'index'])->name('emp');
+        Route::post('/employees/store', [EmployeeController::class, 'store'])->name('employees.store');
+        Route::get('/employee/edit/{id}', [EmployeeController::class, 'edit'])->name('employee.edit');
+        Route::post('/employee/update', [EmployeeController::class, 'update'])->name('employee.update');
+        Route::get('/employee/delete/{id}', [EmployeeController::class, 'destroy'])->name('employee.delete');
+    });
 });

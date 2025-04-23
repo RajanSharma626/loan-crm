@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->string('employee_id')->unique();
             $table->string('password');
             $table->enum('role', ['Admin', 'Manager', 'Agent'])->default('Agent');
-            $table->enum('status', ['Active', 'Inactive'])->default('Active');
+            $table->enum('status', ['Active', 'Deactive'])->default('Active');
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();

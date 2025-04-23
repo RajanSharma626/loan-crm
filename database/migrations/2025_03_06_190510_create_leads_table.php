@@ -32,6 +32,9 @@ return new class extends Migration
             $table->string('disposition')->nullable();
             $table->text('notes')->nullable();
             $table->foreignId('agent_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('assign_to')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('assign_by')->nullable()->constrained('users')->onDelete('cascade');
+
             $table->softDeletes();
             $table->timestamps();
         });
