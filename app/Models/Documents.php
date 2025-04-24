@@ -10,11 +10,14 @@ class Documents extends Model
     protected $fillable = [
         'lead_id',
         'pan_card',
-        'photo_1',
-        'photo_2',
-        'photo_3',
-        'id_proof',
-        'updated_by',
+        'photograph',
+        'adhar_card',
+        'current_address',
+        'permanent_address',
+        'salary_slip',
+        'bank_statement',
+        'cibil',
+        'other_documents',
         'created_at',
         'updated_at'
     ];

@@ -13,11 +13,15 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 
     <!-- Daterangepicker CSS -->
-    <link href="vendors/daterangepicker/daterangepicker.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('vendors/daterangepicker/daterangepicker.css') }}" rel="stylesheet" type="text/css" />
 
     <!-- Data Table CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet"
         type="text/css" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+
     <link href="https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap5.css" rel="stylesheet" type="text/css" />
 
     <!-- CSS -->
@@ -45,97 +49,29 @@
 
                         <li class="nav-item">
                             <div class="dropdown ps-2">
-                                <a class=" dropdown-toggle no-caret" href="#" role="button"
-                                    data-bs-display="static" data-bs-toggle="dropdown" data-dropdown-animation
-                                    data-bs-auto-close="outside" aria-expanded="false">
-                                    <div class="avatar avatar-rounded avatar-xs">
-                                        <img src="{{ asset('dist/img/avatar12.jpg') }}" alt="user"
-                                            class="avatar-img">
+                                <a class="dropdown-toggle no-caret d-flex align-items-center" href="#"
+                                    role="button" data-bs-display="static" data-bs-toggle="dropdown"
+                                    data-dropdown-animation data-bs-auto-close="outside" aria-expanded="false">
+                                    <div class="avatar avatar-rounded rounded-circle avatar-xs me-2"
+                                        style="background-color: #007d88;">
+                                        <span
+                                            class="initial-wrap text-white">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
                                     </div>
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <div class="p-2">
-                                        <div class="media">
-                                            <div class="media-head me-2">
-                                                <div class="avatar avatar-primary avatar-sm avatar-rounded">
-                                                    <span class="initial-wrap">Hk</span>
-                                                </div>
-                                            </div>
-                                            <div class="media-body">
-                                                <div class="dropdown">
-                                                    <a href="#"
-                                                        class="d-block dropdown-toggle link-dark fw-medium"
-                                                        data-bs-toggle="dropdown" data-dropdown-animation
-                                                        data-bs-auto-close="inside">Hencework</a>
-                                                    <div class="dropdown-menu dropdown-menu-end">
-                                                        <div class="p-2">
-                                                            <div class="media align-items-center active-user mb-3">
-                                                                <div class="media-head me-2">
-                                                                    <div
-                                                                        class="avatar avatar-primary avatar-xs avatar-rounded">
-                                                                        <span class="initial-wrap">Hk</span>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="media-body">
-                                                                    <a href="#"
-                                                                        class="d-flex align-items-center link-dark">Hencework
-                                                                        <i
-                                                                            class="ri-checkbox-circle-fill fs-7 text-primary ms-1"></i></a>
-                                                                    <a href="#"
-                                                                        class="d-block fs-8 link-secondary"><u>Manage
-                                                                            your account</u></a>
-                                                                </div>
-                                                            </div>
-                                                            <div class="media align-items-center mb-3">
-                                                                <div class="media-head me-2">
-                                                                    <div class="avatar avatar-xs avatar-rounded">
-                                                                        <img src="dist/img/avatar12.jpg" alt="user"
-                                                                            class="avatar-img">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="media-body">
-                                                                    <a href="#" class="d-block link-dark">Jampack
-                                                                        Team</a>
-                                                                    <a href="#"
-                                                                        class="d-block fs-8 link-secondary">contact@hencework.com</a>
-                                                                </div>
-                                                            </div>
-                                                            <button class="btn btn-block btn-outline-light btn-sm">
-                                                                <span><span class="icon"><span class="feather-icon"><i
-                                                                                data-feather="plus"></i></span></span>
-                                                                    <span>Add Account</span></span>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="fs-7">contact@hencework.com</div>
-                                                <a href="#" class="d-block fs-8 link-secondary"><u>Sign
-                                                        Out</u></a>
-                                            </div>
-                                        </div>
+                                <div class="dropdown-menu dropdown-menu-end shadow-lg border-1 rounded-3">
+                                    <div class="dropdown-header">
+                                        <h6 class="fw-bold mb-0">{{ Auth::user()->name }}</h6>
+                                        <small class="text-muted">ID: {{ Auth::user()->employee_id }}</small>
                                     </div>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="profile.html">Profile</a>
-                                    <a class="dropdown-item" href="#"><span class="me-2">Offers</span><span
-                                            class="badge badge-sm badge-soft-pink">2</span></a>
-                                    <div class="dropdown-divider"></div>
-                                    <h6 class="dropdown-header">Manage Account</h6>
-                                    <a class="dropdown-item" href="#"><span
-                                            class="dropdown-icon feather-icon"><i
-                                                data-feather="credit-card"></i></span><span>Payment methods</span></a>
-                                    <a class="dropdown-item" href="#"><span
-                                            class="dropdown-icon feather-icon"><i
-                                                data-feather="check-square"></i></span><span>Subscriptions</span></a>
-                                    <a class="dropdown-item" href="#"><span
-                                            class="dropdown-icon feather-icon"><i
-                                                data-feather="settings"></i></span><span>Settings</span></a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#"><span
-                                            class="dropdown-icon feather-icon"><i
-                                                data-feather="tag"></i></span><span>Raise a ticket</span></a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">Terms & Conditions</a>
-                                    <a class="dropdown-item" href="#">Help & Support</a>
+
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit"
+                                            class="dropdown-item d-flex align-items-center text-danger">
+                                            <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </li>
@@ -158,9 +94,9 @@
                         <span class="icon">
                             <span class="svg-icon fs-5">
                                 <svg xmlns="http://www.w3.org/2000/svg"
-                                    class="icon icon-tabler icon-tabler-arrow-bar-to-left" width="24"
-                                    height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    class="icon icon-tabler icon-tabler-arrow-bar-to-left" width="24" height="24"
+                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                    stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <line x1="10" y1="12" x2="20" y2="12"></line>
                                     <line x1="10" y1="12" x2="14" y2="16"></line>
@@ -180,7 +116,7 @@
                     <div class="menu-group">
                         <ul class="navbar-nav flex-column">
                             <li
-                                class="nav-item mb-2 {{ Route::currentRouteName() == 'leads' ? 'active' : '' }} {{ Route::currentRouteName() == 'lead.form' ? 'active' : '' }}">
+                                class="nav-item mb-2 {{ Route::currentRouteName() == 'leads' ? 'active' : '' }} {{ Route::currentRouteName() == 'lead.info' ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('leads') }}">
                                     <span class="nav-icon-wrap">
                                         <span class="svg-icon">
@@ -202,7 +138,7 @@
                                     {{-- <span class="badge badge-sm badge-soft-pink ms-auto">Hot</span> --}}
                                 </a>
                             </li>
-                            @can('admin')
+                            @if (Auth::check() && Auth::user()->role === 'Admin')
                                 <li class="nav-item mb-3 {{ Route::currentRouteName() == 'emp' ? 'active' : '' }}">
                                     <a class="nav-link" href="{{ route('emp') }}">
                                         <span class="nav-icon-wrap">
@@ -214,10 +150,14 @@
                                                     stroke-linejoin="round">
                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                     <rect x="4" y="4" width="16" height="4" rx="1" />
-                                                    <rect x="4" y="12" width="6" height="8" rx="1" />
-                                                    <line x1="14" y1="12" x2="20" y2="12" />
-                                                    <line x1="14" y1="16" x2="20" y2="16" />
-                                                    <line x1="14" y1="20" x2="20" y2="20" />
+                                                    <rect x="4" y="12" width="6" height="8"
+                                                        rx="1" />
+                                                    <line x1="14" y1="12" x2="20"
+                                                        y2="12" />
+                                                    <line x1="14" y1="16" x2="20"
+                                                        y2="16" />
+                                                    <line x1="14" y1="20" x2="20"
+                                                        y2="20" />
                                                 </svg>
                                             </span>
                                         </span>
@@ -225,7 +165,7 @@
                                         {{-- <span class="badge badge-sm badge-soft-pink ms-auto">Hot</span> --}}
                                     </a>
                                 </li>
-                            @endcan
+                            @endif
                         </ul>
                     </div>
 
@@ -248,8 +188,10 @@
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
     <!-- Bootstrap Core JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous">
+    </script>
+
     </script>
 
     <script>
@@ -283,6 +225,25 @@
         });
     </script>
 
+    <script>
+        $(document).ready(function() {
+            $('.assignAgentModal').on('click', function(e) {
+                e.preventDefault();
+
+                // Get leadId from data attribute
+                var leadId = $(this).data('leadid');
+
+                // Set value in modal input/display
+                $('#lead_id').val(leadId);
+
+                // Show the modal
+                var modal = new bootstrap.Modal(document.getElementById('assignAgentModal'));
+                modal.show();
+            });
+        });
+    </script>
+
+
 
     <!-- FeatherIcons JS -->
     <script src="{{ asset('dist/js/feather.min.js') }}"></script>
@@ -294,7 +255,7 @@
     <script src="{{ asset('vendors/simplebar/dist/simplebar.min.js') }}"></script>
 
     <!-- Data Table JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script> --}}
     <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.2.2/js/dataTables.bootstrap5.js"></script>
 
@@ -334,7 +295,7 @@
     <!-- Init JS -->
     <script src="{{ asset('dist/js/init.js') }}"></script>
     <script src="{{ asset('dist/js/chips-init.js') }}"></script>
-    <script src="{{ asset('dist/js/dashboard-data.js') }}"></script>
+    {{-- <script src="{{ asset('dist/js/dashboard-data.js') }}"></script> --}}
 </body>
 
 </html>

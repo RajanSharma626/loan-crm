@@ -22,6 +22,12 @@ class AuthController extends Controller
             'password' => 'required|min:6',
         ]);
 
+        $user = \App\Models\User::where('employee_id', $request->employee_id)->first();
+
+        if ($user->status != 'Active') {
+            return back()->with('error', 'Your account is Deactive. Please contact admin.');
+        }
+
         $credentials = [
             'employee_id' => $request->employee_id,
             'password' => $request->password

@@ -72,24 +72,38 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <div class="d-flex">
-                                                                <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover"
-                                                                    data-bs-toggle="tooltip" data-placement="top"
-                                                                    title="" data-bs-original-title="Archive"
-                                                                    href="#"><span class="icon"><span
-                                                                            class="feather-icon"><i
-                                                                                data-feather="archive"></i></span></span></a>
+                                                                @if ($lead->agent_id != null)
+                                                                    <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover"
+                                                                        data-bs-toggle="tooltip" data-placement="top"
+                                                                        title=""
+                                                                        data-bs-original-title="{{ $lead->agent->name . ' (' . $lead->agent->employee_id . ')' }}"
+                                                                        href="#"><span class="icon"><span
+                                                                                class="feather-icon"><i
+                                                                                    data-feather="user"></i></span></span></a>
+                                                                @else
+                                                                    <a data-leadId="{{ $lead->id }}"
+                                                                        class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover assignAgentModal"
+                                                                        data-bs-toggle="tooltip" data-placement="top"
+                                                                        title="" data-bs-original-title="Assign Agent"
+                                                                        href="#"><span class="icon"><span
+                                                                                class="feather-icon"><i
+                                                                                    data-feather="user-plus"></i></span></span></a>
+                                                                @endif
                                                                 <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover"
                                                                     data-bs-toggle="tooltip" data-placement="top"
                                                                     title="Edit" data-bs-original-title="Edit"
                                                                     href="{{ route('lead.info', $lead->id) }}"><span
                                                                         class="icon"><span class="feather-icon"><i
                                                                                 data-feather="edit"></i></span></span></a>
-                                                                <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover del-button"
-                                                                    data-bs-toggle="tooltip" data-placement="top"
-                                                                    title="" data-bs-original-title="Delete"
-                                                                    href="#"><span class="icon"><span
-                                                                            class="feather-icon"><i
-                                                                                data-feather="trash"></i></span></span></a>
+
+                                                                @if (Auth::user()->role == 'Admin')
+                                                                    <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover del-button"
+                                                                        data-bs-toggle="tooltip" data-placement="top"
+                                                                        title="" data-bs-original-title="Delete"
+                                                                        href="#"><span class="icon"><span
+                                                                                class="feather-icon"><i
+                                                                                    data-feather="trash"></i></span></span></a>
+                                                                @endif
                                                             </div>
 
                                                         </div>
@@ -103,6 +117,37 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="assignAgentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Assign Agent</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('lead.assign.agent') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="id" id="lead_id" value="">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Agent</label>
+                                <select name="agent" class="form-select" required>
+                                    <option value="">Select Agent</option>
+                                    @foreach ($agents as $agent)
+                                        <option value="{{ $agent->id }}">
+                                            {{ $agent->name . ' (' . $agent->employee_id . ')' }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Assign</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

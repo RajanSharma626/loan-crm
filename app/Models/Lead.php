@@ -40,4 +40,9 @@ class Lead extends Model
     {
         return $this->hasOne(Eagreement::class, 'lead_id', 'id');
     }
+
+    public function agent()
+    {
+        return $this->belongsTo(User::class, 'agent_id', 'id');
+    }
 }

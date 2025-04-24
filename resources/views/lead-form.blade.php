@@ -374,9 +374,23 @@
                                             <div class="row gx-3">
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
-                                                        <label class="form-label">Upload Pan Card*</label>
-                                                        <input class="form-control" type="file" name="pan_card"
-                                                             />
+                                                        <label class="form-label">Upload Photograph</label>
+                                                        <input class="form-control" type="file" name="photograph[]"
+                                                            accept=".png,.jpg,.jpeg,.webp,.pdf" multiple />
+                                                        @error('photograph')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                        @if ($doc && $doc->pan_card)
+                                                            <a href="{{ asset($doc->pan_card) }}" target="_blank"
+                                                                class="btn btn-link">View Pan Card</a>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Upload Pan Card</label>
+                                                        <input class="form-control" type="file" name="pan_card[]"
+                                                            accept=".png,.jpg,.jpeg,.webp,.pdf" multiple />
                                                         @error('pan_card')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -388,10 +402,10 @@
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
-                                                        <label class="form-label">Upload Photograph 1*</label>
-                                                        <input class="form-control" type="file" name="photo_1"
-                                                             />
-                                                        @error('photo_1')
+                                                        <label class="form-label">Upload Adhaar card</label>
+                                                        <input class="form-control" type="file" name="adhar_card[]"
+                                                            accept=".png,.jpg,.jpeg,.webp,.pdf" multiple />
+                                                        @error('adhar_card')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                         @if ($doc && $doc->photo_1)
@@ -402,24 +416,24 @@
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
-                                                        <label class="form-label">Upload Photograph 2*</label>
-                                                        <input class="form-control" type="file" name="photo_2"
-                                                             />
-                                                        @error('photo_2')
+                                                        <label class="form-label">Upload Current Address</label>
+                                                        <input class="form-control" type="file" name="current_address[]"
+                                                            accept=".png,.jpg,.jpeg,.webp,.pdf" multiple />
+                                                        @error('current_address')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                         @if ($doc && $doc->photo_2)
                                                             <a href="{{ asset($doc->photo_2) }}" target="_blank"
-                                                                class="btn btn-link">View Photograph 2</a>
+                                                                class="btn btn-link">View Current Address</a>
                                                         @endif
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
-                                                        <label class="form-label">Upload Photograph 3*</label>
-                                                        <input class="form-control" type="file" name="photo_3"
-                                                             />
-                                                        @error('photo_3')
+                                                        <label class="form-label">Upload Permanent Address</label>
+                                                        <input class="form-control" type="file" name="permanent_address[]"
+                                                            accept=".png,.jpg,.jpeg,.webp,.pdf" multiple />
+                                                        @error('permanent_address')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                         @if ($doc && $doc->photo_3)
@@ -430,10 +444,52 @@
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
-                                                        <label class="form-label">Upload ID Proof*</label>
-                                                        <input class="form-control" type="file" name="id_proof"
-                                                             />
-                                                        @error('id_proof')
+                                                        <label class="form-label">Upload Salary Slip</label>
+                                                        <input class="form-control" type="file" name="salary_slip[]"
+                                                            accept=".png,.jpg,.jpeg,.webp,.pdf" multiple />
+                                                        @error('salary_slip')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                        @if ($doc && $doc->id_proof)
+                                                            <a href="{{ asset($doc->id_proof) }}" target="_blank"
+                                                                class="btn btn-link">View ID Proof</a>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Upload Bank Statement</label>
+                                                        <input class="form-control" type="file" name="bank_statement[]"
+                                                            accept=".png,.jpg,.jpeg,.webp,.pdf" multiple />
+                                                        @error('bank_statement')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                        @if ($doc && $doc->id_proof)
+                                                            <a href="{{ asset($doc->id_proof) }}" target="_blank"
+                                                                class="btn btn-link">View ID Proof</a>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Upload Cibil</label>
+                                                        <input class="form-control" type="file" name="cibil[]"
+                                                            accept=".png,.jpg,.jpeg,.webp,.pdf" multiple />
+                                                        @error('cibil')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                        @if ($doc && $doc->id_proof)
+                                                            <a href="{{ asset($doc->id_proof) }}" target="_blank"
+                                                                class="btn btn-link">View ID Proof</a>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Upload Other Documents</label>
+                                                        <input class="form-control" type="file" name="other_documents[]"
+                                                            accept=".png,.jpg,.jpeg,.webp,.pdf" multiple />
+                                                        @error('other_documents')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                         @if ($doc && $doc->id_proof)

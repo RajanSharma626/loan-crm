@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Home Page')
+@section('title', 'Add Employees')
 
 @section('content')
     <div class="hk-pg-wrapper pb-0">

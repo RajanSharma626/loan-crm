@@ -14,8 +14,16 @@ class LeadController extends Controller
 {
     public function index()
     {
-        $leads = Lead::whereNull('deleted_at')->get();
-        return view('leads', compact('leads'));
+
+        if (Auth::user()->role == 'Admin') {
+            $leads = Lead::with('agent')->whereNull('deleted_at')->get();
+        } else {
+            $leads = Lead::with('agent')->where('agent_id', Auth::user()->id)->whereNull('deleted_at')->get();
+        }
+
+        $agents = User::where('role', 'Agent')->where('status', 'Active')->whereNull('deleted_at')->get();
+
+        return view('leads', compact('leads', 'agents'));
     }
 
     public function create($id)
@@ -28,6 +36,16 @@ class LeadController extends Controller
 
         $doc =  Documents::where('lead_id', $lead->id)->first();
         return view('lead-form', compact('emp', 'lead', 'doc'));
+    }
+
+    public function assignAgent(Request $request)
+    {
+        $lead = Lead::findOrFail($request->lead_id);
+        $lead->agent_id = $request->agent_id;
+        $lead->assign_by = Auth::id();
+        $lead->save();
+
+        return redirect()->route('leads', $lead->id)->with('success', 'Lead assigned successfully.');
     }
 
     public function updateInfo(Request $request)
@@ -104,34 +122,65 @@ class LeadController extends Controller
     {
         $request->validate([
             'lead_id' => 'required|exists:leads,id',
-            'pan_card' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'photo_1' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'photo_2' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'photo_3' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'id_proof' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'pan_card' => 'nullable|array',
+            'pan_card.*' => 'nullable|file|mimes:png,jpg,jpeg,webp,pdf|max:2048',
+            'photograph' => 'nullable|array',
+            'photograph.*' => 'nullable|file|mimes:png,jpg,jpeg,webp,pdf|max:2048',
+            'adhar_card' => 'nullable|array',
+            'adhar_card.*' => 'nullable|file|mimes:png,jpg,jpeg,webp,pdf|max:2048',
+            'current_address' => 'nullable|array',
+            'current_address.*' => 'nullable|file|mimes:png,jpg,jpeg,webp,pdf|max:2048',
+            'permanent_address' => 'nullable|array',
+            'permanent_address.*' => 'nullable|file|mimes:png,jpg,jpeg,webp,pdf|max:2048',
+            'salary_slip' => 'nullable|array',
+            'salary_slip.*' => 'nullable|file|mimes:png,jpg,jpeg,webp,pdf|max:2048',
+            'bank_statement' => 'nullable|array',
+            'bank_statement.*' => 'nullable|file|mimes:png,jpg,jpeg,webp,pdf|max:2048',
+            'cibil' => 'nullable|array',
+            'cibil.*' => 'nullable|file|mimes:png,jpg,jpeg,webp,pdf|max:2048',
+            'other_documents' => 'nullable|array',
+            'other_documents.*' => 'nullable|file|mimes:png,jpg,jpeg,webp,pdf|max:2048',
         ]);
 
         $lead = Lead::findOrFail($request->lead_id);
 
-        $documents = ['pan_card', 'photo_1', 'photo_2', 'photo_3', 'id_proof'];
-        foreach ($documents as $document) {
-            if ($request->hasFile($document)) {
-                $fileName = time() . '_' . str_replace(' ', '_', strtolower($request->file($document)->getClientOriginalName()));
-                $path = 'uploads/documents/';
-                if (!file_exists($path)) {
-                    mkdir($path, 0777, true);
-                }
-                $request->file($document)->move($path, $fileName);
+        $documentFields = [
+            'photograph',
+            'pan_card',
+            'adhar_card',
+            'current_address',
+            'permanent_address',
+            'salary_slip',
+            'bank_statement',
+            'cibil',
+            'other_documents'
+        ];
 
-                Documents::updateOrCreate(
-                    ['lead_id' => $lead->id],
-                    [
-                        $document => '/' . trim($path, '/') . '/' . trim($fileName, '/'),
-                        'updated_by' => Auth::id(),
-                    ]
-                );
+        $documentsData = [];
+        foreach ($documentFields as $field) {
+            if ($request->hasFile($field)) {
+                $filePaths = [];
+                foreach ($request->file($field) as $file) {
+                    $fileName = time() . '_' . str_replace(' ', '_', strtolower($file->getClientOriginalName()));
+                    $path = 'uploads/documents/' . $field . '/';
+                    if (!file_exists($path)) {
+                        mkdir($path, 0777, true);
+                    }
+                    $file->move($path, $fileName);
+                    $filePaths[] = '/' . trim($path, '/') . '/' . trim($fileName, '/');
+                }
+                $documentsData[$field] = $filePaths;
             }
         }
+
+        $serializedDocumentsData = array_map(function ($item) {
+            return is_array($item) ? json_encode($item) : $item;
+        }, $documentsData);
+
+        Documents::updateOrCreate(
+            ['lead_id' => $lead->id],
+            $serializedDocumentsData
+        );
 
         return redirect()->route('lead.info', $lead->id)->with('success', 'Documents uploaded successfully.');
     }

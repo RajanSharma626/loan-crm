@@ -21,7 +21,7 @@ Route::get('/apply', function () {
 
 
 // Protected Routes (Authenticated Users Only)
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'check.active'])->group(function () {
     Route::get('/leads', [LeadController::class, 'index'])->name('leads');
 
     Route::get('/lead-form/{id}', [LeadController::class, 'create'])->name('lead.info');
@@ -32,6 +32,10 @@ Route::middleware('auth')->group(function () {
     //upload document
     Route::post('/lead/upload-document/store', [LeadController::class, 'storeDocument'])->name('lead.update.upload');
 
+    //assign Agent
+   Route::post('/lead/assign-agent', [LeadController::class, 'assignAgent'])->name('lead.assign.agent');
+
+
     // Employee routes restricted to admin
     Route::middleware('admin')->group(function () {
         Route::get('/employee', [EmployeeController::class, 'index'])->name('emp');
@@ -40,4 +44,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/employee/update', [EmployeeController::class, 'update'])->name('employee.update');
         Route::get('/employee/delete/{id}', [EmployeeController::class, 'destroy'])->name('employee.delete');
     });
+
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

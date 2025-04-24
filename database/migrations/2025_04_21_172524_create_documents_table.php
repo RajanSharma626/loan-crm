@@ -14,12 +14,15 @@ return new class extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
             $table->foreignId('lead_id')->constrained('leads')->onDelete('cascade');
-            $table->string('pan_card')->nullable();
-            $table->string('photo_1')->nullable();
-            $table->string('photo_2')->nullable();
-            $table->string('photo_3')->nullable();
-            $table->string('id_proof')->nullable();
-            $table->string('updated_by')->nullable();
+            $table->json('pan_card')->nullable();
+            $table->json('photograph')->nullable();
+            $table->json('adhar_card')->nullable();
+            $table->json('current_address')->nullable();
+            $table->json('permanent_address')->nullable();
+            $table->json('salary_slip')->nullable();
+            $table->json('bank_statement')->nullable();
+            $table->json('cibil')->nullable();
+            $table->json('other_documents')->nullable();
             $table->timestamps();
         });
     }
