@@ -123,7 +123,9 @@
                                                             <label class="form-label">Loan Type*</label>
                                                             <select class="form-select" name="loan_type" required>
                                                                 <option selected="">--</option>
-                                                                <option value="Instant Loan" {{ $lead->loan_type == "Instant Loan" ? "Selected" : ""}}>Instant Loan</option>
+                                                                <option value="Instant Loan"
+                                                                    {{ $lead->loan_type == 'Instant Loan' ? 'Selected' : '' }}>
+                                                                    Instant Loan</option>
                                                             </select>
                                                             @error('loan_type')
                                                                 <span class="text-danger">{{ $message }}</span>
@@ -135,7 +137,8 @@
                                                         <div class="form-group">
                                                             <label class="form-label">City*</label>
                                                             <input type="text" class="form-control" name="city"
-                                                                placeholder="Enter City" value="{{ $lead->city }}" required>
+                                                                placeholder="Enter City" value="{{ $lead->city }}"
+                                                                required>
                                                             @error('city')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -172,9 +175,9 @@
                                                         <div class="form-group">
                                                             <label class="form-label">Duration (In Days)*</label>
                                                             <input class="form-control" type="number"
-                                                                value="{{ $lead->duration }}" min="0" max="61"
-                                                                name="duration" placeholder="0 Days" required
-                                                                oninput="if(this.value > 61) this.value = 61;" />
+                                                                value="{{ $lead->duration }}" min="0"
+                                                                max="61" name="duration" placeholder="0 Days"
+                                                                required oninput="if(this.value > 61) this.value = 61;" />
                                                             @error('duration')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -198,9 +201,15 @@
                                                             <label class="form-label">Gender*</label>
                                                             <select class="form-select" name="gender" required>
                                                                 <option selected="">--</option>
-                                                                <option value="Male"  {{ $lead->gender == "Male" ? "Selected" : ""}}>Male</option>
-                                                                <option value="Female"  {{ $lead->gender == "Female" ? "Selected" : ""}}>Female</option>
-                                                                <option value="Other"  {{ $lead->gender == "Other" ? "Selected" : ""}}>Other</option>
+                                                                <option value="Male"
+                                                                    {{ $lead->gender == 'Male' ? 'Selected' : '' }}>Male
+                                                                </option>
+                                                                <option value="Female"
+                                                                    {{ $lead->gender == 'Female' ? 'Selected' : '' }}>
+                                                                    Female</option>
+                                                                <option value="Other"
+                                                                    {{ $lead->gender == 'Other' ? 'Selected' : '' }}>Other
+                                                                </option>
                                                             </select>
                                                             @error('gender')
                                                                 <span class="text-danger">{{ $message }}</span>
@@ -225,10 +234,18 @@
                                                             <select class="form-select" name="marital_status"
                                                                 value="{{ old('marital_status') }}">
                                                                 <option selected="">--</option>
-                                                                <option value="Single"  {{ $lead->marital_status == "Single" ? "Selected" : ""}}>Single</option>
-                                                                <option value="Married"  {{ $lead->marital_status == "Married" ? "Selected" : ""}}>Married</option>
-                                                                <option value="Divorced"  {{ $lead->marital_status == "Devorced" ? "Selected" : ""}}>Divorced</option>
-                                                                <option value="Widowed"  {{ $lead->marital_status == "Widowed" ? "Selected" : ""}}>Widowed</option>
+                                                                <option value="Single"
+                                                                    {{ $lead->marital_status == 'Single' ? 'Selected' : '' }}>
+                                                                    Single</option>
+                                                                <option value="Married"
+                                                                    {{ $lead->marital_status == 'Married' ? 'Selected' : '' }}>
+                                                                    Married</option>
+                                                                <option value="Divorced"
+                                                                    {{ $lead->marital_status == 'Devorced' ? 'Selected' : '' }}>
+                                                                    Divorced</option>
+                                                                <option value="Widowed"
+                                                                    {{ $lead->marital_status == 'Widowed' ? 'Selected' : '' }}>
+                                                                    Widowed</option>
                                                             </select>
                                                             @error('marital_status')
                                                                 <span class="text-danger">{{ $message }}</span>
@@ -380,9 +397,18 @@
                                                         @error('photograph')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
-                                                        @if ($doc && $doc->pan_card)
-                                                            <a href="{{ asset($doc->pan_card) }}" target="_blank"
-                                                                class="btn btn-link">View Pan Card</a>
+                                                        @if ($doc && $doc->photograph)
+                                                            @php
+                                                                $no = 1;
+                                                            @endphp
+
+                                                            @foreach (json_decode($doc->photograph) as $photograph)
+                                                                <a href="{{ asset($photograph) }}" target="_blank"
+                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                @php
+                                                                    $no++;
+                                                                @endphp
+                                                            @endforeach
                                                         @endif
                                                     </div>
                                                 </div>
@@ -395,8 +421,17 @@
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                         @if ($doc && $doc->pan_card)
-                                                            <a href="{{ asset($doc->pan_card) }}" target="_blank"
-                                                                class="btn btn-link">View Pan Card</a>
+                                                            @php
+                                                                $no = 1;
+                                                            @endphp
+
+                                                            @foreach (json_decode($doc->pan_card) as $panCard)
+                                                                <a href="{{ asset($panCard) }}" target="_blank"
+                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                @php
+                                                                    $no++;
+                                                                @endphp
+                                                            @endforeach
                                                         @endif
                                                     </div>
                                                 </div>
@@ -408,38 +443,67 @@
                                                         @error('adhar_card')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
-                                                        @if ($doc && $doc->photo_1)
-                                                            <a href="{{ asset($doc->photo_1) }}" target="_blank"
-                                                                class="btn btn-link">View Photograph 1</a>
-                                                        @endif
+                                                        @if ($doc && $doc->adhar_card)
+                                                        @php
+                                                            $no = 1;
+                                                        @endphp
+
+                                                        @foreach (json_decode($doc->adhar_card) as $adharCard)
+                                                            <a href="{{ asset($adharCard) }}" target="_blank"
+                                                                class="m-2 btn-link">View {{ $no }}</a>
+                                                            @php
+                                                                $no++;
+                                                            @endphp
+                                                        @endforeach
+                                                    @endif
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
                                                         <label class="form-label">Upload Current Address</label>
-                                                        <input class="form-control" type="file" name="current_address[]"
-                                                            accept=".png,.jpg,.jpeg,.webp,.pdf" multiple />
+                                                        <input class="form-control" type="file"
+                                                            name="current_address[]" accept=".png,.jpg,.jpeg,.webp,.pdf"
+                                                            multiple />
                                                         @error('current_address')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
-                                                        @if ($doc && $doc->photo_2)
-                                                            <a href="{{ asset($doc->photo_2) }}" target="_blank"
-                                                                class="btn btn-link">View Current Address</a>
-                                                        @endif
+                                                        @if ($doc && $doc->current_address)
+                                                        @php
+                                                            $no = 1;
+                                                        @endphp
+
+                                                        @foreach (json_decode($doc->current_address) as $currentAddress)
+                                                            <a href="{{ asset($currentAddress) }}" target="_blank"
+                                                                class="m-2 btn-link">View {{ $no }}</a>
+                                                            @php
+                                                                $no++;
+                                                            @endphp
+                                                        @endforeach
+                                                    @endif
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
                                                         <label class="form-label">Upload Permanent Address</label>
-                                                        <input class="form-control" type="file" name="permanent_address[]"
-                                                            accept=".png,.jpg,.jpeg,.webp,.pdf" multiple />
+                                                        <input class="form-control" type="file"
+                                                            name="permanent_address[]" accept=".png,.jpg,.jpeg,.webp,.pdf"
+                                                            multiple />
                                                         @error('permanent_address')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
-                                                        @if ($doc && $doc->photo_3)
-                                                            <a href="{{ asset($doc->photo_3) }}" target="_blank"
-                                                                class="btn btn-link">View Photograph 3</a>
-                                                        @endif
+                                                        @if ($doc && $doc->permanent_address)
+                                                        @php
+                                                            $no = 1;
+                                                        @endphp
+
+                                                        @foreach (json_decode($doc->permanent_address) as $permanentAddress)
+                                                            <a href="{{ asset($permanentAddress) }}" target="_blank"
+                                                                class="m-2 btn-link">View {{ $no }}</a>
+                                                            @php
+                                                                $no++;
+                                                            @endphp
+                                                        @endforeach
+                                                    @endif
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -450,24 +514,43 @@
                                                         @error('salary_slip')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
-                                                        @if ($doc && $doc->id_proof)
-                                                            <a href="{{ asset($doc->id_proof) }}" target="_blank"
-                                                                class="btn btn-link">View ID Proof</a>
-                                                        @endif
+                                                        @if ($doc && $doc->salary_slip)
+                                                        @php
+                                                            $no = 1;
+                                                        @endphp
+
+                                                        @foreach (json_decode($doc->salary_slip) as $salarySlip)
+                                                            <a href="{{ asset($salarySlip) }}" target="_blank"
+                                                                class="m-2 btn-link">View {{ $no }}</a>
+                                                            @php
+                                                                $no++;
+                                                            @endphp
+                                                        @endforeach
+                                                    @endif
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
                                                         <label class="form-label">Upload Bank Statement</label>
-                                                        <input class="form-control" type="file" name="bank_statement[]"
-                                                            accept=".png,.jpg,.jpeg,.webp,.pdf" multiple />
+                                                        <input class="form-control" type="file"
+                                                            name="bank_statement[]" accept=".png,.jpg,.jpeg,.webp,.pdf"
+                                                            multiple />
                                                         @error('bank_statement')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
-                                                        @if ($doc && $doc->id_proof)
-                                                            <a href="{{ asset($doc->id_proof) }}" target="_blank"
-                                                                class="btn btn-link">View ID Proof</a>
-                                                        @endif
+                                                        @if ($doc && $doc->bank_statement)
+                                                        @php
+                                                            $no = 1;
+                                                        @endphp
+
+                                                        @foreach (json_decode($doc->bank_statement) as $bankStatement)
+                                                            <a href="{{ asset($bankStatement) }}" target="_blank"
+                                                                class="m-2 btn-link">View {{ $no }}</a>
+                                                            @php
+                                                                $no++;
+                                                            @endphp
+                                                        @endforeach
+                                                    @endif
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -478,24 +561,43 @@
                                                         @error('cibil')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
-                                                        @if ($doc && $doc->id_proof)
-                                                            <a href="{{ asset($doc->id_proof) }}" target="_blank"
-                                                                class="btn btn-link">View ID Proof</a>
+                                                        @if ($doc && $doc->cibil)
+                                                            @php
+                                                                $no = 1;
+                                                            @endphp
+
+                                                            @foreach (json_decode($doc->cibil) as $cibil)
+                                                                <a href="{{ asset($cibil) }}" target="_blank"
+                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                @php
+                                                                    $no++;
+                                                                @endphp
+                                                            @endforeach
                                                         @endif
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
                                                         <label class="form-label">Upload Other Documents</label>
-                                                        <input class="form-control" type="file" name="other_documents[]"
-                                                            accept=".png,.jpg,.jpeg,.webp,.pdf" multiple />
+                                                        <input class="form-control" type="file"
+                                                            name="other_documents[]" accept=".png,.jpg,.jpeg,.webp,.pdf"
+                                                            multiple />
                                                         @error('other_documents')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
-                                                        @if ($doc && $doc->id_proof)
-                                                            <a href="{{ asset($doc->id_proof) }}" target="_blank"
-                                                                class="btn btn-link">View ID Proof</a>
-                                                        @endif
+                                                        @if ($doc && $doc->other_documents)
+                                                        @php
+                                                            $no = 1;
+                                                        @endphp
+
+                                                        @foreach (json_decode($doc->other_documents) as $other)
+                                                            <a href="{{ asset($other) }}" target="_blank"
+                                                                class="m-2 btn-link">View {{ $no }}</a>
+                                                            @php
+                                                                $no++;
+                                                            @endphp
+                                                        @endforeach
+                                                    @endif
                                                     </div>
                                                 </div>
                                             </div>
