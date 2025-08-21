@@ -35,7 +35,7 @@
                                     </div>
                                 @endif
                                 <div class="contact-list-view">
-                                    <table id="EmpTable" class="table nowrap w-100 mb-5">
+                                    <table class="table table-striped table-bordered w-100 mb-5">
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
@@ -49,12 +49,9 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-
-                                            @foreach ($leads as $lead)
+                                            @forelse ($leads as $lead)
                                                 <tr>
-                                                    <td>
-                                                        #{{ $lead->id }}
-                                                    </td>
+                                                    <td>#{{ $lead->id }}</td>
                                                     <td>
                                                         <div class="media align-items-center">
                                                             <div class="media-body">
@@ -68,7 +65,6 @@
                                                     <td>{{ $lead->city }}</td>
                                                     <td>{{ $lead->monthly_salary }}</td>
                                                     <td>{{ $lead->created_at->format('j M, Y h:i A') }}</td>
-
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <div class="d-flex">
@@ -100,18 +96,25 @@
                                                                     <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover del-button"
                                                                         data-bs-toggle="tooltip" data-placement="top"
                                                                         title="" data-bs-original-title="Delete"
-                                                                        href="#"><span class="icon"><span
-                                                                                class="feather-icon"><i
-                                                                                    data-feather="trash"></i></span></span></a>
+                                                                        href="{{ route('lead.delete', $lead->id) }}"
+                                                                        onclick="return confirm('Are you sure you want to delete this lead?');"><span class="icon"><span
+                                                                            class="feather-icon"><i data-feather="trash"></i></span></span></a>
                                                                 @endif
                                                             </div>
-
                                                         </div>
                                                     </td>
                                                 </tr>
-                                            @endforeach
+                                            @empty
+                                                <tr>
+                                                    <td colspan="8" class="text-center">No leads found.</td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
+
+                                    <div class="d-flex justify-content-center">
+                                        {{ $leads->links('pagination::bootstrap-5') }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -138,7 +141,7 @@
                                     <option value="">Select Agent</option>
                                     @foreach ($agents as $agent)
                                         <option value="{{ $agent->id }}">
-                                            {{ $agent->name . ' (' . $agent->employee_id . ')' }}</option>
+                                            {{ "{$agent->name} ({$agent->employee_id})" }}</option>
                                     @endforeach
                                 </select>
                             </div>

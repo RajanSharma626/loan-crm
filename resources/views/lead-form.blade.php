@@ -444,18 +444,18 @@
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                         @if ($doc && $doc->adhar_card)
-                                                        @php
-                                                            $no = 1;
-                                                        @endphp
-
-                                                        @foreach (json_decode($doc->adhar_card) as $adharCard)
-                                                            <a href="{{ asset($adharCard) }}" target="_blank"
-                                                                class="m-2 btn-link">View {{ $no }}</a>
                                                             @php
-                                                                $no++;
+                                                                $no = 1;
                                                             @endphp
-                                                        @endforeach
-                                                    @endif
+
+                                                            @foreach (json_decode($doc->adhar_card) as $adharCard)
+                                                                <a href="{{ asset($adharCard) }}" target="_blank"
+                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                @php
+                                                                    $no++;
+                                                                @endphp
+                                                            @endforeach
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -468,18 +468,18 @@
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                         @if ($doc && $doc->current_address)
-                                                        @php
-                                                            $no = 1;
-                                                        @endphp
-
-                                                        @foreach (json_decode($doc->current_address) as $currentAddress)
-                                                            <a href="{{ asset($currentAddress) }}" target="_blank"
-                                                                class="m-2 btn-link">View {{ $no }}</a>
                                                             @php
-                                                                $no++;
+                                                                $no = 1;
                                                             @endphp
-                                                        @endforeach
-                                                    @endif
+
+                                                            @foreach (json_decode($doc->current_address) as $currentAddress)
+                                                                <a href="{{ asset($currentAddress) }}" target="_blank"
+                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                @php
+                                                                    $no++;
+                                                                @endphp
+                                                            @endforeach
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -492,18 +492,18 @@
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                         @if ($doc && $doc->permanent_address)
-                                                        @php
-                                                            $no = 1;
-                                                        @endphp
-
-                                                        @foreach (json_decode($doc->permanent_address) as $permanentAddress)
-                                                            <a href="{{ asset($permanentAddress) }}" target="_blank"
-                                                                class="m-2 btn-link">View {{ $no }}</a>
                                                             @php
-                                                                $no++;
+                                                                $no = 1;
                                                             @endphp
-                                                        @endforeach
-                                                    @endif
+
+                                                            @foreach (json_decode($doc->permanent_address) as $permanentAddress)
+                                                                <a href="{{ asset($permanentAddress) }}" target="_blank"
+                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                @php
+                                                                    $no++;
+                                                                @endphp
+                                                            @endforeach
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -515,18 +515,18 @@
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                         @if ($doc && $doc->salary_slip)
-                                                        @php
-                                                            $no = 1;
-                                                        @endphp
-
-                                                        @foreach (json_decode($doc->salary_slip) as $salarySlip)
-                                                            <a href="{{ asset($salarySlip) }}" target="_blank"
-                                                                class="m-2 btn-link">View {{ $no }}</a>
                                                             @php
-                                                                $no++;
+                                                                $no = 1;
                                                             @endphp
-                                                        @endforeach
-                                                    @endif
+
+                                                            @foreach (json_decode($doc->salary_slip) as $salarySlip)
+                                                                <a href="{{ asset($salarySlip) }}" target="_blank"
+                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                @php
+                                                                    $no++;
+                                                                @endphp
+                                                            @endforeach
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -539,18 +539,18 @@
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                         @if ($doc && $doc->bank_statement)
-                                                        @php
-                                                            $no = 1;
-                                                        @endphp
-
-                                                        @foreach (json_decode($doc->bank_statement) as $bankStatement)
-                                                            <a href="{{ asset($bankStatement) }}" target="_blank"
-                                                                class="m-2 btn-link">View {{ $no }}</a>
                                                             @php
-                                                                $no++;
+                                                                $no = 1;
                                                             @endphp
-                                                        @endforeach
-                                                    @endif
+
+                                                            @foreach (json_decode($doc->bank_statement) as $bankStatement)
+                                                                <a href="{{ asset($bankStatement) }}" target="_blank"
+                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                @php
+                                                                    $no++;
+                                                                @endphp
+                                                            @endforeach
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -586,18 +586,18 @@
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                         @if ($doc && $doc->other_documents)
-                                                        @php
-                                                            $no = 1;
-                                                        @endphp
-
-                                                        @foreach (json_decode($doc->other_documents) as $other)
-                                                            <a href="{{ asset($other) }}" target="_blank"
-                                                                class="m-2 btn-link">View {{ $no }}</a>
                                                             @php
-                                                                $no++;
+                                                                $no = 1;
                                                             @endphp
-                                                        @endforeach
-                                                    @endif
+
+                                                            @foreach (json_decode($doc->other_documents) as $other)
+                                                                <a href="{{ asset($other) }}" target="_blank"
+                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                @php
+                                                                    $no++;
+                                                                @endphp
+                                                            @endforeach
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>

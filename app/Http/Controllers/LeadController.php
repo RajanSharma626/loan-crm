@@ -16,9 +16,9 @@ class LeadController extends Controller
     {
 
         if (Auth::user()->role == 'Admin') {
-            $leads = Lead::with('agent')->whereNull('deleted_at')->get();
+            $leads = Lead::with('agent')->whereNull('deleted_at')->orderBy('created_at', 'desc')->paginate(10);
         } else {
-            $leads = Lead::with('agent')->where('agent_id', Auth::user()->id)->whereNull('deleted_at')->get();
+            $leads = Lead::with('agent')->where('agent_id', Auth::user()->id)->whereNull('deleted_at')->orderBy('created_at', 'desc')->paginate(10);
         }
 
         $agents = User::where('role', 'Agent')->where('status', 'Active')->whereNull('deleted_at')->get();
@@ -183,5 +183,14 @@ class LeadController extends Controller
         );
 
         return redirect()->route('lead.info', $lead->id)->with('success', 'Documents uploaded successfully.');
+    }
+
+    public function delete($id)
+    {
+        $lead = Lead::findOrFail($id);
+        $lead->deleted_at = now();
+        $lead->save();
+
+        return redirect()->route('leads')->with('success', 'Lead deleted successfully.');
     }
 }

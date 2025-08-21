@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LeadController;
@@ -33,7 +34,7 @@ Route::middleware(['auth', 'check.active'])->group(function () {
     Route::post('/lead/upload-document/store', [LeadController::class, 'storeDocument'])->name('lead.update.upload');
 
     //assign Agent
-   Route::post('/lead/assign-agent', [LeadController::class, 'assignAgent'])->name('lead.assign.agent');
+    Route::post('/leads/assign-agent', [LeadController::class, 'assignAgent'])->name('lead.assign.agent');
 
 
     // Employee routes restricted to admin
@@ -43,7 +44,12 @@ Route::middleware(['auth', 'check.active'])->group(function () {
         Route::get('/employee/edit/{id}', [EmployeeController::class, 'edit'])->name('employee.edit');
         Route::post('/employee/update', [EmployeeController::class, 'update'])->name('employee.update');
         Route::get('/employee/delete/{id}', [EmployeeController::class, 'destroy'])->name('employee.delete');
+
+        Route::get('/lead/detele/{id}', [LeadController::class, 'delete'])->name('lead.delete');
     });
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
+
+// form submit api
+// Route::post('/apply/submit', [ApiController::class, 'applySubmit'])->name('apply.submit');
