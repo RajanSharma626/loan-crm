@@ -34,6 +34,34 @@
                                         @endforeach
                                     </div>
                                 @endif
+
+                                <form method="GET" action="{{ route('leads') }}" class="mb-3">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <select name="disposition" class="form-select" onchange="this.form.submit()">
+                                                <option value="">-- Filter by Disposition --</option>
+                                                <option value="Open" {{ request('disposition') == 'Open' ? 'selected' : '' }}>Open</option>
+                                                <option value="Closed" {{ request('disposition') == 'Closed' ? 'selected' : '' }}>Closed</option>
+                                                <option value="Ringing" {{ request('disposition') == 'Ringing' ? 'selected' : '' }}>Ringing</option>
+                                                <option value="Busy" {{ request('disposition') == 'Busy' ? 'selected' : '' }}>Busy</option>
+                                                <option value="Not reachable" {{ request('disposition') == 'Not reachable' ? 'selected' : '' }}>Not reachable</option>
+                                                <option value="Wrong number" {{ request('disposition') == 'Wrong number' ? 'selected' : '' }}>Wrong number</option>
+                                                <option value="Out of scope" {{ request('disposition') == 'Out of scope' ? 'selected' : '' }}>Out of scope</option>
+                                                <option value="Call back" {{ request('disposition') == 'Call back' ? 'selected' : '' }}>Call back</option>
+                                                <option value="Follow up" {{ request('disposition') == 'Follow up' ? 'selected' : '' }}>Follow up</option>
+                                                <option value="Rejected" {{ request('disposition') == 'Rejected' ? 'selected' : '' }}>Rejected</option>
+                                                <option value="Language barrier" {{ request('disposition') == 'Language barrier' ? 'selected' : '' }}>Language barrier</option>
+                                                <option value="Nc Rejected" {{ request('disposition') == 'Nc Rejected' ? 'selected' : '' }}>Nc Rejected</option>
+                                                <option value="Docs received" {{ request('disposition') == 'Docs received' ? 'selected' : '' }}>Docs received</option>
+                                                <option value="Approved" {{ request('disposition') == 'Approved' ? 'selected' : '' }}>Approved</option>
+                                                <option value="Disbursed" {{ request('disposition') == 'Disbursed' ? 'selected' : '' }}>Disbursed</option>
+                                                <option value="Reopen" {{ request('disposition') == 'Reopen' ? 'selected' : '' }}>Reopen</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </form>
+
+
                                 <div class="contact-list-view">
                                     <table class="table table-striped table-bordered w-100 mb-5">
                                         <thead>
@@ -97,8 +125,9 @@
                                                                         data-bs-toggle="tooltip" data-placement="top"
                                                                         title="" data-bs-original-title="Delete"
                                                                         href="{{ route('lead.delete', $lead->id) }}"
-                                                                        onclick="return confirm('Are you sure you want to delete this lead?');"><span class="icon"><span
-                                                                            class="feather-icon"><i data-feather="trash"></i></span></span></a>
+                                                                        onclick="return confirm('Are you sure you want to delete this lead?');"><span
+                                                                            class="icon"><span class="feather-icon"><i
+                                                                                    data-feather="trash"></i></span></span></a>
                                                                 @endif
                                                             </div>
                                                         </div>
@@ -113,7 +142,7 @@
                                     </table>
 
                                     <div class="d-flex justify-content-center">
-                                        {{ $leads->links('pagination::bootstrap-5') }}
+                                        {{ $leads->appends(request()->query())->links('pagination::bootstrap-5') }}
                                     </div>
                                 </div>
                             </div>

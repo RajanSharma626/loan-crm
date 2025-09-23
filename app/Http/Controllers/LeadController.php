@@ -12,19 +12,30 @@ use Illuminate\Support\Facades\Auth;
 
 class LeadController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $query = Lead::with('agent')->whereNull('deleted_at');
 
-        if (Auth::user()->role == 'Admin') {
-            $leads = Lead::with('agent')->whereNull('deleted_at')->orderBy('created_at', 'desc')->paginate(10);
-        } else {
-            $leads = Lead::with('agent')->where('agent_id', Auth::user()->id)->whereNull('deleted_at')->orderBy('created_at', 'desc')->paginate(10);
+        // Admin vs Agent leads
+        if (Auth::user()->role != 'Admin') {
+            $query->where('agent_id', Auth::user()->id);
         }
 
-        $agents = User::where('role', 'Agent')->where('status', 'Active')->whereNull('deleted_at')->get();
+        // Apply disposition filter if present
+        if ($request->has('disposition') && $request->disposition != '') {
+            $query->where('disposition', $request->disposition);
+        }
+
+        $leads = $query->orderBy('created_at', 'desc')->paginate(10);
+
+        $agents = User::where('role', 'Agent')
+            ->where('status', 'Active')
+            ->whereNull('deleted_at')
+            ->get();
 
         return view('leads', compact('leads', 'agents'));
     }
+
 
     public function create($id)
     {
