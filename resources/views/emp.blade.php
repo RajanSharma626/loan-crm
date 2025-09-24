@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Add Employees')
+@section('title', 'Users')
 
 @section('content')
     <div class="hk-pg-wrapper pb-0">
@@ -14,7 +14,7 @@
 
                                 <div class="d-flex justify-content-between w-100">
                                     <a class="contactapp-title link-dark">
-                                        <h1>Employees List</h1>
+                                        <h1>Users List</h1>
                                     </a>
                                     <button class="btn btn-sm btn-outline-secondary flex-shrink-0 d-lg-inline-block d-none"
                                         data-bs-toggle="modal" data-bs-target="#add_new_contact">+ Create New</button>
@@ -42,8 +42,9 @@
                                     <table id="EmpTable" class="table nowrap w-100 mb-5">
                                         <thead>
                                             <tr>
-                                                <th>EMP ID</th>
+                                                <th>ID</th>
                                                 <th>Name</th>
+                                                <th>Email</th>
                                                 <th>Position</th>
                                                 <th>Date Created</th>
                                                 <th>Status</th>
@@ -52,26 +53,27 @@
                                         </thead>
                                         <tbody>
 
-                                            @foreach ($emp as $employee)
-                                                @if ($employee->id != Auth::user()->id)
+                                            @foreach ($emp as $users)
+                                                @if ($users->id != Auth::user()->id)
                                                     <tr>
                                                         <td>
-                                                            #{{ $employee->employee_id }}
+                                                            #{{ $users->users_id }}
                                                         </td>
                                                         <td>
                                                             <div class="media align-items-center">
                                                                 <div class="media-body">
                                                                     <span
-                                                                        class="d-block text-high-em">{{ $employee->name }}</span>
+                                                                        class="d-block text-high-em">{{ $users->name }}</span>
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td>{{ $employee->role }}</td>
-                                                        <td>{{ $employee->created_at }}</td>
+                                                        <td>{{ $users->email }}</td>
+                                                        <td>{{ $users->role }}</td>
+                                                        <td>{{ $users->created_at }}</td>
                                                         <td>
-                                                            @if ($employee->status == 'Active')
+                                                            @if ($users->status == 'Active')
                                                                 <span class="badge badge-soft-success">Active</span>
-                                                            @elseif($employee->status == 'Deactive')
+                                                            @elseif($users->status == 'Deactive')
                                                                 <span class="badge badge-soft-danger">Deactive</span>
                                                             @endif
 
@@ -80,15 +82,15 @@
                                                         <td>
                                                             <div class="d-flex align-items-center">
                                                                 <div class="d-flex">
-                                                                    <a data-emp-id="{{ $employee->id }}"
-                                                                        class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover edit-employee-btn"
-                                                                        data-bs-toggle="modal"
-                                                                        data-bs-target="#edit_emp"
+                                                                    <a data-emp-id="{{ $users->id }}"
+                                                                        class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover edit-users-btn"
+                                                                        data-bs-toggle="modal" data-bs-target="#edit_emp"
                                                                         title="Edit">
-                                                                         <span class="icon">
-                                                                             <span class="feather-icon"><i data-feather="edit"></i></span>
-                                                                         </span>
-                                                                     </a>
+                                                                        <span class="icon">
+                                                                            <span class="feather-icon"><i
+                                                                                    data-feather="edit"></i></span>
+                                                                        </span>
+                                                                    </a>
 
                                                                     <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover del-button"
                                                                         data-bs-toggle="tooltip" data-placement="top"
@@ -115,13 +117,13 @@
                         aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                             <div class="modal-content">
-                                <form action="{{ route('employees.store') }}" method="post">
+                                <form action="{{ route('userss.store') }}" method="post">
                                     @csrf
                                     <div class="modal-body">
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">×</span>
                                         </button>
-                                        <h5 class="mb-5">Create New Employee</h5>
+                                        <h5 class="mb-5">Create New users</h5>
 
                                         <div class="row gx-3">
                                             <div class="col-sm-4">
@@ -129,6 +131,13 @@
                                                     <label class="form-label">Full Name</label>
                                                     <input class="form-control" type="text" name="name"
                                                         placeholder="Full Name" required />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Email</label>
+                                                    <input class="form-control" type="email" name="email"
+                                                        placeholder="Email" required />
                                                 </div>
                                             </div>
 
@@ -159,24 +168,25 @@
                                         <button type="button" class="btn btn-secondary"
                                             data-bs-dismiss="modal">Discard</button>
                                         <button type="submit" class="btn btn-primary">Create
-                                            Employee</button>
+                                            users</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
                     </div>
 
-                    <div id="edit_emp" class="modal fade add-new-contact" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div id="edit_emp" class="modal fade add-new-contact" tabindex="-1" role="dialog"
+                        aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                             <div class="modal-content">
-                                <form action="{{ route('employee.update') }}" method="post">
+                                <form action="{{ route('users.update') }}" method="post">
                                     @csrf
                                     <div class="modal-body">
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close">
                                             <span aria-hidden="true">×</span>
                                         </button>
-                                        <h5 class="mb-5">Create New Employee</h5>
+                                        <h5 class="mb-5">Create New users</h5>
 
                                         <div class="row gx-3">
                                             <div class="col-sm-4">
@@ -184,6 +194,14 @@
                                                     <label class="form-label">Full Name</label>
                                                     <input class="form-control" type="text" id="emp_name"
                                                         name="name" placeholder="Full Name" required />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Email</label>
+                                                    <input class="form-control" type="email" name="email"
+                                                        id="emp_email" placeholder="Email" required />
                                                 </div>
                                             </div>
 
@@ -225,7 +243,7 @@
                                         <button type="button" class="btn btn-secondary"
                                             data-bs-dismiss="modal">Discard</button>
                                         <button type="submit" class="btn btn-primary">Update
-                                            Employee</button>
+                                            user</button>
                                     </div>
                                 </form>
                             </div>

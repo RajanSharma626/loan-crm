@@ -24,11 +24,11 @@ class User extends Authenticatable
         parent::boot();
 
         static::creating(function ($user) {
-            $user->employee_id = self::generateEmployeeId();
+            $user->users_id = self::generateusersId();
         });
     }
 
-    public static function generateEmployeeId()
+    public static function generateusersId()
     {
         $latestUser = self::latest('id')->first();
 
@@ -36,14 +36,15 @@ class User extends Authenticatable
             return 'EMP0001';
         }
 
-        // Extract number from last employee_id and increment
-        $lastNumber = (int) substr($latestUser->employee_id, 3);
+        // Extract number from last users_id and increment
+        $lastNumber = (int) substr($latestUser->users_id, 3);
         return 'EMP' . str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
     }
 
     protected $fillable = [
         'name',
-        'employee_id',
+        'users_id',
+        'email',
         'password',
         'position'
     ];

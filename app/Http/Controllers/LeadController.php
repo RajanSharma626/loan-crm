@@ -9,6 +9,7 @@ use App\Models\Note;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class LeadController extends Controller
 {
@@ -24,6 +25,57 @@ class LeadController extends Controller
         // Apply disposition filter if present
         if ($request->has('disposition') && $request->disposition != '') {
             $query->where('disposition', $request->disposition);
+        }
+
+        // Apply date filter if present
+        $dateFilter = $request->get('date_filter');
+        $startDate = null;
+        $endDate = null;
+
+        if ($dateFilter) {
+            switch ($dateFilter) {
+                case 'today':
+                    $startDate = Carbon::today();
+                    $endDate = Carbon::today()->endOfDay();
+                    break;
+                case 'yesterday':
+                    $startDate = Carbon::yesterday()->startOfDay();
+                    $endDate = Carbon::yesterday()->endOfDay();
+                    break;
+                case 'last_7_days':
+                    $startDate = Carbon::now()->subDays(6)->startOfDay();
+                    $endDate = Carbon::now()->endOfDay();
+                    break;
+                case 'last_30_days':
+                    $startDate = Carbon::now()->subDays(29)->startOfDay();
+                    $endDate = Carbon::now()->endOfDay();
+                    break;
+                case 'this_month':
+                    $startDate = Carbon::now()->startOfMonth();
+                    $endDate = Carbon::now()->endOfMonth();
+                    break;
+                case 'last_month':
+                    $startDate = Carbon::now()->subMonth()->startOfMonth();
+                    $endDate = Carbon::now()->subMonth()->endOfMonth();
+                    break;
+                case 'custom':
+                    if ($request->filled('start_date') && $request->filled('end_date')) {
+                        try {
+                            $startDate = Carbon::parse($request->get('start_date'))->startOfDay();
+                            $endDate = Carbon::parse($request->get('end_date'))->endOfDay();
+                        } catch (\Exception $e) {
+                            // Ignore parsing errors and skip date filter
+                        }
+                    }
+                    break;
+                default:
+                    // 'all' or unknown -> no date filter
+                    break;
+            }
+        }
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
         $leads = $query->orderBy('created_at', 'desc')->paginate(10);
@@ -193,7 +245,7 @@ class LeadController extends Controller
             $serializedDocumentsData
         );
 
-        return redirect()->route('lead.info', $lead->id)->with('success', 'Documents uploaded successfully.');
+        return redirect()->route('document.info', $lead->id)->with('success', 'Documents uploaded successfully.');
     }
 
     public function delete($id)
@@ -203,5 +255,33 @@ class LeadController extends Controller
         $lead->save();
 
         return redirect()->route('leads')->with('success', 'Lead deleted successfully.');
+    }
+
+    public function uploadDocs()
+    {
+        $leads = Lead::with(['agent', 'document'])->whereNull('deleted_at')->paginate(10);
+        $agents = User::where('role', 'Agent')
+            ->where('status', 'Active')
+            ->whereNull('deleted_at')
+            ->get();
+        return view('upload-docs', compact('leads', 'agents'));
+    }
+
+    public function documentInfo($id)
+    {
+        $lead = Lead::findOrFail($id);
+        $doc = Documents::where('lead_id', $lead->id)->first();
+        $emp = User::whereNull('deleted_at')->where('status', 'Active')->get();
+        return view('doc-upload-form', compact('lead', 'doc', 'emp'));
+    }
+
+    public function underwriting()
+    {
+        $leads = Lead::with(['agent', 'document'])->whereNull('deleted_at')->paginate(10);
+        $agents = User::where('role', 'Agent')
+            ->where('status', 'Active')
+            ->whereNull('deleted_at')
+            ->get();
+        return view('underwriting', compact('leads', 'agents'));
     }
 }

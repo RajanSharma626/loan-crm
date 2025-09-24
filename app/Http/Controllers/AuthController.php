@@ -18,18 +18,18 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'employee_id' => 'required|exists:users,employee_id',
+            'users_id' => 'required|exists:users,users_id',
             'password' => 'required|min:6',
         ]);
 
-        $user = \App\Models\User::where('employee_id', $request->employee_id)->first();
+        $user = \App\Models\User::where('users_id', $request->users_id)->first();
 
         if ($user->status != 'Active') {
             return back()->with('error', 'Your account is Deactive. Please contact admin.');
         }
 
         $credentials = [
-            'employee_id' => $request->employee_id,
+            'users_id' => $request->users_id,
             'password' => $request->password
         ];
 
@@ -39,7 +39,7 @@ class AuthController extends Controller
             return redirect()->intended('/leads');
         }
 
-        return back()->with('error', 'Invalid Employee ID or Password');
+        return back()->with('error', 'Invalid users ID or Password');
     }
 
     public function logout()

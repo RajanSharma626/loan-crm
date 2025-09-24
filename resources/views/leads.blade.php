@@ -40,23 +40,73 @@
                                         <div class="col-md-3">
                                             <select name="disposition" class="form-select" onchange="this.form.submit()">
                                                 <option value="">-- Filter by Disposition --</option>
-                                                <option value="Open" {{ request('disposition') == 'Open' ? 'selected' : '' }}>Open</option>
-                                                <option value="Closed" {{ request('disposition') == 'Closed' ? 'selected' : '' }}>Closed</option>
-                                                <option value="Ringing" {{ request('disposition') == 'Ringing' ? 'selected' : '' }}>Ringing</option>
-                                                <option value="Busy" {{ request('disposition') == 'Busy' ? 'selected' : '' }}>Busy</option>
-                                                <option value="Not reachable" {{ request('disposition') == 'Not reachable' ? 'selected' : '' }}>Not reachable</option>
-                                                <option value="Wrong number" {{ request('disposition') == 'Wrong number' ? 'selected' : '' }}>Wrong number</option>
-                                                <option value="Out of scope" {{ request('disposition') == 'Out of scope' ? 'selected' : '' }}>Out of scope</option>
-                                                <option value="Call back" {{ request('disposition') == 'Call back' ? 'selected' : '' }}>Call back</option>
-                                                <option value="Follow up" {{ request('disposition') == 'Follow up' ? 'selected' : '' }}>Follow up</option>
-                                                <option value="Rejected" {{ request('disposition') == 'Rejected' ? 'selected' : '' }}>Rejected</option>
-                                                <option value="Language barrier" {{ request('disposition') == 'Language barrier' ? 'selected' : '' }}>Language barrier</option>
-                                                <option value="Nc Rejected" {{ request('disposition') == 'Nc Rejected' ? 'selected' : '' }}>Nc Rejected</option>
-                                                <option value="Docs received" {{ request('disposition') == 'Docs received' ? 'selected' : '' }}>Docs received</option>
-                                                <option value="Approved" {{ request('disposition') == 'Approved' ? 'selected' : '' }}>Approved</option>
-                                                <option value="Disbursed" {{ request('disposition') == 'Disbursed' ? 'selected' : '' }}>Disbursed</option>
-                                                <option value="Reopen" {{ request('disposition') == 'Reopen' ? 'selected' : '' }}>Reopen</option>
+                                                <option value="Open"
+                                                    {{ request('disposition') == 'Open' ? 'selected' : '' }}>Open</option>
+                                                <option value="Closed"
+                                                    {{ request('disposition') == 'Closed' ? 'selected' : '' }}>Closed
+                                                </option>
+                                                <option value="Ringing"
+                                                    {{ request('disposition') == 'Ringing' ? 'selected' : '' }}>Ringing
+                                                </option>
+                                                <option value="Busy"
+                                                    {{ request('disposition') == 'Busy' ? 'selected' : '' }}>Busy</option>
+                                                <option value="Not reachable"
+                                                    {{ request('disposition') == 'Not reachable' ? 'selected' : '' }}>Not
+                                                    reachable</option>
+                                                <option value="Wrong number"
+                                                    {{ request('disposition') == 'Wrong number' ? 'selected' : '' }}>Wrong
+                                                    number</option>
+                                                <option value="Out of scope"
+                                                    {{ request('disposition') == 'Out of scope' ? 'selected' : '' }}>Out of
+                                                    scope</option>
+                                                <option value="Call back"
+                                                    {{ request('disposition') == 'Call back' ? 'selected' : '' }}>Call back
+                                                </option>
+                                                <option value="Follow up"
+                                                    {{ request('disposition') == 'Follow up' ? 'selected' : '' }}>Follow up
+                                                </option>
+                                                <option value="Rejected"
+                                                    {{ request('disposition') == 'Rejected' ? 'selected' : '' }}>Rejected
+                                                </option>
+                                                <option value="Language barrier"
+                                                    {{ request('disposition') == 'Language barrier' ? 'selected' : '' }}>
+                                                    Language barrier</option>
+                                                <option value="Nc Rejected"
+                                                    {{ request('disposition') == 'Nc Rejected' ? 'selected' : '' }}>Nc
+                                                    Rejected</option>
+                                                <option value="Docs received"
+                                                    {{ request('disposition') == 'Docs received' ? 'selected' : '' }}>Docs
+                                                    received</option>
+                                                <option value="Approved"
+                                                    {{ request('disposition') == 'Approved' ? 'selected' : '' }}>Approved
+                                                </option>
+                                                <option value="Disbursed"
+                                                    {{ request('disposition') == 'Disbursed' ? 'selected' : '' }}>Disbursed
+                                                </option>
+                                                <option value="Reopen"
+                                                    {{ request('disposition') == 'Reopen' ? 'selected' : '' }}>Reopen
+                                                </option>
                                             </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select name="date_filter" id="date_filter" class="form-select">
+                                                <option value="">-- Date: All --</option>
+                                                <option value="today" {{ request('date_filter') == 'today' ? 'selected' : '' }}>Today</option>
+                                                <option value="yesterday" {{ request('date_filter') == 'yesterday' ? 'selected' : '' }}>Yesterday</option>
+                                                <option value="last_7_days" {{ request('date_filter') == 'last_7_days' ? 'selected' : '' }}>Last 7 days</option>
+                                                <option value="last_30_days" {{ request('date_filter') == 'last_30_days' ? 'selected' : '' }}>Last 30 days</option>
+                                                <option value="this_month" {{ request('date_filter') == 'this_month' ? 'selected' : '' }}>This month</option>
+                                                <option value="last_month" {{ request('date_filter') == 'last_month' ? 'selected' : '' }}>Last month</option>
+                                                <option value="custom" {{ request('date_filter') == 'custom' ? 'selected' : '' }}>Custom range</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4" id="custom_range_group" style="display: none;">
+                                            <div class="d-flex gap-2 align-items-center">
+                                                <input type="date" name="start_date" class="form-control" value="{{ request('start_date') }}">
+                                                <span class="mx-1">to</span>
+                                                <input type="date" name="end_date" class="form-control" value="{{ request('end_date') }}">
+                                                <button type="submit" class="btn btn-primary">Apply</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
@@ -83,8 +133,10 @@
                                                     <td>
                                                         <div class="media align-items-center">
                                                             <div class="media-body">
-                                                                <span
-                                                                    class="d-block text-high-em">{{ $lead->first_name . ' ' . $lead->last_name }}</span>
+                                                                <a href="{{ route('lead.info', $lead->id) }}">
+                                                                    <span
+                                                                        class="d-block text-high-em text-primary">{{ $lead->first_name . ' ' . $lead->last_name }}</span>
+                                                                </a>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -100,7 +152,7 @@
                                                                     <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover"
                                                                         data-bs-toggle="tooltip" data-placement="top"
                                                                         title=""
-                                                                        data-bs-original-title="{{ $lead->agent->name . ' (' . $lead->agent->employee_id . ')' }}"
+                                                                        data-bs-original-title="{{ $lead->agent->name . ' (' . $lead->agent->users_id . ')' }}"
                                                                         href="#"><span class="icon"><span
                                                                                 class="feather-icon"><i
                                                                                     data-feather="user"></i></span></span></a>
@@ -170,7 +222,7 @@
                                     <option value="">Select Agent</option>
                                     @foreach ($agents as $agent)
                                         <option value="{{ $agent->id }}">
-                                            {{ "{$agent->name} ({$agent->employee_id})" }}</option>
+                                            {{ "{$agent->name} ({$agent->users_id})" }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -187,4 +239,36 @@
         @include('layouts.footer')
 
     </div>
+    <script>
+        (function() {
+            var dateFilter = document.getElementById('date_filter');
+            var rangeGroup = document.getElementById('custom_range_group');
+            function updateRangeVisibility(shouldSubmit) {
+                if (!dateFilter) return;
+                var isCustom = dateFilter.value === 'custom';
+                if (rangeGroup) {
+                    rangeGroup.style.display = isCustom ? 'block' : 'none';
+                }
+                if (shouldSubmit) {
+                    var form = dateFilter.form;
+                    if (!form) return;
+                    // If "All" selected, clear all filters
+                    if (dateFilter.value === '') {
+                        // Navigate to base route without any query params
+                        window.location.href = form.getAttribute('action');
+                        return;
+                    }
+                    // For non-custom predefined ranges, submit immediately
+                    if (!isCustom) {
+                        form.submit();
+                    }
+                }
+            }
+            if (dateFilter) {
+                dateFilter.addEventListener('change', function() { updateRangeVisibility(true); });
+                // Initialize on load without submitting
+                updateRangeVisibility(false);
+            }
+        })();
+    </script>
 @endsection

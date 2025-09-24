@@ -17,8 +17,9 @@ class AdminSeeder extends Seeder
         // Create an admin user
         User::create([
             'name' => 'Admin User',
-            'employee_id' => User::generateEmployeeId(), // Call the function to generate ID
+            'users_id' => User::generateusersId(), // Call the function to generate ID
             'role' => 'admin',
+            'email' => 'admin@gmail.com',
             'status' => 'active',
             'password' => Hash::make('admin123'), // Change this to a secure password
             'remember_token' => \Illuminate\Support\Str::random(10),

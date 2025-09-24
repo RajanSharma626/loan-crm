@@ -45,4 +45,9 @@ class Lead extends Model
     {
         return $this->belongsTo(User::class, 'agent_id', 'id');
     }
+
+    public function document()
+    {
+        return $this->hasOne(Documents::class, 'lead_id', 'id');
+    }
 }

@@ -61,7 +61,7 @@
                                 <div class="dropdown-menu dropdown-menu-end shadow-lg border-1 rounded-3">
                                     <div class="dropdown-header">
                                         <h6 class="fw-bold mb-0">{{ Auth::user()->name }}</h6>
-                                        <small class="text-muted">ID: {{ Auth::user()->employee_id }}</small>
+                                        <small class="text-muted">ID: {{ Auth::user()->users_id }}</small>
                                     </div>
                                     <div class="dropdown-divider"></div>
 
@@ -138,6 +138,52 @@
                                     {{-- <span class="badge badge-sm badge-soft-pink ms-auto">Hot</span> --}}
                                 </a>
                             </li>
+                            <li
+                                class="nav-item mb-2 {{ Route::currentRouteName() == 'upload.docs' ? 'active' : '' }} {{ Route::currentRouteName() == 'document.info' ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('upload.docs') }}">
+                                    <span class="nav-icon-wrap">
+                                        <span class="svg-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-template" width="24"
+                                                height="24" viewBox="0 0 24 24" stroke-width="2"
+                                                stroke="currentColor" fill="none" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <rect x="4" y="4" width="16" height="4" rx="1" />
+                                                <rect x="4" y="12" width="6" height="8" rx="1" />
+                                                <line x1="14" y1="12" x2="20" y2="12" />
+                                                <line x1="14" y1="16" x2="20" y2="16" />
+                                                <line x1="14" y1="20" x2="20" y2="20" />
+                                            </svg>
+                                        </span>
+                                    </span>
+                                    <span class="nav-link-text">Upload Documents</span>
+                                    {{-- <span class="badge badge-sm badge-soft-pink ms-auto">Hot</span> --}}
+                                </a>
+                            </li>
+                            <li
+                                class="nav-item mb-2 {{ Route::currentRouteName() == 'underwriting' ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('underwriting') }}">
+                                    <span class="nav-icon-wrap">
+                                        <span class="svg-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-template" width="24"
+                                                height="24" viewBox="0 0 24 24" stroke-width="2"
+                                                stroke="currentColor" fill="none" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <rect x="4" y="4" width="16" height="4" rx="1" />
+                                                <rect x="4" y="12" width="6" height="8" rx="1" />
+                                                <line x1="14" y1="12" x2="20" y2="12" />
+                                                <line x1="14" y1="16" x2="20" y2="16" />
+                                                <line x1="14" y1="20" x2="20" y2="20" />
+                                            </svg>
+                                        </span>
+                                    </span>
+                                    <span class="nav-link-text">Underwriting</span>
+                                    {{-- <span class="badge badge-sm badge-soft-pink ms-auto">Hot</span> --}}
+                                </a>
+                            </li>
                             @if (Auth::check() && Auth::user()->role === 'Admin')
                                 <li class="nav-item mb-3 {{ Route::currentRouteName() == 'emp' ? 'active' : '' }}">
                                     <a class="nav-link" href="{{ route('emp') }}">
@@ -161,7 +207,7 @@
                                                 </svg>
                                             </span>
                                         </span>
-                                        <span class="nav-link-text">Employees</span>
+                                        <span class="nav-link-text">Users</span>
                                         {{-- <span class="badge badge-sm badge-soft-pink ms-auto">Hot</span> --}}
                                     </a>
                                 </li>
@@ -196,20 +242,21 @@
 
     <script>
         $(document).ready(function() {
-            $('.edit-employee-btn').on('click', function() {
+            $('.edit-users-btn').on('click', function() {
                 let empId = $(this).data('emp-id');
 
                 $.ajax({
-                    url: '/employee/edit/' + empId,
+                    url: '/user/edit/' + empId,
                     type: 'GET',
                     success: function(data) {
                         // Populate modal fields
                         $('#emp_name').val(data.name);
+                        $('#emp_email').val(data.email);
                         $('#emp_position').val(data.role);
                         $('#emp_status').val(data.status);
                         $('#emp_password').val(''); // Optional: empty for security
 
-                        // Optionally store employee ID for update
+                        // Optionally store users ID for update
                         $('<input>').attr({
                             type: 'hidden',
                             id: 'emp_id',
@@ -218,7 +265,7 @@
                         }).appendTo('form');
                     },
                     error: function() {
-                        alert('Failed to fetch employee data.');
+                        alert('Failed to fetch users data.');
                     }
                 });
             });

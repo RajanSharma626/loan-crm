@@ -51,12 +51,12 @@
                                                     <div class="row gx-3">
                                                         <div class="form-group col-lg-12">
                                                             <div class="form-label-group">
-                                                                <label>Employee ID</label>
+                                                                <label>users ID</label>
                                                             </div>
-                                                            <input class="form-control" placeholder="Employee ID"
-                                                                name="employee_id" type="text"
-                                                                value="{{ old('employee_id') }}">
-                                                            @error('employee_id')
+                                                            <input class="form-control" placeholder="users ID"
+                                                                name="users_id" type="text"
+                                                                value="{{ old('users_id') }}">
+                                                            @error('users_id')
                                                                 <small class="text-danger">{{ $message }}</small>
                                                             @enderror
                                                         </div>

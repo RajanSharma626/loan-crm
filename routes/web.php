@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\usersController;
 use App\Http\Controllers\LeadController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,20 +30,27 @@ Route::middleware(['auth', 'check.active'])->group(function () {
     Route::post('/lead/update-info', [LeadController::class, 'updateInfo'])->name('lead.update.info');
     Route::post('/lead/update-agreement', [LeadController::class, 'updateAgreement'])->name('lead.update.agreement');
 
-    //upload document
-    Route::post('/lead/upload-document/store', [LeadController::class, 'storeDocument'])->name('lead.update.upload');
 
     //assign Agent
     Route::post('/leads/assign-agent', [LeadController::class, 'assignAgent'])->name('lead.assign.agent');
 
 
-    // Employee routes restricted to admin
+    //upload docs
+    Route::get('/upload-docs', [LeadController::class, 'uploadDocs'])->name('upload.docs');
+    Route::get('/document-info/{id}', [LeadController::class, 'documentInfo'])->name('document.info');
+    Route::post('/lead/upload-document/store', [LeadController::class, 'storeDocument'])->name('lead.update.upload');
+
+    //underwriting
+    Route::get('/underwriting', [LeadController::class, 'underwriting'])->name('underwriting');
+
+
+    // users routes restricted to admin
     Route::middleware('admin')->group(function () {
-        Route::get('/employee', [EmployeeController::class, 'index'])->name('emp');
-        Route::post('/employees/store', [EmployeeController::class, 'store'])->name('employees.store');
-        Route::get('/employee/edit/{id}', [EmployeeController::class, 'edit'])->name('employee.edit');
-        Route::post('/employee/update', [EmployeeController::class, 'update'])->name('employee.update');
-        Route::get('/employee/delete/{id}', [EmployeeController::class, 'destroy'])->name('employee.delete');
+        Route::get('/users', [usersController::class, 'index'])->name('emp');
+        Route::post('/user/store', [usersController::class, 'store'])->name('userss.store');
+        Route::get('/user/edit/{id}', [usersController::class, 'edit'])->name('users.edit');
+        Route::post('/user/update', [usersController::class, 'update'])->name('users.update');
+        Route::get('/user/delete/{id}', [usersController::class, 'destroy'])->name('users.delete');
 
         Route::get('/lead/detele/{id}', [LeadController::class, 'delete'])->name('lead.delete');
     });
