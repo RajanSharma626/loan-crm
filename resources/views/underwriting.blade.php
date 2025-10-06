@@ -48,7 +48,6 @@
                                                 <th>City</th>
                                                 <th>Document Status</th>
                                                 <th>Salary(mth)</th>
-                                                <th>Disposition</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
@@ -66,12 +65,12 @@
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td>{{ $lead->loan_amount }}</td>
+                                                    <td class="text-nowrap">@inr($lead->loan_amount)</td>
                                                     <td>{{ $lead->duration }}</td>
                                                     <td>{{ $lead->pancard_number }}</td>
                                                     <td>{{ $lead->city }}</td>
                                                     <td>
-                                                        <div class="d-flex">
+                                                        <div class="d-flex flex-wrap">
                                                             @php
                                                                 $doc = $lead->document;
                                                                 $hasPan =
@@ -128,17 +127,16 @@
                                                                 Docs</span>
                                                         </div>
                                                     </td>
-                                                    <td>{{ $lead->monthly_salary }}</td>
-                                                    <td>{{ $lead->disposition }}</td>
+                                                    <td class="text-nowrap">@inr($lead->monthly_salary)</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <div class="d-flex">
                                                                 <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover"
                                                                     data-bs-toggle="tooltip" data-placement="top"
-                                                                    title="Edit" data-bs-original-title="Edit"
-                                                                    href="{{ route('document.info', $lead->id) }}"><span
+                                                                    title="Review Docs" data-bs-original-title="Review Docs"
+                                                                    href="{{ route('underwriting.review', $lead->id) }}"><span
                                                                         class="icon"><span class="feather-icon"><i
-                                                                                data-feather="edit"></i></span></span></a>
+                                                                                data-feather="check-square"></i></span></span></a>
                                                             </div>
                                                         </div>
                                                     </td>

@@ -59,19 +59,19 @@
                                                     <td>
                                                         <div class="media align-items-center">
                                                             <div class="media-body">
-                                                                <a href="{{ route('lead.info', $lead->id) }}">
+                                                                <a href="{{ route('document.info', $lead->id) }}">
                                                                     <span
                                                                         class="d-block text-high-em text-primary">{{ $lead->first_name . ' ' . $lead->last_name }}</span>
                                                                 </a>
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td>{{ $lead->loan_amount }}</td>
+                                                    <td class="text-nowrap">@inr($lead->loan_amount)</td>
                                                     <td>{{ $lead->duration }}</td>
                                                     <td>{{ $lead->pancard_number }}</td>
                                                     <td>{{ $lead->city }}</td>
                                                     <td>
-                                                        <div class="d-flex">
+                                                        <div class="d-flex flex-wrap">
                                                             @php
                                                                 $doc = $lead->document;
                                                                 $hasPan =
@@ -128,17 +128,20 @@
                                                                 Docs</span>
                                                         </div>
                                                     </td>
-                                                    <td>{{ $lead->monthly_salary }}</td>
+                                                    <td class="text-nowrap">@inr($lead->monthly_salary)</td>
                                                     <td>{{ $lead->disposition }}</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <div class="d-flex">
                                                                 <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover"
                                                                     data-bs-toggle="tooltip" data-placement="top"
-                                                                    title="Edit" data-bs-original-title="Edit"
+                                                                    title="Upload" data-bs-original-title="Upload"
                                                                     href="{{ route('document.info', $lead->id) }}"><span
-                                                                        class="icon"><span class="feather-icon"><i
-                                                                                data-feather="edit"></i></span></span></a>
+                                                                        class="icon">
+                                                                        <span class="feather-icon">
+                                                                            <i
+                                                                                data-feather="upload"></i>
+                                                                            </span></span></a>
                                                             </div>
                                                         </div>
                                                     </td>

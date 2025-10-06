@@ -157,7 +157,7 @@
                                             </svg>
                                         </span>
                                     </span>
-                                    <span class="nav-link-text">Upload Documents</span>
+                                    <span class="nav-link-text">Upload Docs</span>
                                     {{-- <span class="badge badge-sm badge-soft-pink ms-auto">Hot</span> --}}
                                 </a>
                             </li>

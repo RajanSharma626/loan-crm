@@ -225,12 +225,13 @@ class LeadController extends Controller
                 $filePaths = [];
                 foreach ($request->file($field) as $file) {
                     $fileName = time() . '_' . str_replace(' ', '_', strtolower($file->getClientOriginalName()));
-                    $path = 'uploads/documents/' . $field . '/';
-                    if (!file_exists($path)) {
-                        mkdir($path, 0777, true);
+                    $relativeDir = 'uploads/documents/' . $field . '/';
+                    $absoluteDir = public_path($relativeDir);
+                    if (!file_exists($absoluteDir)) {
+                        mkdir($absoluteDir, 0777, true);
                     }
-                    $file->move($path, $fileName);
-                    $filePaths[] = '/' . trim($path, '/') . '/' . trim($fileName, '/');
+                    $file->move($absoluteDir, $fileName);
+                    $filePaths[] = '/' . trim($relativeDir, '/') . '/' . trim($fileName, '/');
                 }
                 $documentsData[$field] = $filePaths;
             }
@@ -283,5 +284,85 @@ class LeadController extends Controller
             ->whereNull('deleted_at')
             ->get();
         return view('underwriting', compact('leads', 'agents'));
+    }
+
+    public function reviewDocs($id)
+    {
+        $lead = Lead::findOrFail($id);
+        $doc = Documents::where('lead_id', $id)->first();
+        return view('underwriting-review', compact('lead', 'doc'));
+    }
+
+    public function reviewDocsSave(Request $request)
+    {
+        $request->validate([
+            'lead_id' => 'required|exists:leads,id',
+            'statuses' => 'required|array'
+        ]);
+        $leadId = (int)$request->lead_id;
+        $doc = Documents::where('lead_id', $leadId)->firstOrFail();
+        $allowed = [
+            'photograph', 'pan_card', 'adhar_card', 'current_address', 'permanent_address',
+            'salary_slip', 'bank_statement', 'cibil', 'other_documents'
+        ];
+        foreach ($allowed as $key) {
+            $statusKey = $key . '_status';
+            if (array_key_exists($key, $request->statuses)) {
+                // Lock once approved
+                if ($doc->{$statusKey} === 'Approved') {
+                    continue;
+                }
+                $value = $request->statuses[$key];
+                if (in_array($value, ['Approved', 'Disapproved', 'Docs Received'])) {
+                    $doc->{$statusKey} = $value;
+                }
+            }
+        }
+        $doc->save();
+        return redirect()->route('underwriting.review', $leadId)->with('success', 'Document statuses updated.');
+    }
+
+    public function deleteSingleDocument(Request $request)
+    {
+        $request->validate([
+            'lead_id' => 'required|exists:leads,id',
+            'field' => 'required|string|in:photograph,pan_card,adhar_card,current_address,permanent_address,salary_slip,bank_statement,cibil,other_documents',
+            'path' => 'required|string'
+        ]);
+
+        $lead = Lead::findOrFail($request->lead_id);
+        $documents = Documents::where('lead_id', $lead->id)->first();
+        if (!$documents) {
+            return redirect()->back()->with('error', 'No documents found.');
+        }
+
+        $field = $request->field;
+        $existing = $documents->{$field};
+        $paths = [];
+        if (!empty($existing)) {
+            $decoded = json_decode($existing, true);
+            if (is_array($decoded)) {
+                $paths = $decoded;
+            }
+        }
+
+        $targetPath = $request->path;
+        $updated = array_values(array_filter($paths, function ($p) use ($targetPath) {
+            return $p !== $targetPath;
+        }));
+
+        try {
+            $absolute = public_path($targetPath);
+            if (str_starts_with($absolute, public_path()) && file_exists($absolute)) {
+                @unlink($absolute);
+            }
+        } catch (\Throwable $e) {
+            // ignore file delete errors
+        }
+
+        $documents->{$field} = empty($updated) ? null : json_encode($updated);
+        $documents->save();
+
+        return redirect()->back()->with('success', 'Document removed successfully.');
     }
 }

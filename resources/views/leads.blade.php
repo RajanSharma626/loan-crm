@@ -140,10 +140,10 @@
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td>{{ $lead->loan_amount }}</td>
+                                                    <td class="text-nowrap">@inr($lead->loan_amount)</td>
                                                     <td>{{ $lead->mobile }}</td>
                                                     <td>{{ $lead->city }}</td>
-                                                    <td>{{ $lead->monthly_salary }}</td>
+                                                    <td class="text-nowrap">@inr($lead->monthly_salary)</td>
                                                     <td>{{ $lead->created_at->format('j M, Y h:i A') }}</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">

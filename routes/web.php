@@ -39,9 +39,12 @@ Route::middleware(['auth', 'check.active'])->group(function () {
     Route::get('/upload-docs', [LeadController::class, 'uploadDocs'])->name('upload.docs');
     Route::get('/document-info/{id}', [LeadController::class, 'documentInfo'])->name('document.info');
     Route::post('/lead/upload-document/store', [LeadController::class, 'storeDocument'])->name('lead.update.upload');
+    Route::post('/lead/upload-document/delete', [LeadController::class, 'deleteSingleDocument'])->name('lead.delete.single');
 
     //underwriting
     Route::get('/underwriting', [LeadController::class, 'underwriting'])->name('underwriting');
+    Route::get('/underwriting/review/{id}', [LeadController::class, 'reviewDocs'])->name('underwriting.review');
+    Route::post('/underwriting/review/save', [LeadController::class, 'reviewDocsSave'])->name('underwriting.review.save');
 
 
     // users routes restricted to admin

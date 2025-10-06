@@ -67,8 +67,10 @@
                                                             @endphp
 
                                                             @foreach (json_decode($doc->photograph) as $photograph)
-                                                                <a href="{{ asset($photograph) }}" target="_blank"
-                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                <div class="d-inline-flex align-items-center m-2 bg-light px-2 py-1 rounded-3">
+                                                                    <button type="button" class="btn-close text-danger me-2" aria-label="Remove" onclick="deleteDoc({{ $lead->id }}, 'photograph', '{{ $photograph }}')"></button>
+                                                                    <a href="{{ asset($photograph) }}" target="_blank" class="btn-link small fw-semibold">View Doc - {{ $no }}</a>
+                                                                </div>
                                                                 @php
                                                                     $no++;
                                                                 @endphp
@@ -90,8 +92,10 @@
                                                             @endphp
 
                                                             @foreach (json_decode($doc->pan_card) as $panCard)
-                                                                <a href="{{ asset($panCard) }}" target="_blank"
-                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                <div class="d-inline-flex align-items-center m-2 bg-light px-2 py-1 rounded-3">
+                                                                    <button type="button" class="btn-close text-danger me-2" aria-label="Remove" onclick="deleteDoc({{ $lead->id }}, 'pan_card', '{{ $panCard }}')"></button>
+                                                                    <a href="{{ asset($panCard) }}" target="_blank" class="btn-link small fw-semibold">View Doc - {{ $no }}</a>
+                                                                </div>
                                                                 @php
                                                                     $no++;
                                                                 @endphp
@@ -113,8 +117,10 @@
                                                             @endphp
 
                                                             @foreach (json_decode($doc->adhar_card) as $adharCard)
-                                                                <a href="{{ asset($adharCard) }}" target="_blank"
-                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                <div class="d-inline-flex align-items-center m-2 bg-light px-2 py-1 rounded-3">
+                                                                    <button type="button" class="btn-close text-danger me-2" aria-label="Remove" onclick="deleteDoc({{ $lead->id }}, 'adhar_card', '{{ $adharCard }}')"></button>
+                                                                    <a href="{{ asset($adharCard) }}" target="_blank" class="btn-link small fw-semibold">View Doc - {{ $no }}</a>
+                                                                </div>
                                                                 @php
                                                                     $no++;
                                                                 @endphp
@@ -136,8 +142,10 @@
                                                             @endphp
 
                                                             @foreach (json_decode($doc->current_address) as $currentAddress)
-                                                                <a href="{{ asset($currentAddress) }}" target="_blank"
-                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                <div class="d-inline-flex align-items-center m-2 bg-light px-2 py-1 rounded-3">
+                                                                    <button type="button" class="btn-close text-danger me-2" aria-label="Remove" onclick="deleteDoc({{ $lead->id }}, 'current_address', '{{ $currentAddress }}')"></button>
+                                                                    <a href="{{ asset($currentAddress) }}" target="_blank" class="btn-link small fw-semibold">View Doc - {{ $no }}</a>
+                                                                </div>
                                                                 @php
                                                                     $no++;
                                                                 @endphp
@@ -160,8 +168,10 @@
                                                             @endphp
 
                                                             @foreach (json_decode($doc->permanent_address) as $permanentAddress)
-                                                                <a href="{{ asset($permanentAddress) }}" target="_blank"
-                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                <div class="d-inline-flex align-items-center m-2 bg-light px-2 py-1 rounded-3">
+                                                                    <button type="button" class="btn-close text-danger me-2" aria-label="Remove" onclick="deleteDoc({{ $lead->id }}, 'permanent_address', '{{ $permanentAddress }}')"></button>
+                                                                    <a href="{{ asset($permanentAddress) }}" target="_blank" class="btn-link small fw-semibold">View Doc - {{ $no }}</a>
+                                                                </div>
                                                                 @php
                                                                     $no++;
                                                                 @endphp
@@ -183,8 +193,10 @@
                                                             @endphp
 
                                                             @foreach (json_decode($doc->salary_slip) as $salarySlip)
-                                                                <a href="{{ asset($salarySlip) }}" target="_blank"
-                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                <div class="d-inline-flex align-items-center m-2 bg-light px-2 py-1 rounded-3">
+                                                                    <button type="button" class="btn-close text-danger me-2" aria-label="Remove" onclick="deleteDoc({{ $lead->id }}, 'salary_slip', '{{ $salarySlip }}')"></button>
+                                                                    <a href="{{ asset($salarySlip) }}" target="_blank" class="btn-link small fw-semibold">View Doc - {{ $no }}</a>
+                                                                </div>
                                                                 @php
                                                                     $no++;
                                                                 @endphp
@@ -206,8 +218,10 @@
                                                             @endphp
 
                                                             @foreach (json_decode($doc->bank_statement) as $bankStatement)
-                                                                <a href="{{ asset($bankStatement) }}" target="_blank"
-                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                <div class="d-inline-flex align-items-center m-2 bg-light px-2 py-1 rounded-3">
+                                                                    <button type="button" class="btn-close text-danger me-2" aria-label="Remove" onclick="deleteDoc({{ $lead->id }}, 'bank_statement', '{{ $bankStatement }}')"></button>
+                                                                    <a href="{{ asset($bankStatement) }}" target="_blank" class="btn-link small fw-semibold">View Doc - {{ $no }}</a>
+                                                                </div>
                                                                 @php
                                                                     $no++;
                                                                 @endphp
@@ -229,8 +243,10 @@
                                                             @endphp
 
                                                             @foreach (json_decode($doc->cibil) as $cibil)
-                                                                <a href="{{ asset($cibil) }}" target="_blank"
-                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                <div class="d-inline-flex align-items-center m-2 bg-light px-2 py-1 rounded-3">
+                                                                    <button type="button" class="btn-close text-danger me-2" aria-label="Remove" onclick="deleteDoc({{ $lead->id }}, 'cibil', '{{ $cibil }}')"></button>
+                                                                    <a href="{{ asset($cibil) }}" target="_blank" class="btn-link small fw-semibold">View Doc - {{ $no }}</a>
+                                                                </div>
                                                                 @php
                                                                     $no++;
                                                                 @endphp
@@ -253,8 +269,10 @@
                                                             @endphp
 
                                                             @foreach (json_decode($doc->other_documents) as $other)
-                                                                <a href="{{ asset($other) }}" target="_blank"
-                                                                    class="m-2 btn-link">View {{ $no }}</a>
+                                                                <div class="d-inline-flex align-items-center m-2 bg-light px-2 py-1 rounded-3">
+                                                                    <button type="button" class="btn-close text-danger me-2" aria-label="Remove" onclick="deleteDoc({{ $lead->id }}, 'other_documents', '{{ $other }}')"></button>
+                                                                    <a href="{{ asset($other) }}" target="_blank" class="btn-link small fw-semibold">View Doc - {{ $no }}</a>
+                                                                </div>
                                                                 @php
                                                                     $no++;
                                                                 @endphp
@@ -272,6 +290,28 @@
 
 
                                     <div class="card p-5">
+                                        <script>
+                                            async function deleteDoc(leadId, field, path) {
+                                                if (!confirm('Remove this document?')) return;
+                                                try {
+                                                    const res = await fetch("{{ route('lead.delete.single') }}", {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                        },
+                                                        body: JSON.stringify({ lead_id: leadId, field: field, path: path })
+                                                    });
+                                                    if (res.ok) {
+                                                        window.location.reload();
+                                                    } else {
+                                                        alert('Failed to remove document');
+                                                    }
+                                                } catch (e) {
+                                                    alert('Failed to remove document');
+                                                }
+                                            }
+                                        </script>
 
                                         <form action="{{ route('lead.update.info') }}" method="post">
                                             @csrf
