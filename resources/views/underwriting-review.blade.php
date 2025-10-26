@@ -14,7 +14,12 @@
                                     <a class="contactapp-title link-dark">
                                         <h1>Underwriting Review - #{{ $lead->id }}</h1>
                                     </a>
-                                    <a href="{{ route('underwriting') }}" class="btn btn-sm btn-outline-warning">Back</a>
+                                    <span>
+                                        <a href="{{ route('document.info', $lead->id) }}"
+                                            class="btn btn-sm btn-outline-info">Upload Docs</a>
+                                        <a href="{{ route('underwriting') }}"
+                                            class="btn btn-sm btn-outline-warning">Back</a>
+                                    </span>
                                 </div>
                             </div>
                         </header>
@@ -67,7 +72,10 @@
                                                         @if (!empty($arr))
                                                             @php $no = 1; @endphp
                                                             @foreach ($arr as $file)
-                                                                <a href="{{ asset($file) }}" class="btn-link small fw-semibold me-3" target="_blank">View {{ $label }}{{ $no > 1 ? $no : '' }}</a>
+                                                                <a href="{{ asset($file) }}"
+                                                                    class="btn-link small fw-semibold me-3"
+                                                                    target="_blank">View
+                                                                    {{ $label }}{{ $no > 1 ? $no : '' }}</a>
                                                                 @php $no++; @endphp
                                                             @endforeach
                                                         @else
@@ -79,11 +87,19 @@
                                                             <span class="badge badge-success me-2">Approved</span>
                                                             <span class="text-success" title="Locked">✔</span>
                                                         @else
-                                                            <select class="form-select" name="statuses[{{ $key }}]">
-                                                                <option value="" {{ $statusValue ? '' : 'selected' }}>Select</option>
-                                                                <option value="Approved" {{ $statusValue === 'Approved' ? 'selected' : '' }}>Approved</option>
-                                                                <option value="Disapproved" {{ $statusValue === 'Disapproved' ? 'selected' : '' }}>Disapproved</option>
-                                                                <option value="Docs Received" {{ $statusValue === 'Docs Received' ? 'selected' : '' }}>Docs Received</option>
+                                                            <select class="form-select"
+                                                                name="statuses[{{ $key }}]">
+                                                                <option value=""
+                                                                    {{ $statusValue ? '' : 'selected' }}>Select</option>
+                                                                <option value="Approved"
+                                                                    {{ $statusValue === 'Approved' ? 'selected' : '' }}>
+                                                                    Approved</option>
+                                                                <option value="Disapproved"
+                                                                    {{ $statusValue === 'Disapproved' ? 'selected' : '' }}>
+                                                                    Disapproved</option>
+                                                                <option value="Docs Received"
+                                                                    {{ $statusValue === 'Docs Received' ? 'selected' : '' }}>
+                                                                    Docs Received</option>
                                                             </select>
                                                         @endif
                                                     </div>
@@ -95,6 +111,133 @@
                                             </div>
                                         </div>
                                     </form>
+
+
+                                    {{-- ============================== E-Agreement ============================== --}}
+                                    <div class="card p-5">
+                                        <h5 class="mb-5">E-agreement</h5>
+                                        <form action="{{ route('lead.update.agreement') }}" method="post">
+                                            @csrf
+                                            <input type="number" name="lead_id" value="{{ $lead->id }}" hidden>
+
+                                            <input type="number" name="id" value="{{ $lead->eagreement->id ?? '' }}"
+                                                hidden>
+                                            <div class="row gx-3">
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Loan Disposition*</label>
+                                                        <select class="form-select" name="disposition" value=""
+                                                            required>
+                                                            <option selected="">--</option>
+                                                            <option value="Pending">Pending</option>
+                                                            <option value="Approved">Approved</option>
+                                                            <option value="Rejected">Rejected</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Loan Applied Amount</label>
+                                                        <input class="form-control" type="number" name="applied_amount" value="{{ $lead->loan_amount }}"
+                                                            value="" placeholder="Amount" disabled />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Loan Approved Amount*</label>
+                                                        <input class="form-control" type="number" name="approved_amount"
+                                                            value="" placeholder="Amount" required />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Duration (In Days)* </label>
+                                                        <input class="form-control" type="number" name="duration"
+                                                            value="" placeholder="Duration" required />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Rate of intrest per day (%)*
+                                                        </label>
+                                                        <input class="form-control" type="number" name="interest_rate"
+                                                            value="" placeholder="Rate of intrest per day" required />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Processing fees </label>
+                                                        <input class="form-control" type="number" name="processing_fees"
+                                                            value="" placeholder="Processing fees" required />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">EMI/Repayment Amount </label>
+                                                        <input class="form-control" type="number"
+                                                            name="repayment_amount" value=""
+                                                            placeholder="EMI/Repayment Amount" required />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Amount to be Disbursed </label>
+                                                        <input class="form-control" type="number"
+                                                            name="disbursed_amount" value=""
+                                                            placeholder="Amount to be Disbursed" required />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Loan Application Number </label>
+                                                        <input class="form-control" type="number"
+                                                            name="application_number" value=""
+                                                            placeholder="Loan Application Number" required />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Loan Application Status By
+                                                            Customer*</label>
+                                                        <select class="form-select" name="customer_application_status"
+                                                            value="" required>
+                                                            <option selected="">--</option>
+                                                            <option value="Pending">Pending</option>
+                                                            <option value="Approved">Approved</option>
+                                                            <option value="Rejected">Rejected</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Signed Loan Application </label>
+                                                        <input class="form-control" type="file"
+                                                            name="signed_application" required />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Note*</label>
+                                                        <textarea name="notes" class="form-control" id="">  </textarea>
+                                                        @error('notes')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="modal-footer align-items-center">
+                                                    <button type="submit" class="btn btn-primary">Approve &
+                                                        Upload Loan
+                                                        Application </button>
+                                                </div>
+                                            </div>
+
+                                        </form>
+
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -104,5 +247,3 @@
         </div>
     </div>
 @endsection
-
-

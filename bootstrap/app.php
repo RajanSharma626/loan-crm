@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'check.active' => \App\Http\Middleware\CheckUserStatus::class,
+            'underwriting.access' => \App\Http\Middleware\UnderwritingAccessMiddleware::class,
+            'leads.access' => \App\Http\Middleware\LeadsAccessMiddleware::class,
+            'document.upload.access' => \App\Http\Middleware\DocumentUploadAccessMiddleware::class,
+            'disbursal.access' => \App\Http\Middleware\DisbursalAccessMiddleware::class,
+            'manager.access' => \App\Http\Middleware\ManagerAccessMiddleware::class,
         ]);
 
         // Add this line to exclude your route from CSRF

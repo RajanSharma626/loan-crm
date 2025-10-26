@@ -36,7 +36,21 @@ class AuthController extends Controller
         $remember = $request->has('remember');
 
         if (Auth::attempt($credentials, $remember)) {
-            return redirect()->intended('/leads');
+            // Redirect based on user role
+            $role = Auth::user()->role;
+            
+            switch ($role) {
+                case 'Admin':
+                    return redirect('/leads');
+                case 'Manager':
+                    return redirect('/leads');
+                case 'Agent':
+                    return redirect('/leads');
+                case 'Underwriter':
+                    return redirect('/underwriting');
+                default:
+                    return redirect('/leads');
+            }
         }
 
         return back()->with('error', 'Invalid users ID or Password');

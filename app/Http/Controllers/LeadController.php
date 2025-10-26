@@ -365,4 +365,14 @@ class LeadController extends Controller
 
         return redirect()->back()->with('success', 'Document removed successfully.');
     }
+
+    public function disbursal()
+    {
+        $leads = Lead::with(['agent', 'document'])->whereNull('deleted_at')->paginate(10);
+        $agents = User::where('role', 'Agent')
+            ->where('status', 'Active')
+            ->whereNull('deleted_at')
+            ->get();
+        return view('disbursal', compact('leads', 'agents'));
+    }
 }

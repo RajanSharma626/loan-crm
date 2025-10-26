@@ -214,6 +214,7 @@
                                                         <option value="Admin">Admin</option>
                                                         <option value="Manager">Manager</option>
                                                         <option value="Agent">Agent</option>
+                                                        <option value="Underwriter">Underwriter</option>
                                                     </select>
                                                 </div>
                                             </div>

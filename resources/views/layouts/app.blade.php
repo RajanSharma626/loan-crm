@@ -115,6 +115,7 @@
                 <div class="menu-content-wrap">
                     <div class="menu-group">
                         <ul class="navbar-nav flex-column">
+                            @if (Auth::check() && (Auth::user()->role === 'Admin' || Auth::user()->role === 'Manager' || Auth::user()->role === 'Agent'))
                             <li
                                 class="nav-item mb-2 {{ Route::currentRouteName() == 'leads' ? 'active' : '' }} {{ Route::currentRouteName() == 'lead.info' ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('leads') }}">
@@ -138,6 +139,8 @@
                                     {{-- <span class="badge badge-sm badge-soft-pink ms-auto">Hot</span> --}}
                                 </a>
                             </li>
+                            @endif
+                            @if (Auth::check())
                             <li
                                 class="nav-item mb-2 {{ Route::currentRouteName() == 'upload.docs' ? 'active' : '' }} {{ Route::currentRouteName() == 'document.info' ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('upload.docs') }}">
@@ -161,8 +164,10 @@
                                     {{-- <span class="badge badge-sm badge-soft-pink ms-auto">Hot</span> --}}
                                 </a>
                             </li>
+                            @endif
+                            @if (Auth::check() && (Auth::user()->role === 'Admin' || Auth::user()->role === 'Manager' || Auth::user()->role === 'Underwriter'))
                             <li
-                                class="nav-item mb-2 {{ Route::currentRouteName() == 'underwriting' ? 'active' : '' }}">
+                                class="nav-item mb-2 {{ Route::currentRouteName() == 'underwriting' ? 'active' : '' }} {{ Route::currentRouteName() == 'underwriting.review' ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('underwriting') }}">
                                     <span class="nav-icon-wrap">
                                         <span class="svg-icon">
@@ -184,6 +189,32 @@
                                     {{-- <span class="badge badge-sm badge-soft-pink ms-auto">Hot</span> --}}
                                 </a>
                             </li>
+                            @endif
+                            @if (Auth::check() && (Auth::user()->role === 'Admin' || Auth::user()->role === 'Manager'))
+                            <li
+                                class="nav-item mb-2 {{ Route::currentRouteName() == 'disbursal' ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('disbursal') }}">
+                                    <span class="nav-icon-wrap">
+                                        <span class="svg-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-template" width="24"
+                                                height="24" viewBox="0 0 24 24" stroke-width="2"
+                                                stroke="currentColor" fill="none" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <rect x="4" y="4" width="16" height="4" rx="1" />
+                                                <rect x="4" y="12" width="6" height="8" rx="1" />
+                                                <line x1="14" y1="12" x2="20" y2="12" />
+                                                <line x1="14" y1="16" x2="20" y2="16" />
+                                                <line x1="14" y1="20" x2="20" y2="20" />
+                                            </svg>
+                                        </span>
+                                    </span>
+                                    <span class="nav-link-text">Disbursal</span>
+                                    {{-- <span class="badge badge-sm badge-soft-pink ms-auto">Hot</span> --}}
+                                </a>
+                            </li>
+                            @endif
                             @if (Auth::check() && Auth::user()->role === 'Admin')
                                 <li class="nav-item mb-3 {{ Route::currentRouteName() == 'emp' ? 'active' : '' }}">
                                     <a class="nav-link" href="{{ route('emp') }}">
@@ -211,6 +242,28 @@
                                         {{-- <span class="badge badge-sm badge-soft-pink ms-auto">Hot</span> --}}
                                     </a>
                                 </li>
+                            @endif
+                            @if (Auth::check() && Auth::user()->role === 'Admin')
+                            <li class="nav-item mb-2 {{ Route::currentRouteName() == 'reports' ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('reports') }}">
+                                    <span class="nav-icon-wrap">
+                                        <span class="svg-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-chart-bar" width="24"
+                                                height="24" viewBox="0 0 24 24" stroke-width="2"
+                                                stroke="currentColor" fill="none" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <rect x="3" y="12" width="6" height="8" rx="1" />
+                                                <rect x="9" y="8" width="6" height="12" rx="1" />
+                                                <rect x="15" y="4" width="6" height="16" rx="1" />
+                                                <line x1="4" y1="20" x2="18" y2="20" />
+                                            </svg>
+                                        </span>
+                                    </span>
+                                    <span class="nav-link-text">Reports</span>
+                                </a>
+                            </li>
                             @endif
                         </ul>
                     </div>
