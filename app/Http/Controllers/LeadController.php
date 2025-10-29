@@ -15,7 +15,16 @@ class LeadController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Lead::with('agent')->whereNull('deleted_at');
+        $query = Lead::with('agent', 'eagreement')->whereNull('deleted_at');
+
+        // Exclude leads where client has accepted the agreement (move to disbursal)
+        $query->where(function($q) {
+            $q->doesntHave('eagreement')
+              ->orWhereHas('eagreement', function($subQ) {
+                  $subQ->where('is_accepted', false)
+                       ->orWhereNull('is_accepted');
+              });
+        });
 
         // Admin vs Agent leads
         if (Auth::user()->role != 'Admin') {
@@ -152,19 +161,49 @@ class LeadController extends Controller
         $lead->save();
 
         $eagreement = $lead->eagreement ?? new Eagreement();
+        $isNew = !$eagreement->exists;
+        
         $eagreement->lead_id             = $lead->id;
         $eagreement->disposition         = $request->disposition;
-        $eagreement->applied_amount      = $request->applied_amount;
+        // applied_amount is disabled, so use lead's loan_amount
+        $eagreement->applied_amount      = $request->applied_amount ?? $lead->loan_amount;
         $eagreement->approved_amount     = $request->approved_amount;
-        $eagreement->duration            = $request->duration;
+        // duration is disabled, so use lead's duration
+        $eagreement->duration            = $request->duration ?? $lead->duration ?? $eagreement->duration;
         $eagreement->interest_rate       = $request->interest_rate;
         $eagreement->processing_fees     = $request->processing_fees;
-        $eagreement->repayment_amount    = $request->repayment_amount;
-        $eagreement->disbursed_amount    = $request->disbursed_amount;
-        $eagreement->application_number  = $request->application_number;
-        $eagreement->customer_application_status = 'Pending';
+        $eagreement->repayment_amount    = $request->repayment_amount ?? null;
+        $eagreement->disbursed_amount    = $request->disbursed_amount ?? null;
+        
+        // Generate Loan Application Number if it doesn't exist
+        if (empty($eagreement->application_number)) {
+            // Get the last application number
+            $lastAgreement = Eagreement::whereNotNull('application_number')
+                ->where('application_number', 'like', 'RSHLP2025%')
+                ->orderBy('application_number', 'desc')
+                ->first();
+            
+            if ($lastAgreement && preg_match('/RSHLP2025(\d+)/', $lastAgreement->application_number, $matches)) {
+                $nextNumber = intval($matches[1]) + 1;
+            } else {
+                $nextNumber = 1;
+            }
+            
+            $eagreement->application_number = 'RSHLP2025' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+        }
+        
+        // Generate acceptance token when loan is approved and application number exists
+        if (!empty($eagreement->application_number) && empty($eagreement->acceptance_token) && !$eagreement->is_accepted) {
+            $eagreement->acceptance_token = bin2hex(random_bytes(32)); // 64 character token
+            $eagreement->token_expires_at = now()->addDays(30); // Token expires in 30 days
+        }
+        
+        // Always allow updating customer_application_status and notes
+        $eagreement->customer_application_status = $request->customer_application_status ?? ($eagreement->customer_application_status ?? 'Pending');
+        $eagreement->notes = $request->notes ?? null;
+        
         if ($request->hasFile('signed_application')) {
-            if ($eagreement && file_exists(public_path($eagreement->signed_application))) {
+            if ($eagreement->signed_application && file_exists(public_path($eagreement->signed_application))) {
                 unlink(public_path($eagreement->signed_application));
             }
             $fileName = time() . '_' . str_replace(' ', '_', strtolower($request->file('signed_application')->getClientOriginalName()));
@@ -178,7 +217,27 @@ class LeadController extends Controller
 
         $eagreement->save();
 
-        return redirect()->route('lead.info', $lead->id)->with('success', 'Lead Agreement updated successfully.');
+        // Create note for e-agreement update
+        if (!empty($request->notes)) {
+            Note::create([
+                'lead_id' => $lead->id,
+                'updated_by' => Auth::id(),
+                'note' => 'E-Agreement Updated: ' . ($request->notes),
+                'disposition' => $request->disposition,
+                'lead_assign_by' => Auth::id(),
+            ]);
+        } else {
+            // Create note even if no notes field is filled, to track the update
+            Note::create([
+                'lead_id' => $lead->id,
+                'updated_by' => Auth::id(),
+                'note' => 'E-Agreement Updated. Application Number: ' . ($eagreement->application_number ?? 'Pending'),
+                'disposition' => $request->disposition,
+                'lead_assign_by' => Auth::id(),
+            ]);
+        }
+
+        return redirect()->route('underwriting.review', $lead->id)->with('success', 'Lead Agreement updated successfully.');
     }
 
     public function storeDocument(Request $request)
@@ -260,7 +319,18 @@ class LeadController extends Controller
 
     public function uploadDocs()
     {
-        $leads = Lead::with(['agent', 'document'])->whereNull('deleted_at')->paginate(10);
+        $query = Lead::with(['agent', 'document', 'eagreement'])->whereNull('deleted_at');
+
+        // Exclude leads where client has accepted the agreement (move to disbursal)
+        $query->where(function($q) {
+            $q->doesntHave('eagreement')
+              ->orWhereHas('eagreement', function($subQ) {
+                  $subQ->where('is_accepted', false)
+                       ->orWhereNull('is_accepted');
+              });
+        });
+
+        $leads = $query->paginate(10);
         $agents = User::where('role', 'Agent')
             ->where('status', 'Active')
             ->whereNull('deleted_at')
@@ -278,7 +348,18 @@ class LeadController extends Controller
 
     public function underwriting()
     {
-        $leads = Lead::with(['agent', 'document'])->whereNull('deleted_at')->paginate(10);
+        $query = Lead::with(['agent', 'document', 'eagreement'])->whereNull('deleted_at');
+
+        // Exclude leads where client has accepted the agreement (move to disbursal)
+        $query->where(function($q) {
+            $q->doesntHave('eagreement')
+              ->orWhereHas('eagreement', function($subQ) {
+                  $subQ->where('is_accepted', false)
+                       ->orWhereNull('is_accepted');
+              });
+        });
+
+        $leads = $query->paginate(10);
         $agents = User::where('role', 'Agent')
             ->where('status', 'Active')
             ->whereNull('deleted_at')
@@ -288,7 +369,7 @@ class LeadController extends Controller
 
     public function reviewDocs($id)
     {
-        $lead = Lead::findOrFail($id);
+        $lead = Lead::with('eagreement')->findOrFail($id);
         $doc = Documents::where('lead_id', $id)->first();
         return view('underwriting-review', compact('lead', 'doc'));
     }
@@ -319,6 +400,26 @@ class LeadController extends Controller
             }
         }
         $doc->save();
+        
+        // Create note for document status update
+        $lead = Lead::findOrFail($leadId);
+        $statusUpdates = [];
+        foreach ($request->statuses as $docType => $status) {
+            if (in_array($status, ['Approved', 'Disapproved', 'Docs Received'])) {
+                $statusUpdates[] = ucfirst(str_replace('_', ' ', $docType)) . ': ' . $status;
+            }
+        }
+        
+        if (!empty($statusUpdates)) {
+            Note::create([
+                'lead_id' => $leadId,
+                'updated_by' => Auth::id(),
+                'note' => 'Document Status Updated: ' . implode(', ', $statusUpdates),
+                'disposition' => $lead->disposition ?? 'Pending',
+                'lead_assign_by' => Auth::id(),
+            ]);
+        }
+        
         return redirect()->route('underwriting.review', $leadId)->with('success', 'Document statuses updated.');
     }
 
@@ -368,11 +469,116 @@ class LeadController extends Controller
 
     public function disbursal()
     {
-        $leads = Lead::with(['agent', 'document'])->whereNull('deleted_at')->paginate(10);
+        $query = Lead::with(['agent', 'document', 'eagreement'])->whereNull('deleted_at');
+
+        // Only show leads where client has accepted the agreement
+        $query->whereHas('eagreement', function($q) {
+            $q->where('is_accepted', true);
+        });
+
+        $leads = $query->orderBy('created_at', 'desc')->paginate(10);
         $agents = User::where('role', 'Agent')
             ->where('status', 'Active')
             ->whereNull('deleted_at')
             ->get();
         return view('disbursal', compact('leads', 'agents'));
+    }
+
+    public function disbursalInfo($id)
+    {
+        $lead = Lead::with(['agent', 'document', 'eagreement', 'notesRelation.user', 'notesRelation.assignBy'])->findOrFail($id);
+        
+        // Ensure this lead has an accepted e-agreement
+        if (!$lead->eagreement || !$lead->eagreement->is_accepted) {
+            return redirect()->route('disbursal')->with('error', 'This lead is not in disbursal status.');
+        }
+        
+        $doc = Documents::where('lead_id', $lead->id)->first();
+        return view('disbursal-info', compact('lead', 'doc'));
+    }
+
+    public function verifyAcceptance($token)
+    {
+        $eagreement = Eagreement::where('acceptance_token', $token)
+            ->where('is_accepted', false)
+            ->with('lead')
+            ->first();
+
+        if (!$eagreement) {
+            return view('acceptance-expired');
+        }
+
+        if ($eagreement->token_expires_at && $eagreement->token_expires_at < now()) {
+            return view('acceptance-expired');
+        }
+
+        $lead = $eagreement->lead;
+        
+        return view('acceptance-verification', compact('eagreement', 'lead'));
+    }
+
+    public function processAcceptance(Request $request, $token)
+    {
+        $request->validate([
+            'signature' => 'required|string|max:255',
+            'place' => 'required|string|max:255',
+        ]);
+
+        $eagreement = Eagreement::where('acceptance_token', $token)
+            ->where('is_accepted', false)
+            ->first();
+
+        if (!$eagreement) {
+            return redirect()->route('acceptance.expired');
+        }
+
+        if ($eagreement->token_expires_at && $eagreement->token_expires_at < now()) {
+            return redirect()->route('acceptance.expired');
+        }
+
+        // Get client IP address
+        $ipAddress = $request->ip();
+        if ($request->header('X-Forwarded-For')) {
+            $ipAddress = $request->header('X-Forwarded-For');
+        }
+
+        // Update eagreement with acceptance details
+        $eagreement->signature = $request->signature;
+        $eagreement->acceptance_place = $request->place;
+        $eagreement->acceptance_ip = $ipAddress;
+        $eagreement->acceptance_date = now();
+        $eagreement->is_accepted = true;
+        $eagreement->customer_application_status = 'Approved';
+        $eagreement->acceptance_token = null; // Clear token after acceptance
+        $eagreement->save();
+
+        // Create note for client acceptance
+        $lead = $eagreement->lead;
+        Note::create([
+            'lead_id' => $lead->id,
+            'updated_by' => null, // Client acceptance, no user ID
+            'note' => 'Client Accepted E-Agreement. Signature: ' . $request->signature . ', Place: ' . $request->place . ', IP: ' . $ipAddress . ', Date: ' . now()->format('d M, Y h:i A'),
+            'disposition' => 'Approved',
+            'lead_assign_by' => $lead->agent_id ?? null,
+        ]);
+
+        // Encode application number for success page
+        $encodedNumber = base64_encode($eagreement->application_number);
+
+        return redirect()->route('acceptance.success', ['success' => $encodedNumber]);
+    }
+
+    public function acceptanceSuccess($encodedNumber)
+    {
+        $applicationNumber = base64_decode($encodedNumber);
+        $eagreement = Eagreement::where('application_number', $applicationNumber)
+            ->where('is_accepted', true)
+            ->first();
+
+        if (!$eagreement) {
+            return redirect()->route('acceptance.expired');
+        }
+
+        return view('acceptance-success', compact('eagreement'));
     }
 }

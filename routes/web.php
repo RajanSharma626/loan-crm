@@ -52,6 +52,7 @@ Route::middleware(['auth', 'check.active'])->group(function () {
     //disbursal - restricted to Admin, Manager, and Underwriter
     Route::middleware('disbursal.access')->group(function () {
         Route::get('/disbursal', [LeadController::class, 'disbursal'])->name('disbursal');
+        Route::get('/disbursal/info/{id}', [LeadController::class, 'disbursalInfo'])->name('disbursal.info');
     });
 
     // users routes restricted to admin only
@@ -69,3 +70,11 @@ Route::middleware(['auth', 'check.active'])->group(function () {
 
 // form submit api
 // Route::post('/apply/submit', [ApiController::class, 'applySubmit'])->name('apply.submit');
+
+// Public routes for loan acceptance (no authentication required)
+Route::get('/verify/{token}', [LeadController::class, 'verifyAcceptance'])->name('acceptance.verify');
+Route::post('/verify/{token}', [LeadController::class, 'processAcceptance'])->name('acceptance.process');
+Route::get('/success/{success}', [LeadController::class, 'acceptanceSuccess'])->name('acceptance.success');
+Route::get('/expired', function() {
+    return view('acceptance-expired');
+})->name('acceptance.expired');

@@ -243,7 +243,7 @@
                                     </a>
                                 </li>
                             @endif
-                            @if (Auth::check() && Auth::user()->role === 'Admin')
+                            {{-- @if (Auth::check() && Auth::user()->role === 'Admin')
                             <li class="nav-item mb-2 {{ Route::currentRouteName() == 'reports' ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('reports') }}">
                                     <span class="nav-icon-wrap">
@@ -264,7 +264,7 @@
                                     <span class="nav-link-text">Reports</span>
                                 </a>
                             </li>
-                            @endif
+                            @endif --}}
                         </ul>
                     </div>
 

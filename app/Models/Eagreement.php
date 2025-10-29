@@ -19,10 +19,23 @@ class Eagreement extends Model
         'repayment_amount',
         'disbursed_amount',
         'application_number',
+        'acceptance_token',
+        'token_expires_at',
+        'signature',
+        'acceptance_place',
+        'acceptance_ip',
+        'acceptance_date',
+        'is_accepted',
         'customer_application_status',
         'signed_application',
         'notes',
         'updated_by'
+    ];
+
+    protected $casts = [
+        'token_expires_at' => 'datetime',
+        'acceptance_date' => 'datetime',
+        'is_accepted' => 'boolean',
     ];
 
     public function lead()

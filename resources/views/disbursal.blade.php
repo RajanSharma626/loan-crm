@@ -167,20 +167,12 @@
                                                                 @endif
                                                                 <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover"
                                                                     data-bs-toggle="tooltip" data-placement="top"
-                                                                    title="Edit" data-bs-original-title="Edit"
-                                                                    href="{{ route('lead.info', $lead->id) }}"><span
+                                                                    title="View Info" data-bs-original-title="View Disbursal Info"
+                                                                    href="{{ route('disbursal.info', $lead->id) }}"><span
                                                                         class="icon"><span class="feather-icon"><i
-                                                                                data-feather="edit"></i></span></span></a>
+                                                                                data-feather="eye"></i></span></span></a>
 
-                                                                @if (Auth::user()->role == 'Admin')
-                                                                    <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover del-button"
-                                                                        data-bs-toggle="tooltip" data-placement="top"
-                                                                        title="" data-bs-original-title="Delete"
-                                                                        href="{{ route('lead.delete', $lead->id) }}"
-                                                                        onclick="return confirm('Are you sure you want to delete this lead?');"><span
-                                                                            class="icon"><span class="feather-icon"><i
-                                                                                    data-feather="trash"></i></span></span></a>
-                                                                @endif
+                                                            
                                                             </div>
                                                         </div>
                                                     </td>
