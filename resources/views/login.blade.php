@@ -51,9 +51,9 @@
                                                     <div class="row gx-3">
                                                         <div class="form-group col-lg-12">
                                                             <div class="form-label-group">
-                                                                <label>users ID</label>
+                                                                <label>User ID</label>
                                                             </div>
-                                                            <input class="form-control" placeholder="users ID"
+                                                            <input class="form-control" placeholder="User ID"
                                                                 name="users_id" type="text"
                                                                 value="{{ old('users_id') }}">
                                                             @error('users_id')

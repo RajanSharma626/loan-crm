@@ -192,7 +192,7 @@
                             @endif
                             @if (Auth::check() && (Auth::user()->role === 'Admin' || Auth::user()->role === 'Manager'))
                             <li
-                                class="nav-item mb-2 {{ Route::currentRouteName() == 'disbursal' ? 'active' : '' }}">
+                                class="nav-item mb-2 {{ Route::currentRouteName() == 'disbursal' ? 'active' : '' }} {{ Route::currentRouteName() == 'disbursal.info' ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('disbursal') }}">
                                     <span class="nav-icon-wrap">
                                         <span class="svg-icon">
@@ -207,7 +207,7 @@
                                                 <line x1="14" y1="12" x2="20" y2="12" />
                                                 <line x1="14" y1="16" x2="20" y2="16" />
                                                 <line x1="14" y1="20" x2="20" y2="20" />
-                                            </svg>
+                                            </svg> 
                                         </span>
                                     </span>
                                     <span class="nav-link-text">Disbursal</span>
