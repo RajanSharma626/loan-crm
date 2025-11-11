@@ -541,22 +541,22 @@
                                                             <select class="form-select" name="disposition"
                                                                 value="{{ old('disposition') }}" required>
                                                                 <option value="" selected disabled>--</option>
-                                                                <option value="Open">Open</option>
-                                                                <option value="Closed">Closed</option>
-                                                                <option value="Ringing">Ringing</option>
-                                                                <option value="Busy">Busy</option>
-                                                                <option value="Not reachable">Not reachable</option>
-                                                                <option value="Wrong number">Wrong number</option>
-                                                                <option value="Out of scope">Out of scope</option>
-                                                                <option value="Call back">Call back</option>
-                                                                <option value="Follow up">Follow up</option>
-                                                                <option value="Rejected">Rejected</option>
-                                                                <option value="Language barrier">Language barrier</option>
-                                                                <option value="Nc Rejected">Nc Rejected</option>
-                                                                <option value="Docs received">Docs received</option>
-                                                                <option value="Approved">Approved</option>
-                                                                <option value="Disbursed">Disbursed</option>
-                                                                <option value="Reopen">Reopen</option>
+                                                                <option value="Open" {{ $lead->disposition == 'Open' ? 'selected' : '' }}>Open</option>
+                                                                <option value="Closed" {{ $lead->disposition == 'Closed' ? 'selected' : '' }}>Closed</option>
+                                                                <option value="Ringing" {{ $lead->disposition == 'Ringing' ? 'selected' : '' }}>Ringing</option>
+                                                                <option value="Busy" {{ $lead->disposition == 'Busy' ? 'selected' : '' }}>Busy</option>
+                                                                <option value="Not reachable" {{ $lead->disposition == 'Not reachable' ? 'selected' : '' }}>Not reachable</option>
+                                                                <option value="Wrong number" {{ $lead->disposition == 'Wrong number' ? 'selected' : '' }}>Wrong number</option>
+                                                                <option value="Out of scope" {{ $lead->disposition == 'Out of scope' ? 'selected' : '' }}>Out of scope</option>
+                                                                <option value="Call back" {{ $lead->disposition == 'Call back' ? 'selected' : '' }}>Call back</option>
+                                                                <option value="Follow up" {{ $lead->disposition == 'Follow up' ? 'selected' : '' }}>Follow up</option>
+                                                                <option value="Rejected" {{ $lead->disposition == 'Rejected' ? 'selected' : '' }}>Rejected</option>
+                                                                <option value="Language barrier" {{ $lead->disposition == 'Language barrier' ? 'selected' : '' }}>Language barrier</option>
+                                                                <option value="Nc Rejected" {{ $lead->disposition == 'Nc Rejected' ? 'selected' : '' }}>Nc Rejected</option>
+                                                                <option value="Docs received" {{ $lead->disposition == 'Docs received' ? 'selected' : '' }}>Docs received</option>
+                                                                <option value="Approved" {{ $lead->disposition == 'Approved' ? 'selected' : '' }}>Approved</option>
+                                                                <option value="Disbursed" {{ $lead->disposition == 'Disbursed' ? 'selected' : '' }}>Disbursed</option>
+                                                                <option value="Reopen" {{ $lead->disposition == 'Reopen' ? 'selected' : '' }}>Reopen</option>
                                                             </select>
                                                             @error('disposition')
                                                                 <span class="text-danger">{{ $message }}</span>

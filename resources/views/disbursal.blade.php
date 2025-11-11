@@ -35,60 +35,9 @@
                                     </div>
                                 @endif
 
-                                <form method="GET" action="{{ route('leads') }}" class="mb-3">
+                                <form method="GET" action="{{ route('disbursal') }}" class="mb-3">
                                     <div class="row">
-                                        <div class="col-md-3">
-                                            <select name="disposition" class="form-select" onchange="this.form.submit()">
-                                                <option value="">-- Filter by Disposition --</option>
-                                                <option value="Open"
-                                                    {{ request('disposition') == 'Open' ? 'selected' : '' }}>Open</option>
-                                                <option value="Closed"
-                                                    {{ request('disposition') == 'Closed' ? 'selected' : '' }}>Closed
-                                                </option>
-                                                <option value="Ringing"
-                                                    {{ request('disposition') == 'Ringing' ? 'selected' : '' }}>Ringing
-                                                </option>
-                                                <option value="Busy"
-                                                    {{ request('disposition') == 'Busy' ? 'selected' : '' }}>Busy</option>
-                                                <option value="Not reachable"
-                                                    {{ request('disposition') == 'Not reachable' ? 'selected' : '' }}>Not
-                                                    reachable</option>
-                                                <option value="Wrong number"
-                                                    {{ request('disposition') == 'Wrong number' ? 'selected' : '' }}>Wrong
-                                                    number</option>
-                                                <option value="Out of scope"
-                                                    {{ request('disposition') == 'Out of scope' ? 'selected' : '' }}>Out of
-                                                    scope</option>
-                                                <option value="Call back"
-                                                    {{ request('disposition') == 'Call back' ? 'selected' : '' }}>Call back
-                                                </option>
-                                                <option value="Follow up"
-                                                    {{ request('disposition') == 'Follow up' ? 'selected' : '' }}>Follow up
-                                                </option>
-                                                <option value="Rejected"
-                                                    {{ request('disposition') == 'Rejected' ? 'selected' : '' }}>Rejected
-                                                </option>
-                                                <option value="Language barrier"
-                                                    {{ request('disposition') == 'Language barrier' ? 'selected' : '' }}>
-                                                    Language barrier</option>
-                                                <option value="Nc Rejected"
-                                                    {{ request('disposition') == 'Nc Rejected' ? 'selected' : '' }}>Nc
-                                                    Rejected</option>
-                                                <option value="Docs received"
-                                                    {{ request('disposition') == 'Docs received' ? 'selected' : '' }}>Docs
-                                                    received</option>
-                                                <option value="Approved"
-                                                    {{ request('disposition') == 'Approved' ? 'selected' : '' }}>Approved
-                                                </option>
-                                                <option value="Disbursed"
-                                                    {{ request('disposition') == 'Disbursed' ? 'selected' : '' }}>Disbursed
-                                                </option>
-                                                <option value="Reopen"
-                                                    {{ request('disposition') == 'Reopen' ? 'selected' : '' }}>Reopen
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <select name="date_filter" id="date_filter" class="form-select">
                                                 <option value="">-- Date: All --</option>
                                                 <option value="today" {{ request('date_filter') == 'today' ? 'selected' : '' }}>Today</option>
@@ -100,7 +49,7 @@
                                                 <option value="custom" {{ request('date_filter') == 'custom' ? 'selected' : '' }}>Custom range</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-4" id="custom_range_group" style="display: none;">
+                                        <div class="col-md-5" id="custom_range_group" style="display: none;">
                                             <div class="d-flex gap-2 align-items-center">
                                                 <input type="date" name="start_date" class="form-control" value="{{ request('start_date') }}">
                                                 <span class="mx-1">to</span>
@@ -171,8 +120,15 @@
                                                                     href="{{ route('disbursal.info', $lead->id) }}"><span
                                                                         class="icon"><span class="feather-icon"><i
                                                                                 data-feather="eye"></i></span></span></a>
+                                                                @if($lead->eagreement)
+                                                                <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover"
+                                                                    data-bs-toggle="tooltip" data-placement="top"
+                                                                    title="Download Agreement" data-bs-original-title="Download Agreement"
+                                                                    href="{{ route('agreement.pdf', $lead->id) }}" target="_blank"><span
+                                                                        class="icon"><span class="feather-icon"><i
+                                                                                data-feather="download"></i></span></span></a>
+                                                                @endif
 
-                                                            
                                                             </div>
                                                         </div>
                                                     </td>

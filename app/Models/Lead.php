@@ -28,7 +28,10 @@ class Lead extends Model
         'education',
         'disposition',
         'notes',
-        'agent_name'
+        'agent_name',
+        'agent_id',
+        'assign_to',
+        'assign_by',
     ];
 
     public function notesRelation()
@@ -44,6 +47,16 @@ class Lead extends Model
     public function agent()
     {
         return $this->belongsTo(User::class, 'agent_id', 'id');
+    }
+
+    public function assignedTo()
+    {
+        return $this->belongsTo(User::class, 'assign_to', 'id');
+    }
+
+    public function assignedBy()
+    {
+        return $this->belongsTo(User::class, 'assign_by', 'id');
     }
 
     public function document()

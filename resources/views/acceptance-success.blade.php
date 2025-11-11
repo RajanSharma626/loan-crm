@@ -93,8 +93,8 @@
             <strong>Application Number: {{ $eagreement->application_number }}</strong>
         </div>
 
-        <div>
-            <a href="#" class="download-link" onclick="window.print(); return false;">
+        <div class="mt-4">
+            <a class="download-link" href="{{ route('acceptance.success.pdf', $encoded) }}">
                 Download Your Accepted Loan Application
             </a>
         </div>

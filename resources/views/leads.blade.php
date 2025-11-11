@@ -74,18 +74,7 @@
                                                 <option value="Nc Rejected"
                                                     {{ request('disposition') == 'Nc Rejected' ? 'selected' : '' }}>Nc
                                                     Rejected</option>
-                                                <option value="Docs received"
-                                                    {{ request('disposition') == 'Docs received' ? 'selected' : '' }}>Docs
-                                                    received</option>
-                                                <option value="Approved"
-                                                    {{ request('disposition') == 'Approved' ? 'selected' : '' }}>Approved
-                                                </option>
-                                                <option value="Disbursed"
-                                                    {{ request('disposition') == 'Disbursed' ? 'selected' : '' }}>Disbursed
-                                                </option>
-                                                <option value="Reopen"
-                                                    {{ request('disposition') == 'Reopen' ? 'selected' : '' }}>Reopen
-                                                </option>
+                                               
                                             </select>
                                         </div>
                                         <div class="col-md-3">

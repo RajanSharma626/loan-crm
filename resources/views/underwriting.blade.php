@@ -35,6 +35,46 @@
                                     </div>
                                 @endif
 
+                                <form method="GET" action="{{ route('underwriting') }}" class="mb-3">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <select name="date_filter" id="date_filter" class="form-select">
+                                                <option value="">-- Date: All --</option>
+                                                <option value="today"
+                                                    {{ request('date_filter') == 'today' ? 'selected' : '' }}>Today</option>
+                                                <option value="yesterday"
+                                                    {{ request('date_filter') == 'yesterday' ? 'selected' : '' }}>Yesterday
+                                                </option>
+                                                <option value="last_7_days"
+                                                    {{ request('date_filter') == 'last_7_days' ? 'selected' : '' }}>Last 7
+                                                    days</option>
+                                                <option value="last_30_days"
+                                                    {{ request('date_filter') == 'last_30_days' ? 'selected' : '' }}>Last 30
+                                                    days</option>
+                                                <option value="this_month"
+                                                    {{ request('date_filter') == 'this_month' ? 'selected' : '' }}>This
+                                                    month</option>
+                                                <option value="last_month"
+                                                    {{ request('date_filter') == 'last_month' ? 'selected' : '' }}>Last
+                                                    month</option>
+                                                <option value="custom"
+                                                    {{ request('date_filter') == 'custom' ? 'selected' : '' }}>Custom range
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-5" id="custom_range_group" style="display: none;">
+                                            <div class="d-flex gap-2 align-items-center">
+                                                <input type="date" name="start_date" class="form-control"
+                                                    value="{{ request('start_date') }}">
+                                                <span class="mx-1">to</span>
+                                                <input type="date" name="end_date" class="form-control"
+                                                    value="{{ request('end_date') }}">
+                                                <button type="submit" class="btn btn-primary">Apply</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
 
                                 <div class="contact-list-view">
                                     <table class="table table-striped table-bordered w-100 mb-5">
@@ -137,22 +177,32 @@
                                                                     href="{{ route('underwriting.review', $lead->id) }}"><span
                                                                         class="icon"><span class="feather-icon"><i
                                                                                 data-feather="check-square"></i></span></span></a>
-                                                                @if($lead->eagreement && !empty($lead->eagreement->acceptance_token) && !$lead->eagreement->is_accepted)
-                                                                <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover"
-                                                                    data-bs-toggle="tooltip" data-placement="top"
-                                                                    title="Copy Acceptance Link" data-bs-original-title="Copy Acceptance Link"
-                                                                    href="javascript:void(0);"
-                                                                    onclick="copyAcceptanceLink(event, '{{ route('acceptance.verify', $lead->eagreement->acceptance_token) }}', '{{ $lead->id }}')"><span
-                                                                        class="icon"><span class="feather-icon"><i
-                                                                                data-feather="link"></i></span></span></a>
+                                                                @if ($lead->eagreement && $lead->eagreement->is_accepted)
+                                                                    <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover"
+                                                                        data-bs-toggle="tooltip" data-placement="top"
+                                                                        title="Download Agreement"
+                                                                        data-bs-original-title="Download Agreement"
+                                                                        href="{{ route('agreement.pdf', $lead->id) }}"
+                                                                        target="_blank"><span class="icon"><span
+                                                                                class="feather-icon"><i
+                                                                                    data-feather="download"></i></span></span></a>
+                                                                @endif
+                                                                @if ($lead->eagreement && !empty($lead->eagreement->acceptance_token) && !$lead->eagreement->is_accepted)
+                                                                    <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover"
+                                                                        data-bs-toggle="tooltip" data-placement="top"
+                                                                        title="Copy Acceptance Link"
+                                                                        data-bs-original-title="Copy Acceptance Link"
+                                                                        href="javascript:void(0);"
+                                                                        onclick="copyAcceptanceLink(event, '{{ route('acceptance.verify', $lead->eagreement->acceptance_token) }}', '{{ $lead->id }}')"><span
+                                                                            class="icon"><span class="feather-icon"><i
+                                                                                    data-feather="link"></i></span></span></a>
                                                                 @elseif($lead->eagreement && $lead->eagreement->is_accepted)
-                                                                <a class="btn btn-icon btn-flush-success btn-rounded flush-soft-hover"
-                                                                    data-bs-toggle="tooltip" data-placement="top"
-                                                                    title="Accepted" data-bs-original-title="Accepted"
-                                                                    href="javascript:void(0);"
-                                                                    disabled><span
-                                                                        class="icon"><span class="feather-icon"><i
-                                                                                data-feather="check-circle"></i></span></span></a>
+                                                                    <a class="btn btn-icon btn-flush-success btn-rounded flush-soft-hover"
+                                                                        data-bs-toggle="tooltip" data-placement="top"
+                                                                        title="Accepted" data-bs-original-title="Accepted"
+                                                                        href="javascript:void(0);" disabled><span
+                                                                            class="icon"><span class="feather-icon"><i
+                                                                                    data-feather="check-circle"></i></span></span></a>
                                                                 @endif
                                                             </div>
                                                         </div>
@@ -178,7 +228,8 @@
             </div>
         </div>
 
-        <div class="modal fade" id="assignAgentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="assignAgentModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -255,19 +306,21 @@
             document.body.appendChild(tempInput);
             tempInput.select();
             tempInput.setSelectionRange(0, 99999); // For mobile devices
-            
+
             try {
                 document.execCommand('copy');
                 // Show success notification
                 const btn = event.target.closest('a');
                 const originalTitle = btn.getAttribute('data-bs-original-title');
                 btn.setAttribute('data-bs-original-title', 'Link Copied!');
-                
+
                 // Try to update tooltip if Bootstrap is available
                 if (typeof bootstrap !== 'undefined') {
                     const tooltip = bootstrap.Tooltip.getInstance(btn);
                     if (tooltip) {
-                        tooltip.setContent({ '.tooltip-inner': 'Link Copied!' });
+                        tooltip.setContent({
+                            '.tooltip-inner': 'Link Copied!'
+                        });
                         tooltip.show();
                         setTimeout(() => {
                             tooltip.hide();
@@ -291,7 +344,7 @@
                     alert('Please copy manually: ' + link);
                 }
             }
-            
+
             document.body.removeChild(tempInput);
         }
     </script>

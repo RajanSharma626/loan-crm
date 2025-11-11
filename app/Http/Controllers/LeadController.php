@@ -7,9 +7,12 @@ use App\Models\Eagreement;
 use App\Models\Lead;
 use App\Models\Note;
 use App\Models\User;
+use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class LeadController extends Controller
 {
@@ -27,65 +30,16 @@ class LeadController extends Controller
         });
 
         // Admin vs Agent leads
-        if (Auth::user()->role != 'Admin') {
+        if (!in_array(Auth::user()->role, ['Admin', 'Manager'])) {
             $query->where('agent_id', Auth::user()->id);
         }
 
-        // Apply disposition filter if present
-        if ($request->has('disposition') && $request->disposition != '') {
-            $query->where('disposition', $request->disposition);
-        }
+        $query->where(function (Builder $subQuery) {
+            $subQuery->whereNull('disposition')
+                ->orWhereNotIn('disposition', ['Docs received', 'Approved', 'Disbursed', 'Reopen']);
+        });
 
-        // Apply date filter if present
-        $dateFilter = $request->get('date_filter');
-        $startDate = null;
-        $endDate = null;
-
-        if ($dateFilter) {
-            switch ($dateFilter) {
-                case 'today':
-                    $startDate = Carbon::today();
-                    $endDate = Carbon::today()->endOfDay();
-                    break;
-                case 'yesterday':
-                    $startDate = Carbon::yesterday()->startOfDay();
-                    $endDate = Carbon::yesterday()->endOfDay();
-                    break;
-                case 'last_7_days':
-                    $startDate = Carbon::now()->subDays(6)->startOfDay();
-                    $endDate = Carbon::now()->endOfDay();
-                    break;
-                case 'last_30_days':
-                    $startDate = Carbon::now()->subDays(29)->startOfDay();
-                    $endDate = Carbon::now()->endOfDay();
-                    break;
-                case 'this_month':
-                    $startDate = Carbon::now()->startOfMonth();
-                    $endDate = Carbon::now()->endOfMonth();
-                    break;
-                case 'last_month':
-                    $startDate = Carbon::now()->subMonth()->startOfMonth();
-                    $endDate = Carbon::now()->subMonth()->endOfMonth();
-                    break;
-                case 'custom':
-                    if ($request->filled('start_date') && $request->filled('end_date')) {
-                        try {
-                            $startDate = Carbon::parse($request->get('start_date'))->startOfDay();
-                            $endDate = Carbon::parse($request->get('end_date'))->endOfDay();
-                        } catch (\Exception $e) {
-                            // Ignore parsing errors and skip date filter
-                        }
-                    }
-                    break;
-                default:
-                    // 'all' or unknown -> no date filter
-                    break;
-            }
-        }
-
-        if ($startDate && $endDate) {
-            $query->whereBetween('created_at', [$startDate, $endDate]);
-        }
+        $this->applyLeadFilters($request, $query);
 
         $leads = $query->orderBy('created_at', 'desc')->paginate(10);
 
@@ -317,9 +271,9 @@ class LeadController extends Controller
         return redirect()->route('leads')->with('success', 'Lead deleted successfully.');
     }
 
-    public function uploadDocs()
+    public function uploadDocs(Request $request)
     {
-        $query = Lead::with(['agent', 'document', 'eagreement'])->whereNull('deleted_at');
+        $query = Lead::with(['agent', 'assignedTo', 'document', 'eagreement'])->whereNull('deleted_at');
 
         // Exclude leads where client has accepted the agreement (move to disbursal)
         $query->where(function($q) {
@@ -330,7 +284,10 @@ class LeadController extends Controller
               });
         });
 
-        $leads = $query->paginate(10);
+        $this->restrictToAssignedLeads($query);
+        $this->applyLeadFilters($request, $query);
+
+        $leads = $query->orderBy('created_at', 'desc')->paginate(10);
         $agents = User::where('role', 'Agent')
             ->where('status', 'Active')
             ->whereNull('deleted_at')
@@ -346,20 +303,16 @@ class LeadController extends Controller
         return view('doc-upload-form', compact('lead', 'doc', 'emp'));
     }
 
-    public function underwriting()
+    public function underwriting(Request $request)
     {
-        $query = Lead::with(['agent', 'document', 'eagreement'])->whereNull('deleted_at');
+        $query = Lead::with(['agent', 'assignedTo', 'document', 'eagreement'])
+            ->whereNull('deleted_at')
+            ->whereIn('disposition', ['Docs received', 'Approved', 'Reopen']);
 
-        // Exclude leads where client has accepted the agreement (move to disbursal)
-        $query->where(function($q) {
-            $q->doesntHave('eagreement')
-              ->orWhereHas('eagreement', function($subQ) {
-                  $subQ->where('is_accepted', false)
-                       ->orWhereNull('is_accepted');
-              });
-        });
+        $this->restrictToAssignedLeads($query);
+        $this->applyLeadFilters($request, $query);
 
-        $leads = $query->paginate(10);
+        $leads = $query->orderBy('created_at', 'desc')->paginate(10);
         $agents = User::where('role', 'Agent')
             ->where('status', 'Active')
             ->whereNull('deleted_at')
@@ -467,14 +420,19 @@ class LeadController extends Controller
         return redirect()->back()->with('success', 'Document removed successfully.');
     }
 
-    public function disbursal()
+    public function disbursal(Request $request)
     {
-        $query = Lead::with(['agent', 'document', 'eagreement'])->whereNull('deleted_at');
+        $query = Lead::with(['agent', 'assignedTo', 'document', 'eagreement'])->whereNull('deleted_at');
 
         // Only show leads where client has accepted the agreement
         $query->whereHas('eagreement', function($q) {
             $q->where('is_accepted', true);
         });
+
+        $query->where('disposition', 'Disbursed');
+
+        $this->restrictToAssignedLeads($query);
+        $this->applyLeadFilters($request, $query);
 
         $leads = $query->orderBy('created_at', 'desc')->paginate(10);
         $agents = User::where('role', 'Agent')
@@ -495,6 +453,168 @@ class LeadController extends Controller
         
         $doc = Documents::where('lead_id', $lead->id)->first();
         return view('disbursal-info', compact('lead', 'doc'));
+    }
+
+    protected function applyLeadFilters(Request $request, Builder $query): Builder
+    {
+        if ($request->filled('disposition')) {
+            $query->where('disposition', $request->input('disposition'));
+        }
+
+        $dateFilter = $request->get('date_filter');
+        $startDate = null;
+        $endDate = null;
+
+        if ($dateFilter) {
+            switch ($dateFilter) {
+                case 'today':
+                    $startDate = Carbon::today();
+                    $endDate = Carbon::today()->endOfDay();
+                    break;
+                case 'yesterday':
+                    $startDate = Carbon::yesterday()->startOfDay();
+                    $endDate = Carbon::yesterday()->endOfDay();
+                    break;
+                case 'last_7_days':
+                    $startDate = Carbon::now()->subDays(6)->startOfDay();
+                    $endDate = Carbon::now()->endOfDay();
+                    break;
+                case 'last_30_days':
+                    $startDate = Carbon::now()->subDays(29)->startOfDay();
+                    $endDate = Carbon::now()->endOfDay();
+                    break;
+                case 'this_month':
+                    $startDate = Carbon::now()->startOfMonth();
+                    $endDate = Carbon::now()->endOfMonth();
+                    break;
+                case 'last_month':
+                    $startDate = Carbon::now()->subMonth()->startOfMonth();
+                    $endDate = Carbon::now()->subMonth()->endOfMonth();
+                    break;
+                case 'custom':
+                    if ($request->filled('start_date') && $request->filled('end_date')) {
+                        try {
+                            $startDate = Carbon::parse($request->get('start_date'))->startOfDay();
+                            $endDate = Carbon::parse($request->get('end_date'))->endOfDay();
+                        } catch (\Throwable $e) {
+                            $startDate = null;
+                            $endDate = null;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        } elseif ($request->filled('start_date') && $request->filled('end_date')) {
+            try {
+                $startDate = Carbon::parse($request->get('start_date'))->startOfDay();
+                $endDate = Carbon::parse($request->get('end_date'))->endOfDay();
+            } catch (\Throwable $e) {
+                $startDate = null;
+                $endDate = null;
+            }
+        }
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        return $query;
+    }
+
+    protected function restrictToAssignedLeads(Builder $query): Builder
+    {
+        $user = Auth::user();
+
+        if (!$user || in_array($user->role, ['Admin', 'Manager', 'Underwriter'])) {
+            return $query;
+        }
+
+        if ($user->role === 'Agent') {
+            return $query->where('agent_id', $user->id);
+        }
+
+        return $query->where(function (Builder $assigned) use ($user) {
+            $assigned->where('assign_to', $user->id)
+                ->orWhere('agent_id', $user->id)
+                ->orWhereHas('eagreement', function ($sub) use ($user) {
+                    $sub->where('updated_by', $user->id);
+                });
+        });
+    }
+
+    public function agreementPdf(int $leadId)
+    {
+        $lead = Lead::with(['eagreement'])->findOrFail($leadId);
+
+        if (!$lead->eagreement) {
+            return redirect()->back()->with('error', 'Agreement not available for this lead.');
+        }
+
+        $storedPath = $lead->eagreement->signed_application ?? null;
+        if ($storedPath) {
+            $relativePath = ltrim(str_replace('/storage/', '', $storedPath), '/');
+            if (Storage::disk('public')->exists($relativePath)) {
+                $absolutePath = Storage::disk('public')->path($relativePath);
+                return response()->download(
+                    $absolutePath,
+                    'Loan-Agreement-' . ($lead->eagreement->application_number ?? $lead->id) . '.pdf'
+                );
+            }
+        }
+
+        $pdf = Pdf::loadView('agreements.pdf', [
+            'lead' => $lead,
+            'eagreement' => $lead->eagreement,
+        ])->setPaper('a4');
+
+        return $pdf->download('Loan-Agreement-' . ($lead->eagreement->application_number ?? $lead->id) . '.pdf');
+    }
+
+    public function agreementPdfByToken(string $token)
+    {
+        $eagreement = Eagreement::where('acceptance_token', $token)
+            ->with('lead')
+            ->first();
+
+        if (!$eagreement) {
+            return view('acceptance-expired');
+        }
+
+        $pdf = Pdf::loadView('agreements.pdf', [
+            'lead' => $eagreement->lead,
+            'eagreement' => $eagreement,
+        ])->setPaper('a4');
+
+        return $pdf->download('Loan-Agreement-' . ($eagreement->application_number ?? $eagreement->lead->id) . '.pdf');
+    }
+
+    public function agreementPdfByApplication(string $encodedNumber)
+    {
+        $applicationNumber = base64_decode($encodedNumber);
+        $eagreement = Eagreement::where('application_number', $applicationNumber)
+            ->where('is_accepted', true)
+            ->with('lead')
+            ->firstOrFail();
+
+        $storedPath = $eagreement->signed_application ?? null;
+        if ($storedPath) {
+            $relativePath = ltrim(str_replace('/storage/', '', $storedPath), '/');
+            if (Storage::disk('public')->exists($relativePath)) {
+                $absolutePath = Storage::disk('public')->path($relativePath);
+                return response()->download(
+                    $absolutePath,
+                    'Loan-Agreement-' . $eagreement->application_number . '.pdf'
+                );
+            }
+        }
+
+        $pdf = Pdf::loadView('agreements.pdf', [
+            'lead' => $eagreement->lead,
+            'eagreement' => $eagreement,
+        ])->setPaper('a4');
+
+        return $pdf->download('Loan-Agreement-' . ($eagreement->application_number ?? $eagreement->lead->id) . '.pdf');
     }
 
     public function verifyAcceptance($token)
@@ -562,6 +682,22 @@ class LeadController extends Controller
             'lead_assign_by' => $lead->agent_id ?? null,
         ]);
 
+        // Generate and persist customer agreement PDF
+        $lead->refresh();
+        $eagreement->refresh();
+
+        $pdf = Pdf::loadView('agreements.pdf', [
+            'lead' => $lead,
+            'eagreement' => $eagreement,
+        ])->setPaper('a4');
+
+        $fileName = ($eagreement->application_number ?? 'agreement-' . $lead->id) . '.pdf';
+        $storagePath = 'agreements/' . $fileName;
+        Storage::disk('public')->put($storagePath, $pdf->output());
+
+        $eagreement->signed_application = '/storage/' . $storagePath;
+        $eagreement->save();
+
         // Encode application number for success page
         $encodedNumber = base64_encode($eagreement->application_number);
 
@@ -579,6 +715,9 @@ class LeadController extends Controller
             return redirect()->route('acceptance.expired');
         }
 
-        return view('acceptance-success', compact('eagreement'));
+        return view('acceptance-success', [
+            'eagreement' => $eagreement,
+            'encoded' => $encodedNumber,
+        ]);
     }
 }

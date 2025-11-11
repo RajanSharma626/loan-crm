@@ -190,7 +190,7 @@
                                 </a>
                             </li>
                             @endif
-                            @if (Auth::check() && (Auth::user()->role === 'Admin' || Auth::user()->role === 'Manager'))
+                            @if (Auth::check() && in_array(Auth::user()->role, ['Admin', 'Manager', 'Underwriter']))
                             <li
                                 class="nav-item mb-2 {{ Route::currentRouteName() == 'disbursal' ? 'active' : '' }} {{ Route::currentRouteName() == 'disbursal.info' ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('disbursal') }}">

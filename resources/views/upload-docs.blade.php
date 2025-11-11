@@ -35,6 +35,31 @@
                                     </div>
                                 @endif
 
+                                <form method="GET" action="{{ route('upload.docs') }}" class="mb-3">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <select name="date_filter" id="date_filter" class="form-select">
+                                                <option value="">-- Date: All --</option>
+                                                <option value="today" {{ request('date_filter') == 'today' ? 'selected' : '' }}>Today</option>
+                                                <option value="yesterday" {{ request('date_filter') == 'yesterday' ? 'selected' : '' }}>Yesterday</option>
+                                                <option value="last_7_days" {{ request('date_filter') == 'last_7_days' ? 'selected' : '' }}>Last 7 days</option>
+                                                <option value="last_30_days" {{ request('date_filter') == 'last_30_days' ? 'selected' : '' }}>Last 30 days</option>
+                                                <option value="this_month" {{ request('date_filter') == 'this_month' ? 'selected' : '' }}>This month</option>
+                                                <option value="last_month" {{ request('date_filter') == 'last_month' ? 'selected' : '' }}>Last month</option>
+                                                <option value="custom" {{ request('date_filter') == 'custom' ? 'selected' : '' }}>Custom range</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-5" id="custom_range_group" style="display: none;">
+                                            <div class="d-flex gap-2 align-items-center">
+                                                <input type="date" name="start_date" class="form-control" value="{{ request('start_date') }}">
+                                                <span class="mx-1">to</span>
+                                                <input type="date" name="end_date" class="form-control" value="{{ request('end_date') }}">
+                                                <button type="submit" class="btn btn-primary">Apply</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
 
                                 <div class="contact-list-view">
                                     <table class="table table-striped table-bordered w-100 mb-5">
