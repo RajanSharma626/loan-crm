@@ -134,18 +134,18 @@
         .acceptance-form .signature-preview {
             font-family: 'GreatVibes', 'Brush Script MT', cursive;
             font-size: 42px;
-            color: #facc15;
+            color: #1d4ed8;
             letter-spacing: 1px;
             line-height: 1.1;
         }
         .acceptance-form .place-preview {
             font-family: 'GreatVibes', 'Brush Script MT', cursive;
             font-size: 32px;
-            color: #facc15;
+            color: #1d4ed8;
             letter-spacing: 0.8px;
         }
         .acceptance-form .btn-verify {
-            background-color: #facc15;
+            background-color: #1d4ed8;
             color: #111827;
             font-weight: 700;
             padding: 12px 45px;

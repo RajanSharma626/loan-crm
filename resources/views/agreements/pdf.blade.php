@@ -92,8 +92,9 @@
             border-bottom: 1px dotted #d1d5db;
             font-family: 'GreatVibes', 'Brush Script MT', cursive;
             font-size: 20px;
-            color: #d97706;
-            line-height: 1.1;
+            color: #1d4ed8;
+            text-shadow: 0.8px 0.8px 0 rgba(29, 78, 216, 0.35);
+            line-height: 1.05;
         }
         .signature-caption {
             font-size: 10px;
@@ -113,7 +114,6 @@
             font-weight: 600;
         }
         .signature-ip {
-            min-width: 140px;
             text-align: right;
             color: #1f2937;
         }
@@ -150,16 +150,19 @@
     <div class="signature-area">
         <div class="signature-row">
             <div class="signature-box">
+                @php
+                    $rawSignature = $eagreement->signature ?? ($lead->first_name . ' ' . $lead->last_name);
+                    $displaySignature = ucwords(strtolower($rawSignature));
+                @endphp
                 <div class="signature-caption">
-                    <span>Signature : &nbsp; <span class="signature-line">{{ $eagreement->signature ?? ($lead->first_name . ' ' . $lead->last_name) }}</span></span>
+                    <span>Signature :</span>
                 </div>
-                
+                <div class="signature-line">{{ $displaySignature }}</div>
                 <div class="signature-place">Place: {{ $eagreement->acceptance_place ?? $lead->city ?? '________________' }}</div>
             </div>
             
             <div class="signature-ip">
-                <span>IP Address</span>
-                <strong>{{ $eagreement->acceptance_ip ?? '________________' }}</strong>
+                <span>IP Address : {{ $eagreement->acceptance_ip ?? '________________' }}</span>
             </div>
         </div>
     </div>
