@@ -46,7 +46,7 @@
                 <!-- End Nav -->
                 <div class="nav-end-wrap">
                     <ul class="navbar-nav flex-row">
-
+ 
                         <li class="nav-item">
                             <div class="dropdown ps-2">
                                 <a class="dropdown-toggle no-caret d-flex align-items-center" href="#"
@@ -122,16 +122,15 @@
                                     <span class="nav-icon-wrap">
                                         <span class="svg-icon">
                                             <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="icon icon-tabler icon-tabler-template" width="24"
+                                                class="icon icon-tabler icon-tabler-users" width="24"
                                                 height="24" viewBox="0 0 24 24" stroke-width="2"
                                                 stroke="currentColor" fill="none" stroke-linecap="round"
                                                 stroke-linejoin="round">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <rect x="4" y="4" width="16" height="4" rx="1" />
-                                                <rect x="4" y="12" width="6" height="8" rx="1" />
-                                                <line x1="14" y1="12" x2="20" y2="12" />
-                                                <line x1="14" y1="16" x2="20" y2="16" />
-                                                <line x1="14" y1="20" x2="20" y2="20" />
+                                                <circle cx="9" cy="7" r="4" />
+                                                <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                                <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
                                             </svg>
                                         </span>
                                     </span>
@@ -147,16 +146,14 @@
                                     <span class="nav-icon-wrap">
                                         <span class="svg-icon">
                                             <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="icon icon-tabler icon-tabler-template" width="24"
+                                                class="icon icon-tabler icon-tabler-upload" width="24"
                                                 height="24" viewBox="0 0 24 24" stroke-width="2"
                                                 stroke="currentColor" fill="none" stroke-linecap="round"
                                                 stroke-linejoin="round">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <rect x="4" y="4" width="16" height="4" rx="1" />
-                                                <rect x="4" y="12" width="6" height="8" rx="1" />
-                                                <line x1="14" y1="12" x2="20" y2="12" />
-                                                <line x1="14" y1="16" x2="20" y2="16" />
-                                                <line x1="14" y1="20" x2="20" y2="20" />
+                                                <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+                                                <polyline points="7 9 12 4 17 9" />
+                                                <line x1="12" y1="4" x2="12" y2="16" />
                                             </svg>
                                         </span>
                                     </span>
@@ -172,16 +169,14 @@
                                     <span class="nav-icon-wrap">
                                         <span class="svg-icon">
                                             <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="icon icon-tabler icon-tabler-template" width="24"
+                                                class="icon icon-tabler icon-tabler-clipboard-check" width="24"
                                                 height="24" viewBox="0 0 24 24" stroke-width="2"
                                                 stroke="currentColor" fill="none" stroke-linecap="round"
                                                 stroke-linejoin="round">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <rect x="4" y="4" width="16" height="4" rx="1" />
-                                                <rect x="4" y="12" width="6" height="8" rx="1" />
-                                                <line x1="14" y1="12" x2="20" y2="12" />
-                                                <line x1="14" y1="16" x2="20" y2="16" />
-                                                <line x1="14" y1="20" x2="20" y2="20" />
+                                                <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+                                                <rect x="9" y="3" width="6" height="4" rx="2" />
+                                                <path d="M9 12l2 2l4 -4" />
                                             </svg>
                                         </span>
                                     </span>
@@ -197,16 +192,14 @@
                                     <span class="nav-icon-wrap">
                                         <span class="svg-icon">
                                             <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="icon icon-tabler icon-tabler-template" width="24"
+                                                class="icon icon-tabler icon-tabler-cash" width="24"
                                                 height="24" viewBox="0 0 24 24" stroke-width="2"
                                                 stroke="currentColor" fill="none" stroke-linecap="round"
                                                 stroke-linejoin="round">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                <rect x="4" y="4" width="16" height="4" rx="1" />
-                                                <rect x="4" y="12" width="6" height="8" rx="1" />
-                                                <line x1="14" y1="12" x2="20" y2="12" />
-                                                <line x1="14" y1="16" x2="20" y2="16" />
-                                                <line x1="14" y1="20" x2="20" y2="20" />
+                                                <rect x="7" y="9" width="14" height="10" rx="2" />
+                                                <circle cx="14" cy="14" r="2" />
+                                                <path d="M17 9v-2a2 2 0 0 0 -2 -2h-10a2 2 0 0 0 -2 2v6a2 2 0 0 0 2 2h2" />
                                             </svg> 
                                         </span>
                                     </span>
@@ -215,26 +208,67 @@
                                 </a>
                             </li>
                             @endif
+                            @if (Auth::check() && in_array(Auth::user()->role, ['Admin', 'Manager', 'Underwriter', 'Collection']))
+                            <li
+                                class="nav-item mb-2 {{ Route::currentRouteName() == 'collection' ? 'active' : '' }} {{ Route::currentRouteName() == 'collection.info' ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('collection') }}">
+                                    <span class="nav-icon-wrap">
+                                        <span class="svg-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-wallet" width="24"
+                                                height="24" viewBox="0 0 24 24" stroke-width="2"
+                                                stroke="currentColor" fill="none" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M17 8v-3a1 1 0 0 0 -1 -1h-10a2 2 0 0 0 0 4h12a1 1 0 0 1 1 3v0m-5 4h7a3 3 0 0 0 3 -3v-10a3 3 0 0 0 -3 -3h-10a3 3 0 0 0 -3 3v10a3 3 0 0 0 3 3z" />
+                                                <path d="M6 12l4 -4l4 4" />
+                                            </svg> 
+                                        </span>
+                                    </span>
+                                    <span class="nav-link-text">Collection</span>
+                                    {{-- <span class="badge badge-sm badge-soft-pink ms-auto">Hot</span> --}}
+                                </a>
+                            </li>
+                            @endif
                             @if (Auth::check() && Auth::user()->role === 'Admin')
+                                <li class="nav-item mb-2 {{ Route::currentRouteName() == 'deleted.leads' ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('deleted.leads') }}">
+                                        <span class="nav-icon-wrap">
+                                            <span class="svg-icon">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    class="icon icon-tabler icon-tabler-trash" width="24"
+                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
+                                                    stroke="currentColor" fill="none" stroke-linecap="round"
+                                                    stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M4 7l16 0" />
+                                                    <path d="M10 11l0 6" />
+                                                    <path d="M14 11l0 6" />
+                                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                                                </svg>
+                                            </span>
+                                        </span>
+                                        <span class="nav-link-text">Deleted Leads</span>
+                                        {{-- <span class="badge badge-sm badge-soft-pink ms-auto">Hot</span> --}}
+                                    </a>
+                                </li>
                                 <li class="nav-item mb-3 {{ Route::currentRouteName() == 'emp' ? 'active' : '' }}">
                                     <a class="nav-link" href="{{ route('emp') }}">
                                         <span class="nav-icon-wrap">
                                             <span class="svg-icon">
                                                 <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-template" width="24"
+                                                    class="icon icon-tabler icon-tabler-users-group" width="24"
                                                     height="24" viewBox="0 0 24 24" stroke-width="2"
                                                     stroke="currentColor" fill="none" stroke-linecap="round"
                                                     stroke-linejoin="round">
                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <rect x="4" y="4" width="16" height="4" rx="1" />
-                                                    <rect x="4" y="12" width="6" height="8"
-                                                        rx="1" />
-                                                    <line x1="14" y1="12" x2="20"
-                                                        y2="12" />
-                                                    <line x1="14" y1="16" x2="20"
-                                                        y2="16" />
-                                                    <line x1="14" y1="20" x2="20"
-                                                        y2="20" />
+                                                    <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                                    <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1" />
+                                                    <path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                                    <path d="M17 10h2a2 2 0 0 1 2 2v1" />
+                                                    <path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                                    <path d="M3 13v-1a2 2 0 0 1 2 -2h2" />
                                                 </svg>
                                             </span>
                                         </span>
@@ -360,22 +394,25 @@
     <script src="https://cdn.datatables.net/2.2.2/js/dataTables.bootstrap5.js"></script>
 
     <script>
-        $('#EmpTable').DataTable({
-            scrollX: true,
-            autoWidth: false,
-            language: {
-                search: "",
-                searchPlaceholder: "Search",
-                sLengthMenu: "_MENU_items",
-                paginate: {
-                    next: '', // or '→'
-                    previous: '' // or '←'
+        // Initialize DataTable only if EmpTable exists
+        if ($('#EmpTable').length) {
+            $('#EmpTable').DataTable({
+                scrollX: true,
+                autoWidth: false,
+                language: {
+                    search: "",
+                    searchPlaceholder: "Search",
+                    sLengthMenu: "_MENU_items",
+                    paginate: {
+                        next: '', // or '→'
+                        previous: '' // or '←'
+                    }
+                },
+                "drawCallback": function() {
+                    $('.dataTables_paginate > .pagination').addClass('custom-pagination pagination-simple');
                 }
-            },
-            "drawCallback": function() {
-                $('.dataTables_paginate > .pagination').addClass('custom-pagination pagination-simple');
-            }
-        });
+            });
+        }
     </script>
 
     <!-- Daterangepicker JS -->

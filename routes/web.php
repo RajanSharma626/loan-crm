@@ -30,6 +30,10 @@ Route::middleware(['auth', 'check.active'])->group(function () {
 
         //assign Agent
         Route::post('/leads/assign-agent', [LeadController::class, 'assignAgent'])->name('lead.assign.agent');
+        
+        // Bulk operations
+        Route::post('/leads/bulk-assign', [LeadController::class, 'bulkAssignAgent'])->name('lead.bulk.assign');
+        Route::post('/leads/bulk-delete', [LeadController::class, 'bulkDelete'])->name('lead.bulk.delete');
     });
 
 
@@ -56,6 +60,12 @@ Route::middleware(['auth', 'check.active'])->group(function () {
         Route::get('/disbursal/info/{id}', [LeadController::class, 'disbursalInfo'])->name('disbursal.info');
     });
 
+    //collection - restricted to Admin, Manager, and Underwriter
+    Route::middleware('disbursal.access')->group(function () {
+        Route::get('/collection', [LeadController::class, 'collection'])->name('collection');
+        Route::get('/collection/info/{id}', [LeadController::class, 'collectionInfo'])->name('collection.info');
+    });
+
     // users routes restricted to admin only
     Route::middleware('admin')->group(function () {
         Route::get('/users', [usersController::class, 'index'])->name('emp');
@@ -64,6 +74,12 @@ Route::middleware(['auth', 'check.active'])->group(function () {
         Route::post('/user/update', [usersController::class, 'update'])->name('users.update');
         Route::get('/user/delete/{id}', [usersController::class, 'destroy'])->name('users.delete');
         Route::get('/lead/detele/{id}', [LeadController::class, 'delete'])->name('lead.delete');
+        
+        // Deleted leads
+        Route::get('/deleted-leads', [LeadController::class, 'deletedLeads'])->name('deleted.leads');
+        Route::get('/lead/restore/{id}', [LeadController::class, 'restoreLead'])->name('lead.restore');
+        Route::post('/leads/bulk-restore', [LeadController::class, 'bulkRestore'])->name('lead.bulk.restore');
+        Route::post('/leads/bulk-delete-permanent', [LeadController::class, 'bulkDeletePermanent'])->name('lead.bulk.delete.permanent');
     });
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

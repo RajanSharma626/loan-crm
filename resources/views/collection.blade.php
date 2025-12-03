@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Disbursal | Money Portal')
+@section('title', 'Collection | Money Portal')
 
 @section('content')
     <div class="hk-pg-wrapper pb-0">
@@ -13,7 +13,7 @@
                             <div class="w-100 align-items-center justify-content-between">
                                 <div class="d-flex justify-content-between w-100">
                                     <a class="contactapp-title link-dark">
-                                        <h1>Disbursal List</h1>
+                                        <h1>Collection List</h1>
                                     </a>
                                 </div>
                             </div>
@@ -35,7 +35,7 @@
                                     </div>
                                 @endif
 
-                                <form method="GET" action="{{ route('disbursal') }}" class="mb-3">
+                                <form method="GET" action="{{ route('collection') }}" class="mb-3">
                                     <div class="row g-2 align-items-end">
                                         <div class="col-md-3">
                                             <input type="text" name="search" class="form-control form-control-sm" 
@@ -123,8 +123,8 @@
                                                                 @endif
                                                                 <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover"
                                                                     data-bs-toggle="tooltip" data-placement="top"
-                                                                    title="View Info" data-bs-original-title="View Disbursal Info"
-                                                                    href="{{ route('disbursal.info', $lead->id) }}"><span
+                                                                    title="View Info" data-bs-original-title="View Collection Info"
+                                                                    href="{{ route('collection.info', $lead->id) }}"><span
                                                                         class="icon"><span class="feather-icon"><i
                                                                                 data-feather="eye"></i></span></span></a>
                                                                 @if($lead->eagreement)
@@ -227,3 +227,5 @@
         })();
     </script>
 @endsection
+
+

@@ -42,7 +42,13 @@
                                             </div>
                                         @endif
 
-                                        <form action="{{ route('lead.update.info') }}" method="post">
+                                        @if (Auth::user()->role === 'Agent')
+                                            <div class="alert alert-info" role="alert">
+                                                <strong>Note:</strong> As an Agent, you can only edit Disposition, Agent Assignment, and Notes. Other fields are view-only.
+                                            </div>
+                                        @endif
+
+                                        <form action="{{ route('lead.update.info') }}" method="post" id="leadUpdateForm">
                                             @csrf
 
                                             <input type="number" name="id" id="" value="{{ $lead->id }}"
@@ -56,17 +62,22 @@
                                                             <label class="form-label">First Name*</label>
                                                             <input class="form-control" type="text" name="first_name"
                                                                 value="{{ $lead->first_name }}" placeholder="First Name"
-                                                                required />
+                                                                {{ Auth::user()->role === 'Agent' ? 'readonly' : 'required' }} />
                                                             @error('first_name')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
                                                         </div>
                                                     </div>
+                                                    @php
+                                                        $isAgent = Auth::user()->role === 'Agent';
+                                                        $readonlyAttr = $isAgent ? 'readonly' : '';
+                                                        $disabledAttr = $isAgent ? 'disabled' : '';
+                                                    @endphp
                                                     <div class="col-sm-4">
                                                         <div class="form-group">
                                                             <label class="form-label">Last Name</label>
                                                             <input class="form-control" type="text" name="last_name"
-                                                                value="{{ $lead->last_name }}" placeholder="Last Name" />
+                                                                value="{{ $lead->last_name }}" placeholder="Last Name" {{ $readonlyAttr }} />
                                                             @error('last_name')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -77,7 +88,7 @@
                                                             <label class="form-label">Mobile*</label>
                                                             <input class="form-control" type="number"
                                                                 value="{{ $lead->mobile }}" min="0" name="mobile"
-                                                                placeholder="00000 00000" required />
+                                                                placeholder="00000 00000" {{ $isAgent ? 'readonly' : 'required' }} />
                                                             @error('mobile')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -88,7 +99,7 @@
                                                             <label class="form-label">Email Address*</label>
                                                             <input class="form-control" type="email" name="email"
                                                                 value="{{ $lead->email }}" placeholder="Email Address"
-                                                                required />
+                                                                {{ $isAgent ? 'readonly' : 'required' }} />
                                                             @error('email')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -100,7 +111,7 @@
                                                             <label class="form-label">Lead Source</label>
                                                             <input class="form-control" type="text" name="lead_source"
                                                                 value="{{ $lead->lead_source }}"
-                                                                placeholder="Leade Source" />
+                                                                placeholder="Leade Source" {{ $readonlyAttr }} />
                                                             @error('lead_source')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -111,7 +122,7 @@
                                                         <div class="form-group">
                                                             <label class="form-label">Keyword</label>
                                                             <input class="form-control" type="text" name="keyword"
-                                                                value="{{ $lead->keyword }}" placeholder="Keyword" />
+                                                                value="{{ $lead->keyword }}" placeholder="Keyword" {{ $readonlyAttr }} />
                                                             @error('keyword')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -121,12 +132,21 @@
                                                     <div class="col-sm-4">
                                                         <div class="form-group">
                                                             <label class="form-label">Loan Type*</label>
-                                                            <select class="form-select" name="loan_type" required>
+                                                            <select class="form-select" name="loan_type" {{ $isAgent ? 'disabled' : 'required' }}>
                                                                 <option selected="">--</option>
-                                                                <option value="Instant Loan"
-                                                                    {{ $lead->loan_type == 'Instant Loan' ? 'Selected' : '' }}>
-                                                                    Instant Loan</option>
+                                                                <option value="Personal Loan"
+                                                                    {{ $lead->loan_type == 'Personal Loan' ? 'Selected' : '' }}>
+                                                                    Personal Loan</option>
+                                                                <option value="Short Term Loan"
+                                                                    {{ $lead->loan_type == 'Short Term Loan' ? 'Selected' : '' }}>
+                                                                    Short Term Loan</option>
+                                                                <option value="Other Loan"
+                                                                    {{ $lead->loan_type == 'Other Loan' ? 'Selected' : '' }}>
+                                                                    Other Loan</option>
                                                             </select>
+                                                            @if($isAgent)
+                                                                <input type="hidden" name="loan_type" value="{{ $lead->loan_type }}">
+                                                            @endif
                                                             @error('loan_type')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -138,7 +158,7 @@
                                                             <label class="form-label">City*</label>
                                                             <input type="text" class="form-control" name="city"
                                                                 placeholder="Enter City" value="{{ $lead->city }}"
-                                                                required>
+                                                                {{ $isAgent ? 'readonly' : 'required' }}>
                                                             @error('city')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -151,7 +171,7 @@
                                                             <label class="form-label">Monthly Salary (INR)*</label>
                                                             <input class="form-control" type="number"
                                                                 value="{{ $lead->monthly_salary }}" min="0"
-                                                                name="monthly_salary" placeholder="₹0" required />
+                                                                name="monthly_salary" placeholder="₹0" {{ $isAgent ? 'readonly' : 'required' }} />
                                                             @error('monthly_salary')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -163,7 +183,7 @@
                                                             <label class="form-label">Loan Amount (INR)*</label>
                                                             <input class="form-control" type="number" min="0"
                                                                 name="loan_amount" placeholder="₹0"
-                                                                value="{{ $lead->loan_amount }}" required />
+                                                                value="{{ $lead->loan_amount }}" {{ $isAgent ? 'readonly' : 'required' }} />
                                                             @error('loan_amount')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -177,7 +197,7 @@
                                                             <input class="form-control" type="number"
                                                                 value="{{ $lead->duration }}" min="0"
                                                                 max="61" name="duration" placeholder="0 Days"
-                                                                required oninput="if(this.value > 61) this.value = 61;" />
+                                                                {{ $isAgent ? 'readonly' : 'required' }} oninput="if(this.value > 61) this.value = 61;" />
                                                             @error('duration')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -186,10 +206,13 @@
 
                                                     <div class="col-sm-4">
                                                         <div class="form-group">
-                                                            <label class="form-label">Pancard Number*</label>
+                                                            <label class="form-label">PAN Card*</label>
                                                             <input class="form-control" type="text"
                                                                 value="{{ $lead->pancard_number }}" name="pancard_number"
-                                                                placeholder="PAN No." required />
+                                                                id="pancard_number"
+                                                                placeholder="PAN No." {{ $isAgent ? 'readonly' : 'required' }} 
+                                                                style="text-transform: uppercase;"
+                                                                oninput="this.value = this.value.toUpperCase();" />
                                                             @error('pancard_number')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -199,7 +222,7 @@
                                                     <div class="col-sm-4">
                                                         <div class="form-group">
                                                             <label class="form-label">Gender*</label>
-                                                            <select class="form-select" name="gender" required>
+                                                            <select class="form-select" name="gender" {{ $isAgent ? 'disabled' : 'required' }}>
                                                                 <option selected="">--</option>
                                                                 <option value="Male"
                                                                     {{ $lead->gender == 'Male' ? 'Selected' : '' }}>Male
@@ -211,6 +234,9 @@
                                                                     {{ $lead->gender == 'Other' ? 'Selected' : '' }}>Other
                                                                 </option>
                                                             </select>
+                                                            @if($isAgent)
+                                                                <input type="hidden" name="gender" value="{{ $lead->gender }}">
+                                                            @endif
                                                             @error('gender')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -220,8 +246,11 @@
                                                     <div class="col-sm-4">
                                                         <div class="form-group">
                                                             <label class="form-label">DOB*</label>
-                                                            <input class="form-control" type="date" name="dob"
-                                                                value="{{ $lead->dob }}" required />
+                                                            <input class="form-control" type="text" name="dob"
+                                                                id="dob"
+                                                                value="{{ $lead->dob ? \Carbon\Carbon::parse($lead->dob)->format('d/m/Y') : '' }}" 
+                                                                placeholder="DD/MM/YYYY" {{ $isAgent ? 'readonly' : 'required' }} 
+                                                                pattern="\d{2}/\d{2}/\d{4}" />
                                                             @error('dob')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -230,9 +259,9 @@
 
                                                     <div class="col-sm-4">
                                                         <div class="form-group">
-                                                            <label class="form-label">Merital Status</label>
+                                                            <label class="form-label">Marital Status</label>
                                                             <select class="form-select" name="marital_status"
-                                                                value="{{ old('marital_status') }}">
+                                                                value="{{ old('marital_status') }}" {{ $disabledAttr }}>
                                                                 <option selected="">--</option>
                                                                 <option value="Single"
                                                                     {{ $lead->marital_status == 'Single' ? 'Selected' : '' }}>
@@ -241,12 +270,15 @@
                                                                     {{ $lead->marital_status == 'Married' ? 'Selected' : '' }}>
                                                                     Married</option>
                                                                 <option value="Divorced"
-                                                                    {{ $lead->marital_status == 'Devorced' ? 'Selected' : '' }}>
+                                                                    {{ $lead->marital_status == 'Divorced' ? 'Selected' : '' }}>
                                                                     Divorced</option>
                                                                 <option value="Widowed"
                                                                     {{ $lead->marital_status == 'Widowed' ? 'Selected' : '' }}>
                                                                     Widowed</option>
                                                             </select>
+                                                            @if($isAgent)
+                                                                <input type="hidden" name="marital_status" value="{{ $lead->marital_status }}">
+                                                            @endif
                                                             @error('marital_status')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -257,7 +289,7 @@
                                                         <div class="form-group">
                                                             <label class="form-label">Education</label>
                                                             <input class="form-control" type="text" name="education"
-                                                                value="{{ $lead->education }}" placeholder="Education" />
+                                                                value="{{ $lead->education }}" placeholder="Education" {{ $readonlyAttr }} />
                                                             @error('education')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -386,4 +418,110 @@
         </div>
         <!-- /Page Body -->
     </div>
+    <script>
+        // Frontend Form Validation
+        document.getElementById('leadUpdateForm')?.addEventListener('submit', function(e) {
+            const form = this;
+            let isValid = true;
+            const errors = [];
+
+            // Validate required fields
+            const requiredFields = form.querySelectorAll('[required]');
+            requiredFields.forEach(function(field) {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                    errors.push(field.previousElementSibling?.textContent?.trim() + ' is required');
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+
+            // Validate email format
+            const emailField = form.querySelector('input[type="email"]');
+            if (emailField && emailField.value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(emailField.value)) {
+                    isValid = false;
+                    emailField.classList.add('is-invalid');
+                    errors.push('Please enter a valid email address');
+                }
+            }
+
+            // Validate PAN Card format
+            const panField = form.querySelector('#pancard_number');
+            if (panField && panField.value && !panField.readOnly) {
+                const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+                if (!panRegex.test(panField.value)) {
+                    isValid = false;
+                    panField.classList.add('is-invalid');
+                    errors.push('PAN Card must be in format: ABCDE1234F');
+                }
+            }
+
+            // Validate DOB format
+            const dobField = form.querySelector('#dob');
+            if (dobField && dobField.value && !dobField.readOnly) {
+                const dobRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+                if (!dobRegex.test(dobField.value)) {
+                    isValid = false;
+                    dobField.classList.add('is-invalid');
+                    errors.push('Date of Birth must be in DD/MM/YYYY format');
+                }
+            }
+
+            // Validate numeric fields
+            const numericFields = form.querySelectorAll('input[type="number"]');
+            numericFields.forEach(function(field) {
+                if (field.value && field.min && parseFloat(field.value) < parseFloat(field.min)) {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                    errors.push(field.previousElementSibling?.textContent?.trim() + ' must be greater than or equal to ' + field.min);
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please fix the following errors:\n' + errors.join('\n'));
+                return false;
+            }
+        });
+
+        // DOB Date formatting (DD/MM/YYYY)
+        document.addEventListener('DOMContentLoaded', function() {
+            const dobInput = document.getElementById('dob');
+            if (dobInput) {
+                // Format date on input
+                dobInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                    
+                    if (value.length >= 2) {
+                        value = value.substring(0, 2) + '/' + value.substring(2);
+                    }
+                    if (value.length >= 5) {
+                        value = value.substring(0, 5) + '/' + value.substring(5, 9);
+                    }
+                    
+                    e.target.value = value;
+                });
+
+                // Convert DD/MM/YYYY to YYYY-MM-DD before form submission
+                const form = dobInput.closest('form');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        const dobValue = dobInput.value;
+                        if (dobValue && dobValue.includes('/')) {
+                            const parts = dobValue.split('/');
+                            if (parts.length === 3) {
+                                const day = parts[0].padStart(2, '0');
+                                const month = parts[1].padStart(2, '0');
+                                const year = parts[2];
+                                dobInput.value = `${year}-${month}-${day}`;
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    </script>
 @endsection

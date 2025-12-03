@@ -48,6 +48,8 @@ class AuthController extends Controller
                     return redirect('/leads');
                 case 'Underwriter':
                     return redirect('/underwriting');
+                case 'Collection':
+                    return redirect('/collection');
                 default:
                     return redirect('/leads');
             }

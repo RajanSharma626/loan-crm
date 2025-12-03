@@ -18,7 +18,7 @@ class LeadController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Lead::with('agent', 'eagreement')->whereNull('deleted_at');
+        $query = Lead::with('agent', 'eagreement');
 
         // Exclude leads where client has accepted the agreement (move to disbursal)
         $query->where(function($q) {
@@ -36,7 +36,7 @@ class LeadController extends Controller
 
         $query->where(function (Builder $subQuery) {
             $subQuery->whereNull('disposition')
-                ->orWhereNotIn('disposition', ['Docs received', 'Approved', 'Disbursed', 'Reopen']);
+                ->orWhereNotIn('disposition', ['Docs received', 'Approved', 'Disbursed', 'Reopen', 'Hold', 'FI Negative']);
         });
 
         $this->applyLeadFilters($request, $query);
@@ -66,16 +66,211 @@ class LeadController extends Controller
 
     public function assignAgent(Request $request)
     {
-        $lead = Lead::findOrFail($request->lead_id);
-        $lead->agent_id = $request->agent_id;
+        // Handle both 'id' and 'lead_id' parameters for compatibility
+        $leadId = $request->input('lead_id') ?? $request->input('id');
+        $lead = Lead::findOrFail($leadId);
+        
+        // Handle both 'agent' and 'agent_id' parameters
+        $agentId = $request->input('agent_id') ?? $request->input('agent');
+        
+        $agent = User::find($agentId);
+        
+        $lead->agent_id = $agentId;
         $lead->assign_by = Auth::id();
         $lead->save();
 
-        return redirect()->route('leads', $lead->id)->with('success', 'Lead assigned successfully.');
+        // Create a note for the assignment
+        Note::create([
+            'lead_id' => $lead->id,
+            'updated_by' => Auth::id(),
+            'note' => 'Agent assigned: ' . ($agent ? $agent->name : 'N/A'),
+            'disposition' => $lead->disposition ?? 'Pending',
+            'lead_assign_by' => Auth::id(),
+        ]);
+
+        return redirect()->back()->with('success', 'Lead assigned successfully.');
+    }
+
+    public function bulkAssignAgent(Request $request)
+    {
+        $request->validate([
+            'lead_ids' => 'required|array',
+            'lead_ids.*' => 'exists:leads,id',
+            'agent_id' => 'required|exists:users,id',
+        ]);
+
+        $agentId = $request->input('agent_id') ?? $request->input('agent');
+        $leadIds = $request->input('lead_ids');
+        $assignedCount = 0;
+
+        foreach ($leadIds as $leadId) {
+            $lead = Lead::findOrFail($leadId);
+            $lead->agent_id = $agentId;
+            $lead->assign_by = Auth::id();
+            $lead->save();
+
+            Note::create([
+                'lead_id' => $lead->id,
+                'updated_by' => Auth::id(),
+                'note' => 'Agent assigned via bulk assignment',
+                'disposition' => $lead->disposition ?? 'Pending',
+                'lead_assign_by' => Auth::id(),
+            ]);
+            $assignedCount++;
+        }
+
+        return redirect()->back()->with('success', "Successfully assigned {$assignedCount} lead(s) to agent.");
+    }
+
+    public function bulkDelete(Request $request)
+    {
+        $request->validate([
+            'lead_ids' => 'required|array',
+            'lead_ids.*' => 'exists:leads,id',
+        ]);
+
+        // Restrict Manager from deleting leads
+        if (!in_array(Auth::user()->role, ['Admin'])) {
+            return redirect()->back()->with('error', 'Only Admin can delete leads.');
+        }
+
+        $leadIds = $request->input('lead_ids');
+        $deletedCount = 0;
+
+        foreach ($leadIds as $leadId) {
+            $lead = Lead::findOrFail($leadId);
+            $lead->delete(); // Use soft delete
+            $deletedCount++;
+        }
+
+        return redirect()->back()->with('success', "Successfully deleted {$deletedCount} lead(s).");
+    }
+
+    public function deletedLeads(Request $request)
+    {
+        if (Auth::user()->role !== 'Admin') {
+            return redirect()->route('leads')->with('error', 'Access denied.');
+        }
+
+        $query = Lead::with('agent', 'eagreement')->onlyTrashed();
+
+        $this->applyLeadFilters($request, $query);
+
+        $leads = $query->orderBy('deleted_at', 'desc')->paginate(10);
+
+        $agents = User::where('role', 'Agent')
+            ->where('status', 'Active')
+            ->whereNull('deleted_at')
+            ->get();
+
+        return view('deleted-leads', compact('leads', 'agents'));
+    }
+
+    public function restoreLead($id)
+    {
+        if (Auth::user()->role !== 'Admin') {
+            return redirect()->back()->with('error', 'Access denied.');
+        }
+
+        $lead = Lead::withTrashed()->findOrFail($id);
+        $lead->restore();
+
+        Note::create([
+            'lead_id' => $lead->id,
+            'updated_by' => Auth::id(),
+            'note' => 'Lead restored from deleted leads',
+            'disposition' => $lead->disposition ?? 'Pending',
+            'lead_assign_by' => Auth::id(),
+        ]);
+
+        return redirect()->back()->with('success', 'Lead restored successfully.');
+    }
+
+    public function bulkRestore(Request $request)
+    {
+        if (Auth::user()->role !== 'Admin') {
+            return redirect()->back()->with('error', 'Access denied.');
+        }
+
+        $request->validate([
+            'lead_ids' => 'required|array',
+            'lead_ids.*' => 'exists:leads,id',
+        ]);
+
+        $leadIds = $request->input('lead_ids');
+        $restoredCount = 0;
+
+        foreach ($leadIds as $leadId) {
+            $lead = Lead::withTrashed()->findOrFail($leadId);
+            $lead->restore();
+
+            Note::create([
+                'lead_id' => $lead->id,
+                'updated_by' => Auth::id(),
+                'note' => 'Lead restored from deleted leads via bulk restore',
+                'disposition' => $lead->disposition ?? 'Pending',
+                'lead_assign_by' => Auth::id(),
+            ]);
+            $restoredCount++;
+        }
+
+        return redirect()->back()->with('success', "Successfully restored {$restoredCount} lead(s).");
+    }
+
+    public function bulkDeletePermanent(Request $request)
+    {
+        if (Auth::user()->role !== 'Admin') {
+            return redirect()->back()->with('error', 'Access denied.');
+        }
+
+        $request->validate([
+            'lead_ids' => 'required|array',
+            'lead_ids.*' => 'exists:leads,id',
+        ]);
+
+        $leadIds = $request->input('lead_ids');
+        $deletedCount = 0;
+
+        foreach ($leadIds as $leadId) {
+            $lead = Lead::withTrashed()->findOrFail($leadId);
+            $lead->forceDelete(); // Permanently delete
+            $deletedCount++;
+        }
+
+        return redirect()->back()->with('success', "Successfully permanently deleted {$deletedCount} lead(s).");
     }
 
     public function updateInfo(Request $request)
     {
+        // Restrict Agent from editing lead info (except disposition, re-assign, remark)
+        if (Auth::user()->role === 'Agent') {
+            return redirect()->back()->with('error', 'Agents can only edit disposition, agent assignment, and remarks. Contact Admin or Manager for other changes.');
+        }
+
+        // Validation
+        $request->validate([
+            'id' => 'required|exists:leads,id',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'mobile' => 'required|string|max:20',
+            'email' => 'required|email|max:255',
+            'lead_source' => 'nullable|string|max:255',
+            'keyword' => 'nullable|string|max:255',
+            'loan_type' => 'required|string|in:Personal Loan,Short Term Loan,Other Loan',
+            'city' => 'required|string|max:255',
+            'monthly_salary' => 'nullable|integer|min:0',
+            'loan_amount' => 'nullable|integer|min:0',
+            'duration' => 'nullable|integer|min:1',
+            'pancard_number' => ['nullable', 'string', 'max:10', 'regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/i'],
+            'gender' => 'nullable|string|in:Male,Female,Other',
+            'dob' => 'nullable|date',
+            'marital_status' => 'nullable|string|in:Single,Married,Divorced,Widowed',
+            'education' => 'nullable|string|max:255',
+            'disposition' => 'nullable|string|max:255',
+            'agent_id' => 'nullable|exists:users,id',
+            'notes' => 'nullable|string',
+        ]);
+
         $lead = Lead::findOrFail($request->id);
         $lead->first_name      = $request->first_name;
         $lead->last_name       = $request->last_name;
@@ -88,9 +283,17 @@ class LeadController extends Controller
         $lead->monthly_salary  = $request->monthly_salary;
         $lead->loan_amount     = $request->loan_amount;
         $lead->duration        = $request->duration;
-        $lead->pancard_number  = $request->pancard_number;
+        $lead->pancard_number  = strtoupper($request->pancard_number);
         $lead->gender          = $request->gender;
-        $lead->dob             = $request->dob;
+        // Handle DOB format conversion (DD/MM/YYYY to YYYY-MM-DD)
+        $dob = $request->dob;
+        if ($dob && strpos($dob, '/') !== false) {
+            $parts = explode('/', $dob);
+            if (count($parts) === 3) {
+                $dob = $parts[2] . '-' . $parts[1] . '-' . $parts[0];
+            }
+        }
+        $lead->dob             = $dob;
         $lead->marital_status  = $request->marital_status;
         $lead->education       = $request->education;
         $lead->disposition     = $request->disposition;
@@ -131,19 +334,20 @@ class LeadController extends Controller
         
         // Generate Loan Application Number if it doesn't exist
         if (empty($eagreement->application_number)) {
-            // Get the last application number
+            // Get the last application number with format MP0000XXX
             $lastAgreement = Eagreement::whereNotNull('application_number')
-                ->where('application_number', 'like', 'RSHLP2025%')
+                ->where('application_number', 'like', 'MP%')
                 ->orderBy('application_number', 'desc')
                 ->first();
             
-            if ($lastAgreement && preg_match('/RSHLP2025(\d+)/', $lastAgreement->application_number, $matches)) {
+            if ($lastAgreement && preg_match('/MP0+(\d+)/', $lastAgreement->application_number, $matches)) {
                 $nextNumber = intval($matches[1]) + 1;
             } else {
-                $nextNumber = 1;
+                $nextNumber = 301; // Start from 301 as per example MP0000301
             }
             
-            $eagreement->application_number = 'RSHLP2025' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+            // Format: MP + 4 zeros + 3 digit number (e.g., MP0000301)
+            $eagreement->application_number = 'MP' . str_pad($nextNumber, 7, '0', STR_PAD_LEFT);
         }
         
         // Generate acceptance token when loan is approved and application number exists
@@ -254,6 +458,25 @@ class LeadController extends Controller
             return is_array($item) ? json_encode($item) : $item;
         }, $documentsData);
 
+        // Add individual remarks fields for each document type
+        $remarksFields = [
+            'photograph_remarks',
+            'pan_card_remarks',
+            'adhar_card_remarks',
+            'current_address_remarks',
+            'permanent_address_remarks',
+            'salary_slip_remarks',
+            'bank_statement_remarks',
+            'cibil_remarks',
+            'other_documents_remarks'
+        ];
+
+        foreach ($remarksFields as $field) {
+            if ($request->filled($field)) {
+                $serializedDocumentsData[$field] = $request->input($field);
+            }
+        }
+
         Documents::updateOrCreate(
             ['lead_id' => $lead->id],
             $serializedDocumentsData
@@ -264,16 +487,23 @@ class LeadController extends Controller
 
     public function delete($id)
     {
+        // Restrict Manager from deleting leads
+        if (Auth::user()->role !== 'Admin') {
+            return redirect()->route('leads')->with('error', 'Only Admin can delete leads.');
+        }
+
         $lead = Lead::findOrFail($id);
-        $lead->deleted_at = now();
-        $lead->save();
+        $lead->delete(); // Use soft delete
 
         return redirect()->route('leads')->with('success', 'Lead deleted successfully.');
     }
 
     public function uploadDocs(Request $request)
     {
-        $query = Lead::with(['agent', 'assignedTo', 'document', 'eagreement'])->whereNull('deleted_at');
+        $query = Lead::with(['agent', 'assignedTo', 'document', 'eagreement']);
+
+        // Only show leads with "Docs received" disposition
+        $query->where('disposition', 'Docs received');
 
         // Exclude leads where client has accepted the agreement (move to disbursal)
         $query->where(function($q) {
@@ -306,8 +536,7 @@ class LeadController extends Controller
     public function underwriting(Request $request)
     {
         $query = Lead::with(['agent', 'assignedTo', 'document', 'eagreement'])
-            ->whereNull('deleted_at')
-            ->whereIn('disposition', ['Docs received', 'Approved', 'Reopen']);
+            ->whereIn('disposition', ['Docs received', 'Approved', 'Reopen', 'Hold', 'FI Negative']);
 
         $this->restrictToAssignedLeads($query);
         $this->applyLeadFilters($request, $query);
@@ -422,7 +651,7 @@ class LeadController extends Controller
 
     public function disbursal(Request $request)
     {
-        $query = Lead::with(['agent', 'assignedTo', 'document', 'eagreement'])->whereNull('deleted_at');
+        $query = Lead::with(['agent', 'assignedTo', 'document', 'eagreement']);
 
         // Only show leads where client has accepted the agreement
         $query->whereHas('eagreement', function($q) {
@@ -455,10 +684,61 @@ class LeadController extends Controller
         return view('disbursal-info', compact('lead', 'doc'));
     }
 
+    public function collection(Request $request)
+    {
+        $query = Lead::with(['agent', 'assignedTo', 'document', 'eagreement']);
+
+        // Only show leads where client has accepted the agreement
+        $query->whereHas('eagreement', function($q) {
+            $q->where('is_accepted', true);
+        });
+
+        $query->where('disposition', 'Disbursed');
+
+        $this->restrictToAssignedLeads($query);
+        $this->applyLeadFilters($request, $query);
+
+        $leads = $query->orderBy('created_at', 'desc')->paginate(10);
+        $agents = User::where('role', 'Agent')
+            ->where('status', 'Active')
+            ->whereNull('deleted_at')
+            ->get();
+        return view('collection', compact('leads', 'agents'));
+    }
+
+    public function collectionInfo($id)
+    {
+        $lead = Lead::with(['agent', 'document', 'eagreement', 'notesRelation.user', 'notesRelation.assignBy'])->findOrFail($id);
+        
+        // Ensure this lead has an accepted e-agreement
+        if (!$lead->eagreement || !$lead->eagreement->is_accepted) {
+            return redirect()->route('collection')->with('error', 'This lead is not in collection status.');
+        }
+        
+        $doc = Documents::where('lead_id', $lead->id)->first();
+        return view('collection-info', compact('lead', 'doc'));
+    }
+
     protected function applyLeadFilters(Request $request, Builder $query): Builder
     {
         if ($request->filled('disposition')) {
             $query->where('disposition', $request->input('disposition'));
+        }
+
+        if ($request->filled('loan_type')) {
+            $query->where('loan_type', $request->input('loan_type'));
+        }
+
+        // Search functionality: Name, Mobile No., PAN No.
+        if ($request->filled('search')) {
+            $searchTerm = $request->input('search');
+            $query->where(function (Builder $q) use ($searchTerm) {
+                $q->where('first_name', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('last_name', 'like', '%' . $searchTerm . '%')
+                  ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $searchTerm . '%'])
+                  ->orWhere('mobile', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('pancard_number', 'like', '%' . strtoupper($searchTerm) . '%');
+            });
         }
 
         $dateFilter = $request->get('date_filter');
@@ -526,7 +806,7 @@ class LeadController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user || in_array($user->role, ['Admin', 'Manager', 'Underwriter'])) {
+        if (!$user || in_array($user->role, ['Admin', 'Manager', 'Underwriter', 'Collection'])) {
             return $query;
         }
 

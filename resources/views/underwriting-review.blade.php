@@ -155,7 +155,10 @@
                                                             <option value="">--</option>
                                                             <option value="Pending" {{ ($lead->eagreement->disposition ?? '') === 'Pending' ? 'selected' : '' }}>Pending</option>
                                                             <option value="Approved" {{ ($lead->eagreement->disposition ?? '') === 'Approved' ? 'selected' : '' }}>Approved</option>
+                                                            <option value="Disbursed" {{ ($lead->eagreement->disposition ?? '') === 'Disbursed' ? 'selected' : '' }}>Disbursed</option>
                                                             <option value="Rejected" {{ ($lead->eagreement->disposition ?? '') === 'Rejected' ? 'selected' : '' }}>Rejected</option>
+                                                            <option value="Hold" {{ ($lead->eagreement->disposition ?? '') === 'Hold' ? 'selected' : '' }}>Hold</option>
+                                                            <option value="FI Negative" {{ ($lead->eagreement->disposition ?? '') === 'FI Negative' ? 'selected' : '' }}>FI Negative</option>
                                                         </select>
                                                         @if($hasApplicationNumber)
                                                             <input type="hidden" name="disposition" value="{{ $lead->eagreement->disposition ?? '' }}">
@@ -194,8 +197,9 @@
                                                         <label class="form-label">Rate of intrest per day (%)*
                                                         </label>
                                                         <input class="form-control" type="number" name="interest_rate"
-                                                            id="interest_rate" value="{{ $lead->eagreement->interest_rate ?? '' }}" 
-                                                            placeholder="Rate of intrest per day" {{ $hasApplicationNumber ? 'readonly' : 'required' }} />
+                                                            id="interest_rate" step="0.01" min="0" 
+                                                            value="{{ $lead->eagreement->interest_rate ?? '' }}" 
+                                                            placeholder="Rate of intrest per day (e.g., 0.90)" {{ $hasApplicationNumber ? 'readonly' : 'required' }} />
                                                         @if($hasApplicationNumber)
                                                             <input type="hidden" name="interest_rate" value="{{ $lead->eagreement->interest_rate ?? '' }}">
                                                         @endif

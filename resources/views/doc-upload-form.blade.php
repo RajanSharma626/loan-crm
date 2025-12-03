@@ -76,6 +76,10 @@
                                                                 @endphp
                                                             @endforeach
                                                         @endif
+                                                        <label class="form-label mt-2 small">Remarks/Password</label>
+                                                        <input class="form-control" type="text" name="photograph_remarks" 
+                                                            placeholder="Enter password/credentials for Photograph..." 
+                                                            value="{{ $doc && $doc->photograph_remarks ? $doc->photograph_remarks : '' }}" />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -101,6 +105,10 @@
                                                                 @endphp
                                                             @endforeach
                                                         @endif
+                                                        <label class="form-label mt-2 small">Remarks/Password</label>
+                                                        <input class="form-control" type="text" name="pan_card_remarks" 
+                                                            placeholder="Enter password/credentials for PAN Card..." 
+                                                            value="{{ $doc && $doc->pan_card_remarks ? $doc->pan_card_remarks : '' }}" />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -126,6 +134,10 @@
                                                                 @endphp
                                                             @endforeach
                                                         @endif
+                                                        <label class="form-label mt-2 small">Remarks/Password</label>
+                                                        <input class="form-control" type="text" name="adhar_card_remarks" 
+                                                            placeholder="Enter password/credentials for Aadhaar Card..." 
+                                                            value="{{ $doc && $doc->adhar_card_remarks ? $doc->adhar_card_remarks : '' }}" />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -151,6 +163,10 @@
                                                                 @endphp
                                                             @endforeach
                                                         @endif
+                                                        <label class="form-label mt-2 small">Remarks/Password</label>
+                                                        <input class="form-control" type="text" name="current_address_remarks" 
+                                                            placeholder="Enter password/credentials for Current Address..." 
+                                                            value="{{ $doc && $doc->current_address_remarks ? $doc->current_address_remarks : '' }}" />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -177,6 +193,10 @@
                                                                 @endphp
                                                             @endforeach
                                                         @endif
+                                                        <label class="form-label mt-2 small">Remarks/Password</label>
+                                                        <input class="form-control" type="text" name="permanent_address_remarks" 
+                                                            placeholder="Enter password/credentials for Permanent Address..." 
+                                                            value="{{ $doc && $doc->permanent_address_remarks ? $doc->permanent_address_remarks : '' }}" />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -202,6 +222,10 @@
                                                                 @endphp
                                                             @endforeach
                                                         @endif
+                                                        <label class="form-label mt-2 small">Remarks/Password</label>
+                                                        <input class="form-control" type="text" name="salary_slip_remarks" 
+                                                            placeholder="Enter password/credentials for Salary Slip..." 
+                                                            value="{{ $doc && $doc->salary_slip_remarks ? $doc->salary_slip_remarks : '' }}" />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -227,6 +251,10 @@
                                                                 @endphp
                                                             @endforeach
                                                         @endif
+                                                        <label class="form-label mt-2 small">Remarks/Password</label>
+                                                        <input class="form-control" type="text" name="bank_statement_remarks" 
+                                                            placeholder="Enter password/credentials for Bank Statement (Banking)..." 
+                                                            value="{{ $doc && $doc->bank_statement_remarks ? $doc->bank_statement_remarks : '' }}" />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -252,6 +280,10 @@
                                                                 @endphp
                                                             @endforeach
                                                         @endif
+                                                        <label class="form-label mt-2 small">Remarks/Password</label>
+                                                        <input class="form-control" type="text" name="cibil_remarks" 
+                                                            placeholder="Enter password/credentials for CIBIL..." 
+                                                            value="{{ $doc && $doc->cibil_remarks ? $doc->cibil_remarks : '' }}" />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">
@@ -278,6 +310,10 @@
                                                                 @endphp
                                                             @endforeach
                                                         @endif
+                                                        <label class="form-label mt-2 small">Remarks/Password</label>
+                                                        <input class="form-control" type="text" name="other_documents_remarks" 
+                                                            placeholder="Enter password/credentials for Other Documents..." 
+                                                            value="{{ $doc && $doc->other_documents_remarks ? $doc->other_documents_remarks : '' }}" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -457,10 +493,13 @@
 
                                                     <div class="col-sm-4">
                                                         <div class="form-group">
-                                                            <label class="form-label">Pancard Number*</label>
+                                                            <label class="form-label">PAN Card*</label>
                                                             <input class="form-control" type="text"
                                                                 value="{{ $lead->pancard_number }}" name="pancard_number"
-                                                                placeholder="PAN No." required />
+                                                                id="pancard_number_doc"
+                                                                placeholder="PAN No." required 
+                                                                style="text-transform: uppercase;"
+                                                                oninput="this.value = this.value.toUpperCase();" />
                                                             @error('pancard_number')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -491,8 +530,11 @@
                                                     <div class="col-sm-4">
                                                         <div class="form-group">
                                                             <label class="form-label">DOB*</label>
-                                                            <input class="form-control" type="date" name="dob"
-                                                                value="{{ $lead->dob }}" required />
+                                                            <input class="form-control" type="text" name="dob"
+                                                                id="dob_doc"
+                                                                value="{{ $lead->dob ? \Carbon\Carbon::parse($lead->dob)->format('d/m/Y') : '' }}" 
+                                                                placeholder="DD/MM/YYYY" required 
+                                                                pattern="\d{2}/\d{2}/\d{4}" />
                                                             @error('dob')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -501,7 +543,7 @@
 
                                                     <div class="col-sm-4">
                                                         <div class="form-group">
-                                                            <label class="form-label">Merital Status</label>
+                                                            <label class="form-label">Marital Status</label>
                                                             <select class="form-select" name="marital_status"
                                                                 value="{{ old('marital_status') }}">
                                                                 <option selected="">--</option>
@@ -512,7 +554,7 @@
                                                                     {{ $lead->marital_status == 'Married' ? 'Selected' : '' }}>
                                                                     Married</option>
                                                                 <option value="Divorced"
-                                                                    {{ $lead->marital_status == 'Devorced' ? 'Selected' : '' }}>
+                                                                    {{ $lead->marital_status == 'Divorced' ? 'Selected' : '' }}>
                                                                     Divorced</option>
                                                                 <option value="Widowed"
                                                                     {{ $lead->marital_status == 'Widowed' ? 'Selected' : '' }}>
@@ -658,4 +700,42 @@
         </div>
         <!-- /Page Body -->
     </div>
+    <script>
+        // DOB Date formatting (DD/MM/YYYY)
+        document.addEventListener('DOMContentLoaded', function() {
+            const dobInput = document.getElementById('dob_doc');
+            if (dobInput) {
+                // Format date on input
+                dobInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                    
+                    if (value.length >= 2) {
+                        value = value.substring(0, 2) + '/' + value.substring(2);
+                    }
+                    if (value.length >= 5) {
+                        value = value.substring(0, 5) + '/' + value.substring(5, 9);
+                    }
+                    
+                    e.target.value = value;
+                });
+
+                // Convert DD/MM/YYYY to YYYY-MM-DD before form submission
+                const form = dobInput.closest('form');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        const dobValue = dobInput.value;
+                        if (dobValue && dobValue.includes('/')) {
+                            const parts = dobValue.split('/');
+                            if (parts.length === 3) {
+                                const day = parts[0].padStart(2, '0');
+                                const month = parts[1].padStart(2, '0');
+                                const year = parts[2];
+                                dobInput.value = `${year}-${month}-${day}`;
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    </script>
 @endsection

@@ -16,10 +16,10 @@ class DisbursalAccessMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && in_array(Auth::user()->role, ['Admin', 'Manager', 'Underwriter'])) {
+        if (Auth::check() && in_array(Auth::user()->role, ['Admin', 'Manager', 'Underwriter', 'Collection'])) {
             return $next($request);
         }
 
-        abort(403, 'Access denied. Only Admin, Manager, and Underwriter roles can access disbursal.');
+        abort(403, 'Access denied. Only Admin, Manager, Underwriter, and Collection roles can access disbursal.');
     }
 }

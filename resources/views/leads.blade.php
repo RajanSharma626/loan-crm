@@ -36,9 +36,25 @@
                                 @endif
 
                                 <form method="GET" action="{{ route('leads') }}" class="mb-3">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <select name="disposition" class="form-select" onchange="this.form.submit()">
+                                    <div class="row g-2 align-items-end">
+                                        <div class="col-md-2">
+                                            <input type="text" name="search" class="form-control form-control-sm" 
+                                                placeholder="Search by Name, Mobile No., or PAN No." 
+                                                value="{{ request('search') }}" />
+                                        </div>
+                                        <div class="col-md-2">
+                                            <select name="loan_type" class="form-select form-select-sm" onchange="this.form.submit()">
+                                                <option value="">-- Loan Types --</option>
+                                                <option value="Personal Loan"
+                                                    {{ request('loan_type') == 'Personal Loan' ? 'selected' : '' }}>Personal Loan</option>
+                                                <option value="Short Term Loan"
+                                                    {{ request('loan_type') == 'Short Term Loan' ? 'selected' : '' }}>Short Term Loan</option>
+                                                <option value="Other Loan"
+                                                    {{ request('loan_type') == 'Other Loan' ? 'selected' : '' }}>Other Loan</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <select name="disposition" class="form-select form-select-sm" onchange="this.form.submit()">
                                                 <option value="">-- Filter by Disposition --</option>
                                                 <option value="Open"
                                                     {{ request('disposition') == 'Open' ? 'selected' : '' }}>Open</option>
@@ -74,11 +90,18 @@
                                                 <option value="Nc Rejected"
                                                     {{ request('disposition') == 'Nc Rejected' ? 'selected' : '' }}>Nc
                                                     Rejected</option>
-                                               
+                                                <option value="Docs received"
+                                                    {{ request('disposition') == 'Docs received' ? 'selected' : '' }}>Docs received</option>
+                                                <option value="Approved"
+                                                    {{ request('disposition') == 'Approved' ? 'selected' : '' }}>Approved</option>
+                                                <option value="Disbursed"
+                                                    {{ request('disposition') == 'Disbursed' ? 'selected' : '' }}>Disbursed</option>
+                                                <option value="Reopen"
+                                                    {{ request('disposition') == 'Reopen' ? 'selected' : '' }}>Reopen</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
-                                            <select name="date_filter" id="date_filter" class="form-select">
+                                        <div class="col-md-2">
+                                            <select name="date_filter" id="date_filter" class="form-select form-select-sm">
                                                 <option value="">-- Date: All --</option>
                                                 <option value="today" {{ request('date_filter') == 'today' ? 'selected' : '' }}>Today</option>
                                                 <option value="yesterday" {{ request('date_filter') == 'yesterday' ? 'selected' : '' }}>Yesterday</option>
@@ -89,22 +112,40 @@
                                                 <option value="custom" {{ request('date_filter') == 'custom' ? 'selected' : '' }}>Custom range</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-4" id="custom_range_group" style="display: none;">
+                                        <div class="col-md-3" id="custom_range_group" style="display: none;">
                                             <div class="d-flex gap-2 align-items-center">
-                                                <input type="date" name="start_date" class="form-control" value="{{ request('start_date') }}">
-                                                <span class="mx-1">to</span>
-                                                <input type="date" name="end_date" class="form-control" value="{{ request('end_date') }}">
-                                                <button type="submit" class="btn btn-primary">Apply</button>
+                                                <input type="date" name="start_date" class="form-control form-control-sm" value="{{ request('start_date') }}">
+                                                <span class="small">to</span>
+                                                <input type="date" name="end_date" class="form-control form-control-sm" value="{{ request('end_date') }}">
                                             </div>
+                                        </div>
+                                        <div class="col-md-auto">
+                                            <button type="submit" class="btn btn-primary btn-sm">Search</button>
                                         </div>
                                     </div>
                                 </form>
 
 
+                                @if (in_array(Auth::user()->role, ['Admin', 'Manager']))
+                                <div class="mb-3 d-flex gap-2 align-items-center">
+                                    <button type="button" class="btn btn-sm btn-primary" id="selectAllBtn" onclick="selectAll()">Select All</button>
+                                    <button type="button" class="btn btn-sm btn-secondary" id="deselectAllBtn" onclick="deselectAll()" style="display: none;">Deselect All</button>
+                                    <button type="button" class="btn btn-sm btn-success" id="bulkAssignBtn" onclick="showBulkAssignModal()" disabled>Bulk Assign</button>
+                                    @if (Auth::user()->role == 'Admin')
+                                    <button type="button" class="btn btn-sm btn-danger" id="bulkDeleteBtn" onclick="bulkDelete()" disabled>Bulk Delete</button>
+                                    @endif
+                                </div>
+                                @endif
+
                                 <div class="contact-list-view">
                                     <table class="table table-striped table-bordered w-100 mb-5">
                                         <thead>
                                             <tr>
+                                                @if (in_array(Auth::user()->role, ['Admin', 'Manager']))
+                                                <th width="50">
+                                                    <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
+                                                </th>
+                                                @endif
                                                 <th>ID</th>
                                                 <th>Name</th>
                                                 <th>Loan Amount (INR)</th>
@@ -118,6 +159,11 @@
                                         <tbody>
                                             @forelse ($leads as $lead)
                                                 <tr>
+                                                    @if (in_array(Auth::user()->role, ['Admin', 'Manager']))
+                                                    <td>
+                                                        <input type="checkbox" class="lead-checkbox" name="lead_ids[]" value="{{ $lead->id }}" onchange="updateBulkButtons()">
+                                                    </td>
+                                                    @endif
                                                     <td>#{{ $lead->id }}</td>
                                                     <td>
                                                         <div class="media align-items-center">
@@ -176,7 +222,7 @@
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="8" class="text-center">No leads found.</td>
+                                                    <td colspan="{{ in_array(Auth::user()->role, ['Admin', 'Manager']) ? '9' : '8' }}" class="text-center">No leads found.</td>
                                                 </tr>
                                             @endforelse
                                         </tbody>
@@ -203,11 +249,43 @@
                     </div>
                     <form action="{{ route('lead.assign.agent') }}" method="POST">
                         @csrf
-                        <input type="hidden" name="id" id="lead_id" value="">
+                        <input type="hidden" name="lead_id" id="lead_id" value="">
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label for="recipient-name" class="col-form-label">Agent</label>
-                                <select name="agent" class="form-select" required>
+                                <select name="agent_id" class="form-select" required>
+                                    <option value="">Select Agent</option>
+                                    @foreach ($agents as $agent)
+                                        <option value="{{ $agent->id }}">
+                                            {{ "{$agent->name} ({$agent->users_id})" }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Assign</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bulk Assign Modal -->
+        <div class="modal fade" id="bulkAssignModal" tabindex="-1" aria-labelledby="bulkAssignModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="bulkAssignModalLabel">Bulk Assign Agent</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('lead.bulk.assign') }}" method="POST" id="bulkAssignForm">
+                        @csrf
+                        <div class="modal-body">
+                            <p>Assign selected leads to an agent:</p>
+                            <div class="mb-3">
+                                <label for="bulk-agent" class="col-form-label">Agent</label>
+                                <select name="agent_id" id="bulk-agent" class="form-select" required>
                                     <option value="">Select Agent</option>
                                     @foreach ($agents as $agent)
                                         <option value="{{ $agent->id }}">
@@ -259,5 +337,113 @@
                 updateRangeVisibility(false);
             }
         })();
+
+        // Bulk operations functions
+        function toggleSelectAll(checkbox) {
+            var checkboxes = document.querySelectorAll('.lead-checkbox');
+            checkboxes.forEach(function(cb) {
+                cb.checked = checkbox.checked;
+            });
+            updateBulkButtons();
+            if (checkbox.checked) {
+                document.getElementById('selectAllBtn').style.display = 'none';
+                document.getElementById('deselectAllBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('selectAllBtn').style.display = 'inline-block';
+                document.getElementById('deselectAllBtn').style.display = 'none';
+            }
+        }
+
+        function selectAll() {
+            var checkboxes = document.querySelectorAll('.lead-checkbox');
+            var selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            checkboxes.forEach(function(cb) {
+                cb.checked = true;
+            });
+            if (selectAllCheckbox) selectAllCheckbox.checked = true;
+            updateBulkButtons();
+            document.getElementById('selectAllBtn').style.display = 'none';
+            document.getElementById('deselectAllBtn').style.display = 'inline-block';
+        }
+
+        function deselectAll() {
+            var checkboxes = document.querySelectorAll('.lead-checkbox');
+            var selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            checkboxes.forEach(function(cb) {
+                cb.checked = false;
+            });
+            if (selectAllCheckbox) selectAllCheckbox.checked = false;
+            updateBulkButtons();
+            document.getElementById('selectAllBtn').style.display = 'inline-block';
+            document.getElementById('deselectAllBtn').style.display = 'none';
+        }
+
+        function updateBulkButtons() {
+            var checked = document.querySelectorAll('.lead-checkbox:checked');
+            var bulkAssignBtn = document.getElementById('bulkAssignBtn');
+            var bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+            
+            if (bulkAssignBtn) {
+                bulkAssignBtn.disabled = checked.length === 0;
+            }
+            if (bulkDeleteBtn) {
+                bulkDeleteBtn.disabled = checked.length === 0;
+            }
+        }
+
+        function showBulkAssignModal() {
+            var checked = document.querySelectorAll('.lead-checkbox:checked');
+            if (checked.length === 0) {
+                alert('Please select at least one lead.');
+                return;
+            }
+            var modal = new bootstrap.Modal(document.getElementById('bulkAssignModal'));
+            modal.show();
+        }
+
+        function bulkDelete() {
+            var checked = document.querySelectorAll('.lead-checkbox:checked');
+            if (checked.length === 0) {
+                alert('Please select at least one lead.');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to delete ' + checked.length + ' lead(s)?')) {
+                return;
+            }
+
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route("lead.bulk.delete") }}';
+            
+            var csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = '_token';
+            csrf.value = '{{ csrf_token() }}';
+            form.appendChild(csrf);
+
+            checked.forEach(function(checkbox) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'lead_ids[]';
+                input.value = checkbox.value;
+                form.appendChild(input);
+            });
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // Update bulk assign form with selected lead IDs
+        document.getElementById('bulkAssignForm')?.addEventListener('submit', function(e) {
+            var checked = document.querySelectorAll('.lead-checkbox:checked');
+            checked.forEach(function(checkbox) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'lead_ids[]';
+                input.value = checkbox.value;
+                this.appendChild(input);
+            }.bind(this));
+        });
     </script>
 @endsection

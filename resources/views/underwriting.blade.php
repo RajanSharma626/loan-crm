@@ -36,9 +36,14 @@
                                 @endif
 
                                 <form method="GET" action="{{ route('underwriting') }}" class="mb-3">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <select name="date_filter" id="date_filter" class="form-select">
+                                    <div class="row g-2 align-items-end">
+                                        <div class="col-md-3">
+                                            <input type="text" name="search" class="form-control form-control-sm" 
+                                                placeholder="Search by Name, Mobile No., or PAN No." 
+                                                value="{{ request('search') }}" />
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select name="date_filter" id="date_filter" class="form-select form-select-sm">
                                                 <option value="">-- Date: All --</option>
                                                 <option value="today"
                                                     {{ request('date_filter') == 'today' ? 'selected' : '' }}>Today</option>
@@ -62,15 +67,17 @@
                                                 </option>
                                             </select>
                                         </div>
-                                        <div class="col-md-5" id="custom_range_group" style="display: none;">
+                                        <div class="col-md-4" id="custom_range_group" style="display: none;">
                                             <div class="d-flex gap-2 align-items-center">
-                                                <input type="date" name="start_date" class="form-control"
+                                                <input type="date" name="start_date" class="form-control form-control-sm"
                                                     value="{{ request('start_date') }}">
-                                                <span class="mx-1">to</span>
-                                                <input type="date" name="end_date" class="form-control"
+                                                <span class="small">to</span>
+                                                <input type="date" name="end_date" class="form-control form-control-sm"
                                                     value="{{ request('end_date') }}">
-                                                <button type="submit" class="btn btn-primary">Apply</button>
                                             </div>
+                                        </div>
+                                        <div class="col-md-auto">
+                                            <button type="submit" class="btn btn-primary btn-sm">Search</button>
                                         </div>
                                     </div>
                                 </form>

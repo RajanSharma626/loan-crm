@@ -16,8 +16,10 @@
                                     <a class="contactapp-title link-dark">
                                         <h1>Users List</h1>
                                     </a>
+                                    @if (Auth::user()->role === 'Admin')
                                     <button class="btn btn-sm btn-outline-secondary flex-shrink-0 d-lg-inline-block d-none"
                                         data-bs-toggle="modal" data-bs-target="#add_new_contact">+ Create New</button>
+                                    @endif
                                 </div>
 
                             </div>
@@ -38,8 +40,25 @@
                                         @endforeach
                                     </div>
                                 @endif
+
+                                <form method="GET" action="{{ route('emp') }}" class="mb-3">
+                                    <div class="row g-2 align-items-end">
+                                        <div class="col-md-4">
+                                            <input type="text" name="search" class="form-control form-control-sm" 
+                                                placeholder="Search by Name, Email, or Employee ID" 
+                                                value="{{ request('search') }}" />
+                                        </div>
+                                        <div class="col-md-auto">
+                                            <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                                            @if(request('search'))
+                                                <a href="{{ route('emp') }}" class="btn btn-secondary btn-sm">Clear</a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </form>
+
                                 <div class="contact-list-view">
-                                    <table id="EmpTable" class="table nowrap w-100 mb-5">
+                                    <table class="table table-striped table-bordered w-100 mb-5">
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
@@ -52,8 +71,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-
-                                            @foreach ($emp as $users)
+                                            @forelse ($emp as $users)
                                                 @if ($users->id != Auth::user()->id)
                                                     <tr>
                                                         <td>
@@ -69,7 +87,7 @@
                                                         </td>
                                                         <td>{{ $users->email }}</td>
                                                         <td>{{ $users->role }}</td>
-                                                        <td>{{ $users->created_at }}</td>
+                                                        <td>{{ $users->created_at->format('j M, Y h:i A') }}</td>
                                                         <td>
                                                             @if ($users->status == 'Active')
                                                                 <span class="badge badge-soft-success">Active</span>
@@ -95,7 +113,8 @@
                                                                     <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover del-button"
                                                                         data-bs-toggle="tooltip" data-placement="top"
                                                                         title="" data-bs-original-title="Delete"
-                                                                        href="#"><span class="icon"><span
+                                                                        href="{{ route('users.delete', $users->id) }}"
+                                                                        onclick="return confirm('Are you sure you want to delete this user?');"><span class="icon"><span
                                                                                 class="feather-icon"><i
                                                                                     data-feather="trash"></i></span></span></a>
                                                                 </div>
@@ -104,9 +123,17 @@
                                                         </td>
                                                     </tr>
                                                 @endif
-                                            @endforeach
+                                            @empty
+                                                <tr>
+                                                    <td colspan="7" class="text-center">No users found.</td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
+
+                                    <div class="d-flex justify-content-center">
+                                        {{ $emp->appends(request()->query())->links('pagination::bootstrap-5') }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -117,7 +144,7 @@
                         aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                             <div class="modal-content">
-                                <form action="{{ route('userss.store') }}" method="post">
+                                <form action="{{ route('userss.store') }}" method="post" id="createUserForm">
                                     @csrf
                                     <div class="modal-body">
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
@@ -128,36 +155,50 @@
                                         <div class="row gx-3">
                                             <div class="col-sm-4">
                                                 <div class="form-group">
-                                                    <label class="form-label">Full Name</label>
+                                                    <label class="form-label">Full Name*</label>
                                                     <input class="form-control" type="text" name="name"
-                                                        placeholder="Full Name" required />
+                                                        placeholder="Full Name" required minlength="2" maxlength="255" />
+                                                    @error('name')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-sm-4">
                                                 <div class="form-group">
-                                                    <label class="form-label">Email</label>
+                                                    <label class="form-label">Email*</label>
                                                     <input class="form-control" type="email" name="email"
-                                                        placeholder="Email" required />
+                                                        placeholder="Email" required maxlength="255" />
+                                                    @error('email')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                 </div>
                                             </div>
 
                                             <div class="col-sm-4">
                                                 <div class="form-group">
-                                                    <label class="form-label">Position</label>
+                                                    <label class="form-label">Position*</label>
                                                     <select class="form-select" name="position" required>
                                                         <option selected="">--</option>
                                                         <option value="Admin">Admin</option>
                                                         <option value="Manager">Manager</option>
                                                         <option value="Agent">Agent</option>
+                                                        <option value="Underwriter">Underwriter</option>
+                                                        <option value="Collection">Collection</option>
                                                     </select>
+                                                    @error('position')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                 </div>
                                             </div>
 
                                             <div class="col-sm-4">
                                                 <div class="form-group">
-                                                    <label class="form-label">Password</label>
-                                                    <input class="form-control" type="text" name="password"
-                                                        placeholder="Set New Password" required />
+                                                    <label class="form-label">Password*</label>
+                                                    <input class="form-control" type="password" name="password"
+                                                        placeholder="Set New Password" required minlength="6" maxlength="255" />
+                                                    @error('password')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         </div>
@@ -179,7 +220,7 @@
                         aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                             <div class="modal-content">
-                                <form action="{{ route('users.update') }}" method="post">
+                                <form action="{{ route('users.update') }}" method="post" id="editUserForm">
                                     @csrf
                                     <div class="modal-body">
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -215,6 +256,7 @@
                                                         <option value="Manager">Manager</option>
                                                         <option value="Agent">Agent</option>
                                                         <option value="Underwriter">Underwriter</option>
+                                                        <option value="Collection">Collection</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -257,4 +299,85 @@
         </div>
         <!-- /Page Body -->
     </div>
+    <script>
+        // Frontend Form Validation for Create User
+        document.getElementById('createUserForm')?.addEventListener('submit', function(e) {
+            const form = this;
+            let isValid = true;
+            const errors = [];
+
+            // Validate name
+            const nameField = form.querySelector('input[name="name"]');
+            if (nameField && nameField.value.trim().length < 2) {
+                isValid = false;
+                nameField.classList.add('is-invalid');
+                errors.push('Name must be at least 2 characters');
+            }
+
+            // Validate email
+            const emailField = form.querySelector('input[type="email"]');
+            if (emailField && emailField.value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(emailField.value)) {
+                    isValid = false;
+                    emailField.classList.add('is-invalid');
+                    errors.push('Please enter a valid email address');
+                }
+            }
+
+            // Validate password
+            const passwordField = form.querySelector('input[type="password"]');
+            if (passwordField && passwordField.value.length < 6) {
+                isValid = false;
+                passwordField.classList.add('is-invalid');
+                errors.push('Password must be at least 6 characters');
+            }
+
+            // Validate position
+            const positionField = form.querySelector('select[name="position"]');
+            if (positionField && !positionField.value) {
+                isValid = false;
+                positionField.classList.add('is-invalid');
+                errors.push('Please select a position/role');
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please fix the following errors:\n' + errors.join('\n'));
+                return false;
+            }
+        });
+
+        // Frontend Form Validation for Update User
+        document.getElementById('editUserForm')?.addEventListener('submit', function(e) {
+            const form = this;
+            let isValid = true;
+            const errors = [];
+
+            // Validate email
+            const emailField = form.querySelector('input[type="email"]');
+            if (emailField && emailField.value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(emailField.value)) {
+                    isValid = false;
+                    emailField.classList.add('is-invalid');
+                    errors.push('Please enter a valid email address');
+                }
+            }
+
+            // Validate password if provided
+            const passwordField = form.querySelector('input[type="password"]');
+            if (passwordField && passwordField.value && passwordField.value.length < 6) {
+                isValid = false;
+                passwordField.classList.add('is-invalid');
+                errors.push('Password must be at least 6 characters');
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please fix the following errors:\n' + errors.join('\n'));
+                return false;
+            }
+        });
+    </script>
 @endsection
