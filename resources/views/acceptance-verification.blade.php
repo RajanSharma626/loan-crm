@@ -96,11 +96,11 @@
         }
         .acceptance-form {
             margin-top: 50px;
-            background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
-            color: #ffffff;
+            background: #f3f4f6;
+            color: #1f2937;
             padding: 35px;
             border-radius: 12px;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
         }
         .acceptance-form h4 {
             text-transform: uppercase;
@@ -116,26 +116,26 @@
             font-weight: 600;
         }
         .acceptance-form textarea {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: #ffffff;
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            color: #1f2937;
         }
         .signature-input {
             font-size: 18px;
-            color: #ffffff;
+            color: #1f2937;
             letter-spacing: 0.8px;
-            background: transparent;
+            background: #ffffff;
         }
         .acceptance-form .dotted-line {
-            border-bottom: 2px dotted rgba(255,255,255,0.35);
+            border-bottom: 2px dotted #9ca3af;
             padding-bottom: 6px;
             margin-bottom: 10px;
         }
         .acceptance-form .signature-preview {
             font-family: 'GreatVibes', 'Brush Script MT', cursive;
-            font-size: 42px;
+            font-size: 30px;
             color: #1d4ed8;
-            letter-spacing: 1px;
+            letter-spacing: 3px;
             line-height: 1.1;
         }
         .acceptance-form .place-preview {
@@ -145,8 +145,8 @@
             letter-spacing: 0.8px;
         }
         .acceptance-form .btn-verify {
-            background-color: #1d4ed8;
-            color: #111827;
+            background-color: #007d88;
+            color: #ffffff;
             font-weight: 700;
             padding: 12px 45px;
             border: none;
@@ -156,7 +156,7 @@
         }
         .acceptance-form .btn-verify:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(250, 204, 21, 0.35);
+            background-color: #01626b;
         }
         .download-actions {
             margin-top: 20px;
@@ -189,7 +189,7 @@
 </head>
 <body>
     <div class="agreement-wrapper">
-        @include('agreements.partials.letter', ['lead' => $lead, 'eagreement' => $eagreement])
+        @include('agreements.partials.letter', ['lead' => $lead, 'eagreement' => $eagreement, 'hideSignature' => true])
 
         <div class="acceptance-form print-hide mt-5">
             <h4>Borrower Acceptance</h4>
@@ -200,7 +200,7 @@
 
                 <div class="mb-4">
                     <label class="form-label">Signature</label>
-                    <div class="signature-preview" id="signaturePreview">{{ $lead->first_name }} {{ $lead->last_name }}</div>
+                    <div class="signature-preview" id="signaturePreview"></div>
                     <textarea
                         class="form-control mt-3 signature-input"
                         name="signature"
@@ -209,7 +209,7 @@
                         placeholder="Write your name for signature"
                         required
                         oninput="updateSignaturePreview(this.value)"
-                    >{{ $lead->first_name }} {{ $lead->last_name }}</textarea>
+                    ></textarea>
                     <div class="dotted-line"></div>
                 </div>
 
@@ -227,7 +227,7 @@
 
                 <div class="mb-4">
                     <label class="form-label">Place</label>
-                    <div id="placePreview" class="fw-semibold">{{ $lead->city ?? '' }}</div>
+                    <div id="placePreview" class="fw-semibold"></div>
                     <input type="text"
                         class="form-control mt-3 signature-input"
                         name="place"
@@ -235,7 +235,7 @@
                         placeholder="Enter your current place"
                         required
                         oninput="updatePlacePreview(this.value)"
-                        value="{{ $lead->city ?? '' }}">
+                        value="">
                 </div>
 
                 <div class="text-end">
@@ -249,12 +249,12 @@
     <script>
         function updateSignaturePreview(value) {
             const preview = document.getElementById('signaturePreview');
-            preview.textContent = value || '{{ $lead->first_name }} {{ $lead->last_name }}';
+            preview.textContent = value || '';
         }
 
         function updatePlacePreview(value) {
             const preview = document.getElementById('placePreview');
-            preview.textContent = value || '{{ $lead->city ?? '' }}';
+            preview.textContent = value || '';
         }
     </script>
 </body>

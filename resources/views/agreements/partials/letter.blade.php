@@ -43,16 +43,16 @@
     <div class="letter-address">
         <p>
             To<br>
-            <strong>{{ $leadFullName }}</strong>
+            <strong style="color: #007d88;" class="text-uppercase">{{ $leadFullName }}</strong>
         </p>
     </div>
-    <p class="mt-3">
+    <p style="margin-top: 8px; margin-bottom: 8px;">
         Thank you for showing your interest in moneyportal.in and giving us an opportunity to serve you.
         We are pleased to inform you that your loan application has been approved as per the below
         mentioned terms and conditions.
     </p>
 
-    <p>
+    <p style="margin-bottom: 8px;">
         Money Portal, through its Digital Lending Partner - NBFC : <strong>SEED CAPITAL PRIVATE LIMITED
         (RBI registered NBFC - Reg No. N-14.00973)</strong><br>
         Registered Office at D-12202 BPTP, Princess Park, Sector-86, Faridabad, HR-121007<br>
@@ -91,8 +91,8 @@
     <table class="details-table particulars">
         <thead>
             <tr>
-                <th>Particulars</th>
-                <th>Details</th>
+                <th style="background-color: #007d88; color: #ffffff;">Particulars</th>
+                <th style="background-color: #007d88; color: #ffffff;">Details</th>
             </tr>
         </thead>
         <tbody>
@@ -167,12 +167,12 @@
         </tbody>
     </table>
 
-    <p>
+    <p style="margin-bottom: 8px;">
         Henceforth visiting (physically) your Workplace and Residence has your concurrence on it. Kindly request you to go through above
-        mentioned terms and conditions and provide your kind acceptance over the email or “esign” so that we can process your loan for final disbursement.
+        mentioned terms and conditions and provide your kind acceptance over the email or "esign" so that we can process your loan for final disbursement.
     </p>
 
-    <p>
+    <p style="margin-bottom: 8px;">
         <strong>Best Regards<br>
         Team MoneyPortal.in<br>
         (Digital Lending Partner - SEED CAPITAL PRIVATE LIMITED)</strong><br>
@@ -181,7 +181,7 @@
     </p>
 
     <div class="terms-wrapper">
-        <h3>TERMS AND CONDITIONS</h3>
+        <h3 style="color: #007d88;">TERMS AND CONDITIONS</h3>
         <p>The Borrower confirms to have read and understood these Terms of Agreement before accepting a personal loan (“Loan”) offer with us. By clicking on the “esign” button or accepting over the email, the Borrower shall be deemed to have electronically accepted these Terms of Agreement. To the extent of any inconsistency, these Terms of Agreement shall prevail.</p>
 
         <ol>
@@ -201,11 +201,42 @@
 
         <p><strong>Effective Date</strong> - These Terms of Agreement shall be effective from the date of disbursal of the loan amount.</p>
 
-        <h4>Background:</h4>
-        <p>The Borrower has approached the Lender for a loan to meet its financial requirements, and the Lender has agreed to provide the loan on the terms and conditions set forth in this Agreement.</p>
-        <p>The Lender reserves the right to take legal action or pursue any other remedies available under law in case of default by the Borrower.</p>
-        <p>Non-payment of loan on time will adversely affect your Credit score, further reducing your chances of getting the Loan again. Upon approval, the processing fee will be deducted from your Sanction amount and the balance amount will be disbursed to your account.</p>
-        <p>Please ensure that all terms and conditions are thoroughly reviewed and understood by both parties before signing the agreement. It is also advisable to consult with legal professionals to ensure compliance with applicable laws and regulations.</p>
+        <h4 style="color: #007d88; margin-top: 10px; margin-bottom: 6px;">Background:</h4>
+        <p style="margin-bottom: 6px;">The Borrower has approached the Lender for a loan to meet its financial requirements, and the Lender has agreed to provide the loan on the terms and conditions set forth in this Agreement.</p>
+        <p style="margin-bottom: 6px;">The Lender reserves the right to take legal action or pursue any other remedies available under law in case of default by the Borrower.</p>
+        <p style="margin-bottom: 6px;">Non-payment of loan on time will adversely affect your Credit score, further reducing your chances of getting the Loan again. Upon approval, the processing fee will be deducted from your Sanction amount and the balance amount will be disbursed to your account.</p>
+        <p style="margin-bottom: 0;">Please ensure that all terms and conditions are thoroughly reviewed and understood by both parties before signing the agreement. It is also advisable to consult with legal professionals to ensure compliance with applicable laws and regulations.</p>
     </div>
+
+    @if(!isset($hideSignature) || !$hideSignature)
+    <div class="signature-area">
+        <div class="signature-row">
+            <div class="signature-box">
+                @php
+                    $rawSignature = $eagreement->signature ?? ($lead->first_name . ' ' . $lead->last_name);
+                    $displaySignature = ucwords(strtolower($rawSignature));
+                @endphp
+                <div class="signature-caption">
+                    <span>Signature :</span>
+                </div>
+                <div class="signature-line">{{ $displaySignature }}</div>
+                <div class="signature-place">Place: {{ $eagreement->acceptance_place ?? $lead->city ?? '________________' }}</div>
+                <div class="signature-ip">
+                    <span>IP Address :</span>
+                    <strong>{{ $eagreement->acceptance_ip ?? '________________' }}</strong>
+                </div>
+            </div>
+            
+            <div class="stamp-box">
+                @php
+                    $stampPath = public_path('stamp.png');
+                    // Use file:// protocol for dompdf compatibility
+                    $stampUrl = 'file://' . str_replace('\\', '/', $stampPath);
+                @endphp
+                <img src="{{ $stampUrl }}" alt="Company Stamp">
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
 

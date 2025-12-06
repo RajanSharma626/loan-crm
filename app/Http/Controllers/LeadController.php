@@ -334,7 +334,7 @@ class LeadController extends Controller
         
         // Generate Loan Application Number if it doesn't exist
         if (empty($eagreement->application_number)) {
-            // Get the last application number with format MP0000XXX
+            // Get the last application number with format MP0000XXX (ignore old RSHPL format)
             $lastAgreement = Eagreement::whereNotNull('application_number')
                 ->where('application_number', 'like', 'MP%')
                 ->orderBy('application_number', 'desc')
@@ -342,6 +342,10 @@ class LeadController extends Controller
             
             if ($lastAgreement && preg_match('/MP0+(\d+)/', $lastAgreement->application_number, $matches)) {
                 $nextNumber = intval($matches[1]) + 1;
+                // Ensure it doesn't go below 301
+                if ($nextNumber < 301) {
+                    $nextNumber = 301;
+                }
             } else {
                 $nextNumber = 301; // Start from 301 as per example MP0000301
             }
@@ -954,11 +958,16 @@ class LeadController extends Controller
 
         // Create note for client acceptance
         $lead = $eagreement->lead;
+        
+        // Update lead disposition to "Disbursed" after client acceptance
+        $lead->disposition = 'Disbursed';
+        $lead->save();
+        
         Note::create([
             'lead_id' => $lead->id,
             'updated_by' => null, // Client acceptance, no user ID
             'note' => 'Client Accepted E-Agreement. Signature: ' . $request->signature . ', Place: ' . $request->place . ', IP: ' . $ipAddress . ', Date: ' . now()->format('d M, Y h:i A'),
-            'disposition' => 'Approved',
+            'disposition' => 'Disbursed',
             'lead_assign_by' => $lead->agent_id ?? null,
         ]);
 
