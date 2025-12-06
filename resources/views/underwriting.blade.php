@@ -195,21 +195,21 @@
                                                                                     data-feather="download"></i></span></span></a>
                                                                 @endif
                                                                 @if ($lead->eagreement && !empty($lead->eagreement->acceptance_token) && !$lead->eagreement->is_accepted)
-                                                                    <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover"
-                                                                        data-bs-toggle="tooltip" data-placement="top"
+                                                                <a class="btn btn-icon btn-flush-dark btn-rounded flush-soft-hover"
+                                                                    data-bs-toggle="tooltip" data-placement="top"
                                                                         title="Copy Acceptance Link"
                                                                         data-bs-original-title="Copy Acceptance Link"
-                                                                        href="javascript:void(0);"
-                                                                        onclick="copyAcceptanceLink(event, '{{ route('acceptance.verify', $lead->eagreement->acceptance_token) }}', '{{ $lead->id }}')"><span
-                                                                            class="icon"><span class="feather-icon"><i
-                                                                                    data-feather="link"></i></span></span></a>
+                                                                    href="javascript:void(0);"
+                                                                    onclick="copyAcceptanceLink(event, '{{ route('acceptance.verify', $lead->eagreement->acceptance_token) }}', '{{ $lead->id }}')"><span
+                                                                        class="icon"><span class="feather-icon"><i
+                                                                                data-feather="link"></i></span></span></a>
                                                                 @elseif($lead->eagreement && $lead->eagreement->is_accepted)
-                                                                    <a class="btn btn-icon btn-flush-success btn-rounded flush-soft-hover"
-                                                                        data-bs-toggle="tooltip" data-placement="top"
-                                                                        title="Accepted" data-bs-original-title="Accepted"
+                                                                <a class="btn btn-icon btn-flush-success btn-rounded flush-soft-hover"
+                                                                    data-bs-toggle="tooltip" data-placement="top"
+                                                                    title="Accepted" data-bs-original-title="Accepted"
                                                                         href="javascript:void(0);" disabled><span
-                                                                            class="icon"><span class="feather-icon"><i
-                                                                                    data-feather="check-circle"></i></span></span></a>
+                                                                        class="icon"><span class="feather-icon"><i
+                                                                                data-feather="check-circle"></i></span></span></a>
                                                                 @endif
                                                             </div>
                                                         </div>
@@ -313,14 +313,14 @@
             document.body.appendChild(tempInput);
             tempInput.select();
             tempInput.setSelectionRange(0, 99999); // For mobile devices
-
+            
             try {
                 document.execCommand('copy');
                 // Show success notification
                 const btn = event.target.closest('a');
                 const originalTitle = btn.getAttribute('data-bs-original-title');
                 btn.setAttribute('data-bs-original-title', 'Link Copied!');
-
+                
                 // Try to update tooltip if Bootstrap is available
                 if (typeof bootstrap !== 'undefined') {
                     const tooltip = bootstrap.Tooltip.getInstance(btn);
@@ -351,7 +351,7 @@
                     alert('Please copy manually: ' + link);
                 }
             }
-
+            
             document.body.removeChild(tempInput);
         }
     </script>

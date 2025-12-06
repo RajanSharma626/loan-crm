@@ -83,10 +83,12 @@
                                                     $statusField = $key . '_status';
                                                     $statusValue = $doc->{$statusField} ?? null;
                                                     $isApproved = $statusValue === 'Approved';
+                                                    $remarksField = $key . '_remarks';
+                                                    $remarksValue = $doc && $doc->{$remarksField} ? $doc->{$remarksField} : null;
                                                 @endphp
                                                 <div class="row gx-3 align-items-center mb-3">
                                                     <div class="col-sm-2">
-                                                        <div class="fw-semibold">{{ $label }}</div>
+                                                        <div class="fw-semibold">{{ $label }} : </div>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         @if (!empty($arr))
@@ -94,8 +96,8 @@
                                                             @foreach ($arr as $file)
                                                                 <a href="{{ asset($file) }}"
                                                                     class="btn-link small fw-semibold me-3"
-                                                                    target="_blank">View
-                                                                    {{ $label }}{{ $no > 1 ? $no : '' }}</a>
+                                                                    target="_blank">View -
+                                                                    {{ $no >= 1 ? $no : '' }}</a>
                                                                 @php $no++; @endphp
                                                             @endforeach
                                                         @else
@@ -103,11 +105,17 @@
                                                         @endif
                                                     </div>
                                                     <div class="col-sm-4">
+                                                        <div class="alert alert-info py-2 px-3 mb-0 small">
+                                                            <strong>Remarks/Password for {{ $label }}:</strong> 
+                                                            <span class="ms-2">{{ $remarksValue }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
                                                         @if ($isApproved)
                                                             <span class="badge badge-success me-2">Approved</span>
                                                             <span class="text-success" title="Locked">✔</span>
                                                         @else
-                                                            <select class="form-select"
+                                                            <select class="form-select form-select-sm" @if(empty($arr)) disabled @endif
                                                                 name="statuses[{{ $key }}]">
                                                                 <option value=""
                                                                     {{ $statusValue ? '' : 'selected' }}>Select</option>
@@ -253,8 +261,8 @@
                                                         <select class="form-select" name="customer_application_status"
                                                             {{ $isClientAccepted ? 'disabled' : 'required' }}>
                                                             <option value="">--</option>
-                                                            <option value="Pending" {{ ($lead->eagreement->customer_application_status ?? '') === 'Pending' ? 'selected' : '' }}>Pending</option>
-                                                            <option value="Approved" {{ ($lead->eagreement->customer_application_status ?? '') === 'Approved' ? 'selected' : '' }}>Approved</option>
+                                                            <option value="Accepted" {{ ($lead->eagreement->customer_application_status ?? '') === 'Accepted' ? 'selected' : '' }}>Accepted</option>
+                                                            <option value="Not Intrested" {{ ($lead->eagreement->customer_application_status ?? '') === 'Not Intrested' ? 'selected' : '' }}>Not Intrested</option>
                                                             <option value="Rejected" {{ ($lead->eagreement->customer_application_status ?? '') === 'Rejected' ? 'selected' : '' }}>Rejected</option>
                                                         </select>
                                                         @if($isClientAccepted)

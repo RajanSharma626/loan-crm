@@ -46,7 +46,7 @@
                 <!-- End Nav -->
                 <div class="nav-end-wrap">
                     <ul class="navbar-nav flex-row">
- 
+
                         <li class="nav-item">
                             <div class="dropdown ps-2">
                                 <a class="dropdown-toggle no-caret d-flex align-items-center" href="#"
@@ -396,22 +396,22 @@
     <script>
         // Initialize DataTable only if EmpTable exists
         if ($('#EmpTable').length) {
-            $('#EmpTable').DataTable({
-                scrollX: true,
-                autoWidth: false,
-                language: {
-                    search: "",
-                    searchPlaceholder: "Search",
-                    sLengthMenu: "_MENU_items",
-                    paginate: {
-                        next: '', // or '→'
-                        previous: '' // or '←'
-                    }
-                },
-                "drawCallback": function() {
-                    $('.dataTables_paginate > .pagination').addClass('custom-pagination pagination-simple');
+        $('#EmpTable').DataTable({
+            scrollX: true,
+            autoWidth: false,
+            language: {
+                search: "",
+                searchPlaceholder: "Search",
+                sLengthMenu: "_MENU_items",
+                paginate: {
+                    next: '', // or '→'
+                    previous: '' // or '←'
                 }
-            });
+            },
+            "drawCallback": function() {
+                $('.dataTables_paginate > .pagination').addClass('custom-pagination pagination-simple');
+            }
+        });
         }
     </script>
 
