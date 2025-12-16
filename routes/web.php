@@ -64,6 +64,8 @@ Route::middleware(['auth', 'check.active'])->group(function () {
     Route::middleware('disbursal.access')->group(function () {
         Route::get('/collection', [LeadController::class, 'collection'])->name('collection');
         Route::get('/collection/info/{id}', [LeadController::class, 'collectionInfo'])->name('collection.info');
+        Route::post('/collection/update', [LeadController::class, 'updateCollection'])->name('collection.update');
+        Route::post('/collection/send-eagreement', [LeadController::class, 'sendFreshEAgreement'])->name('collection.send.eagreement');
     });
 
     // users routes restricted to admin only

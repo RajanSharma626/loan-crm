@@ -29,12 +29,15 @@ class Eagreement extends Model
         'customer_application_status',
         'signed_application',
         'notes',
-        'updated_by'
+        'updated_by',
+        'closed_date',
+        'received_amount'
     ];
 
     protected $casts = [
         'token_expires_at' => 'datetime',
         'acceptance_date' => 'datetime',
+        'closed_date' => 'date',
         'is_accepted' => 'boolean',
     ];
 

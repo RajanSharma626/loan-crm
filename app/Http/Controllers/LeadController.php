@@ -697,7 +697,8 @@ class LeadController extends Controller
             $q->where('is_accepted', true);
         });
 
-        $query->where('disposition', 'Disbursed');
+        // Show leads with Disbursed or collection dispositions (Closed, Partially Received, Settled, NPA)
+        $query->whereIn('disposition', ['Disbursed', 'Closed', 'Partially Received', 'Settled', 'NPA']);
 
         $this->restrictToAssignedLeads($query);
         $this->applyLeadFilters($request, $query);
@@ -714,13 +715,107 @@ class LeadController extends Controller
     {
         $lead = Lead::with(['agent', 'document', 'eagreement', 'notesRelation.user', 'notesRelation.assignBy'])->findOrFail($id);
         
-        // Ensure this lead has an accepted e-agreement
+        // Ensure this lead has an accepted e-agreement and is in Disbursed or collection status
         if (!$lead->eagreement || !$lead->eagreement->is_accepted) {
+            return redirect()->route('collection')->with('error', 'This lead is not in collection status.');
+        }
+        
+        if (!in_array($lead->disposition, ['Disbursed', 'Closed', 'Partially Received', 'Settled', 'NPA'])) {
             return redirect()->route('collection')->with('error', 'This lead is not in collection status.');
         }
         
         $doc = Documents::where('lead_id', $lead->id)->first();
         return view('collection-info', compact('lead', 'doc'));
+    }
+
+    public function updateCollection(Request $request)
+    {
+        $request->validate([
+            'lead_id' => 'required|exists:leads,id',
+            'disposition' => 'required|in:Closed,Partially Received,Settled,NPA',
+            'closed_date' => 'required|date',
+            'received_amount' => 'required|numeric|min:0',
+        ]);
+
+        $lead = Lead::findOrFail($request->lead_id);
+        
+        if (!$lead->eagreement) {
+            return redirect()->back()->with('error', 'No e-agreement found for this lead.');
+        }
+
+        $oldDisposition = $lead->disposition;
+        
+        // Update lead disposition
+        $lead->disposition = $request->disposition;
+        $lead->save();
+
+        // Update eagreement with collection details
+        $eagreement = $lead->eagreement;
+        $eagreement->closed_date = $request->closed_date;
+        $eagreement->received_amount = $request->received_amount;
+        $eagreement->save();
+
+        // Create note
+        $noteText = 'Collection Updated. Disposition changed to ' . $request->disposition;
+        if ($request->closed_date) {
+            $noteText .= '. Closed Date: ' . Carbon::parse($request->closed_date)->format('d M, Y');
+        }
+        if ($request->received_amount) {
+            $noteText .= '. Received Amount: ₹' . number_format($request->received_amount, 2);
+        }
+        
+        Note::create([
+            'lead_id' => $lead->id,
+            'updated_by' => Auth::id(),
+            'note' => $noteText,
+            'disposition' => $request->disposition,
+            'lead_assign_by' => $lead->agent_id ?? null,
+        ]);
+
+        return redirect()->route('collection.info', $lead->id)->with('success', 'Collection details updated successfully.');
+    }
+
+    public function sendFreshEAgreement(Request $request)
+    {
+        $request->validate([
+            'lead_id' => 'required|exists:leads,id',
+        ]);
+
+        $lead = Lead::findOrFail($request->lead_id);
+        
+        if (!$lead->eagreement) {
+            return redirect()->back()->with('error', 'No e-agreement found for this lead.');
+        }
+
+        $eagreement = $lead->eagreement;
+
+        // Generate new acceptance token
+        $eagreement->acceptance_token = bin2hex(random_bytes(32)); // 64 character token
+        $eagreement->token_expires_at = now()->addDays(30); // Token expires in 30 days
+        $eagreement->is_accepted = false; // Reset acceptance status
+        $eagreement->signature = null;
+        $eagreement->acceptance_place = null;
+        $eagreement->acceptance_ip = null;
+        $eagreement->acceptance_date = null;
+        $eagreement->signed_application = null;
+        $eagreement->save();
+
+        // Generate acceptance link
+        $acceptanceLink = route('acceptance.verify', $eagreement->acceptance_token);
+
+        // Create note
+        Note::create([
+            'lead_id' => $lead->id,
+            'updated_by' => Auth::id(),
+            'note' => 'Fresh E-Agreement sent. Acceptance Link: ' . $acceptanceLink,
+            'disposition' => $lead->disposition,
+            'lead_assign_by' => $lead->agent_id ?? null,
+        ]);
+
+        // TODO: Send email with acceptance link to client
+        // Mail::to($lead->email)->send(new EAgreementMail($lead, $acceptanceLink));
+
+        return redirect()->route('collection.info', $lead->id)->with('success', 'Fresh e-agreement link generated successfully. Link: ' . $acceptanceLink);
     }
 
     protected function applyLeadFilters(Request $request, Builder $query): Builder

@@ -333,6 +333,33 @@
                                             </div>
                                         </div>
                                         @endif
+                                        
+                                        @if($lead->eagreement->closed_date || $lead->eagreement->received_amount)
+                                        <div class="col-12 mt-3">
+                                            <h6 class="mb-3">Collection Details</h6>
+                                            <div class="row gx-3">
+                                                @if($lead->eagreement->closed_date)
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Closed Date</label>
+                                                        <input class="form-control disabled-field" type="text" 
+                                                            value="{{ \Carbon\Carbon::parse($lead->eagreement->closed_date)->format('d M, Y') }}" disabled>
+                                                    </div>
+                                                </div>
+                                                @endif
+                                                @if($lead->eagreement->received_amount)
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Received Amount (INR)</label>
+                                                        <input class="form-control disabled-field" type="text" 
+                                                            value="₹ {{ number_format($lead->eagreement->received_amount, 2) }}" disabled>
+                                                    </div>
+                                                </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        @endif
+                                        
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label class="form-label">Notes</label>
@@ -373,6 +400,66 @@
                                     <div class="alert alert-info">
                                         No E-Agreement found for this lead.
                                     </div>
+                                </div>
+                                @endif
+
+                                {{-- ============================== Collection Management ============================== --}}
+                                @if($lead->eagreement && in_array($lead->disposition, ['Closed', 'Partially Received', 'Settled', 'NPA', 'Disbursed']))
+                                <div class="card p-5 mb-4">
+                                    <h5 class="mb-5">Collection Management</h5>
+                                    
+                                    <form action="{{ route('collection.update') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                                        
+                                        <div class="row gx-3">
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Disposition <span class="text-danger">*</span></label>
+                                                    <select class="form-select" name="disposition" required>
+                                                        <option value="Closed" {{ $lead->disposition === 'Closed' ? 'selected' : '' }}>Closed</option>
+                                                        <option value="Partially Received" {{ $lead->disposition === 'Partially Received' ? 'selected' : '' }}>Partially Received</option>
+                                                        <option value="Settled" {{ $lead->disposition === 'Settled' ? 'selected' : '' }}>Settled</option>
+                                                        <option value="NPA" {{ $lead->disposition === 'NPA' ? 'selected' : '' }}>NPA</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Closed Date <span class="text-danger">*</span></label>
+                                                    <input class="form-control" type="date" name="closed_date" 
+                                                        value="{{ $lead->eagreement->closed_date ? \Carbon\Carbon::parse($lead->eagreement->closed_date)->format('Y-m-d') : '' }}" required>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Received Amount (INR) <span class="text-danger">*</span></label>
+                                                    <input class="form-control" type="number" name="received_amount" 
+                                                        value="{{ $lead->eagreement->received_amount ?? '' }}" step="0.01" min="0" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="d-flex justify-content-end mt-4">
+                                            <button type="submit" class="btn btn-primary">Update Collection</button>
+                                        </div>
+                                    </form>
+                                    
+                                    @if(in_array($lead->disposition, ['Closed', 'Partially Received', 'Settled', 'NPA']))
+                                    <hr class="my-4">
+                                    
+                                    <div class="mt-4">
+                                        <h6 class="mb-3">Send Fresh E-Agreement</h6>
+                                        <p class="text-muted">Generate a new acceptance link for this closed lead to sign a fresh e-agreement.</p>
+                                        <form action="{{ route('collection.send.eagreement') }}" method="POST" onsubmit="return confirm('Are you sure you want to send a fresh e-agreement? This will invalidate the current acceptance.');">
+                                            @csrf
+                                            <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                                            <button type="submit" class="btn btn-outline-primary">Send Fresh E-Agreement</button>
+                                        </form>
+                                    </div>
+                                    @endif
                                 </div>
                                 @endif
 
