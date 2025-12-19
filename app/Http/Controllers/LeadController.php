@@ -735,6 +735,7 @@ class LeadController extends Controller
             'disposition' => 'required|in:Closed,Partially Received,Settled,NPA',
             'closed_date' => 'required|date',
             'received_amount' => 'required|numeric|min:0',
+            'note' => 'nullable|string|max:1000',
         ]);
 
         $lead = Lead::findOrFail($request->lead_id);
@@ -753,6 +754,7 @@ class LeadController extends Controller
         $eagreement = $lead->eagreement;
         $eagreement->closed_date = $request->closed_date;
         $eagreement->received_amount = $request->received_amount;
+        $eagreement->notes = $request->note ?? null;
         $eagreement->save();
 
         // Create note

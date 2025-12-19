@@ -442,6 +442,16 @@
                                             </div>
                                         </div>
                                         
+                                        <div class="row gx-3 mt-3">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="form-label">Note</label>
+                                                    <textarea class="form-control" name="note" rows="3" 
+                                                        placeholder="Enter any additional notes...">{{ old('note') }}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
                                         <div class="d-flex justify-content-end mt-4">
                                             <button type="submit" class="btn btn-primary">Update Collection</button>
                                         </div>
